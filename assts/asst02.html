@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.18">
+<title>Assignment 02: Trust the Process (Part 1)</title>
+<link rel="stylesheet" href="../style/cs21.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_assignment_02_trust_the_process_part_1">Assignment 02: Trust the Process (Part 1)</a></li>
+<li><a href="#_microcat">1. Microcat</a></li>
+<li><a href="#_parser">2. Parser</a></li>
+<li><a href="#_simple_shell">3. Simple Shell</a></li>
+<li><a href="#_grading_rubric">4. Grading Rubric</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_assignment_02_trust_the_process_part_1">Assignment 02: Trust the Process (Part 1)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Due Sunday, Feb 2, before midnight</strong></p>
+</div>
+<div class="paragraph">
+<p>The goals for this assignment are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Working with stdout, stdin, and files</p>
+</li>
+<li>
+<p>Understanding redirection and pipes at the command line</p>
+</li>
+<li>
+<p>Working with system calls: read, write, open, fork, exec, wait</p>
+</li>
+<li>
+<p>C practice/review</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Get the starter code <a href="https://classroom.github.com/a/z8JKZurc">here</a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_microcat">1. Microcat</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>By Dianna Xu</em></p>
+</div>
+<div class="paragraph">
+<p>In the file, <code>microcat.c</code>, implement a C program that concatenates and prints files
+to standard output. If no arguments are given, it takes input from stdin.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ <strong>./microcat lyrics.txt</strong>
+What a beautiful face
+I have found in this place
+That is circling all round the sun
+What a beautiful dream
+That could flash on the screen
+In a blink of an eye and be gone from me
+Soft and sweet
+Let me hold it close and keep it here with me
+$ <strong>cat lyrics.txt | ./microcat</strong>
+What a beautiful face
+I have found in this place
+That is circling all round the sun
+What a beautiful dream
+That could flash on the screen
+In a blink of an eye and be gone from me
+Soft and sweet
+Let me hold it close and keep it here with me
+$ <strong>./microcat < lyrics.txt</strong>
+What a beautiful face
+I have found in this place
+That is circling all round the sun
+What a beautiful dream
+That could flash on the screen
+In a blink of an eye and be gone from me
+Soft and sweet
+Let me hold it close and keep it here with me
+$ <strong>./microcat</strong>
+<strong>hello</strong>
+hello
+<strong>nice hat</strong>
+nice hat
+$ <strong>./microcat B.txt A.txt C.txt D.txt</strong>
+World
+Hello
+!!!
+All life is precious</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Requirements/Hints:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>This is basically the Unix <code>cat</code> command with no flags.</p>
+</li>
+<li>
+<p>When working with the standard input and standard output streams, either use the defined file descriptors (e.g. <code>STDOUT_FILENO</code>, <code>STDIN_FILENO</code>), or defined file pointers (e.g. <code>stdin</code>, <code>stdout</code>), with either <code>read</code> or <code>fread</code>.</p>
+</li>
+<li>
+<p>Your program should use the system calls, <a href="https://www.man7.org/linux/man-pages/man2/read.2.html">read</a>, <a href="https://www.man7.org/linux/man-pages/man2/write.2.html">write</a>, and <a href="https://www.man7.org/linux/man-pages/man2/open.2.html">open</a>.</p>
+</li>
+<li>
+<p>Ctrl-d will quit your application when reading from stdin</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_parser">2. Parser</h2>
+<div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This question is from <a href="https://www.cs.swarthmore.edu/~kwebb/cs45/s24/labs/lab1.html">this lab</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In the file, <code>parser.c</code>, implement a function that parses command line input.
+This function should fill in a <code>struct Cmd</code> that holds the information needed to execute. Your struct should look as follows.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>struct Cmd {
+  char **cmd1_argv;
+  char **cmd2_argv;
+  char *cmd1_fds[3];
+  char *cmd2_fds[3];
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Sample output from your program should look as follows:</p>
+</div>
+<div class="paragraph">
+<p>Plain command: <code>ls -l</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>cmd1_args: ["ls", "-l", NULL]  /* three-element dynamically-allocated array */
+cmd2_args: NULL  /* There is no second command here. */
+
+cmd1_fds[0]: NULL  /* With no I/O redirects, all descriptors are NULL */
+cmd1_fds[1]: NULL
+cmd1_fds[2]: NULL
+
+cmd2_fds[0]: NULL
+cmd2_fds[1]: NULL
+cmd2_fds[2]: NULL</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Pipe only command: <code>ls | sort</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>cmd1_args: ["ls", NULL]  /* two-element dynamically-allocated array containing */
+cmd2_args: ["sort", NULL]  /* two-element dynamically-allocated array containing */
+
+cmd1_fds[0]: NULL  /* With no I/O redirects, all descriptors are NULL */
+cmd1_fds[1]: NULL
+cmd1_fds[2]: NULL
+
+cmd2_fds[0]: NULL
+cmd2_fds[1]: NULL
+cmd2_fds[2]: NULL</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Redirects only: <code>ls -l 1&gt; out.txt 2&gt; error.txt</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>cmd1_args: ["ls", "-l", NULL]  /* three-element dynamically-allocated array */
+
+cmd2_args: NULL  /* There is no second command here. */
+
+cmd1_fds[0]: NULL
+cmd1_fds[1]: "out.txt"
+cmd1_fds[2]: "error.txt"
+
+cmd2_fds[0]: NULL  /* There is no second command here. */
+cmd2_fds[1]: NULL
+cmd2_fds[2]: NULL</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Combined: <code>grep -i blah &lt; input.txt | sort 1&gt; output.txt</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>cmd1_args: ["grep", "-i", "blah", NULL]  /* four-element dynamically-allocated array */
+cmd2_args: ["sort", NULL]  /* two-element dynamically-allocated array containing */
+
+cmd1_fds[0]: "input.txt"
+cmd1_fds[1]: NULL
+cmd1_fds[2]: NULL
+
+cmd2_fds[0]: NULL
+cmd2_fds[1]: "output.txt"
+cmd2_fds[2]: NULL</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Requirements/Hints:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Use only C commands, such as malloc/free, for this program</p>
+</li>
+<li>
+<p>The comments above are to help you understand what memory you should allocate. Don&#8217;t print the information in the comments.</p>
+</li>
+<li>
+<p>Make sure you have no memory errors!</p>
+</li>
+<li>
+<p>You can extend the above struct if you like, but don&#8217;t change the given data types!</p>
+</li>
+<li>
+<p>You can assume that you will have at most one pipe</p>
+</li>
+<li>
+<p>Note that the 2&gt; error.txt, |, and &amp; portions of the command are instructions to the shell and are NOT command ARGV tokens.</p>
+</li>
+<li>
+<p>To simplify parsing, you may assume that nothing other than white space (spaces, newlines, etc.) will appear after an ampersand (&amp;), there will be at most one ampersand, and that ampersands will not appear for any reason other than to specify background tasks.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_simple_shell">3. Simple Shell</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the file, <code>shell.c</code>, write a program that implements a simple shell.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="img/RainbowShell.png" alt="RainbowShell" width="640px">
+</div>
+</div>
+<div class="paragraph">
+<p>Requirements:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Your program should print a prompt. At minimum, your prompt should show the current working directory and look distinct from the lab machine prompts. In other words, it should be easy to tell what shell if running from the terminal.</p>
+</li>
+<li>
+<p>Use the <code>readline()</code> function to get user input. This function supports backspace, tab completion, and more. <a href="https://www.man7.org/linux/man-pages/man3/readline.3.html">Documentation for readline can be found here</a>.</p>
+</li>
+<li>
+<p>Use the <code>add_history()</code> function to save user history. This will allow arrow keys to work. <a href="https://www.man7.org/linux/man-pages/man3/readline.3.html">Documentation for readline can be found here</a>.</p>
+</li>
+<li>
+<p>Your program should quit if the users types <code>exit</code>.</p>
+</li>
+<li>
+<p>When the user gives a command, split it into a command and arguments using <a href="https://www.man7.org/linux/man-pages/man3/exec.3.html">execvp</a>and then fork a command to execute it.</p>
+</li>
+<li>
+<p>Compiles with <code>make</code>. (Do not modify the Makefile)</p>
+</li>
+<li>
+<p>No memory errors using <code>valgrind</code></p>
+</li>
+<li>
+<p>Adheres to the style guidelines and includes a header comment</p>
+</li>
+<li>
+<p>Your terminal should wait for the command to finish. If the command terminates with an error, report the error.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<code>readline</code> is a package that is installed on goldengate and in our labs. However, you may need to install it on your own machine. On Unix systems, this can be done by running <code>sudo apt install libreadline-dev</code>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You can print with colors to the console using ANSI escape sequences (see below).
+For example, <code>printf(ANSI_COLOR_GREEN "Green Text" ANSI_COLOR_RESET);</code> will print green text. <a href="https://azrael.digipen.edu/~mmead/www/mg/ansicolors/index.html">Here is a good guide!</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>// Helpful macros for working with color
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+#define ANSI_COLOR_YELLOW  "\x1b[33m"
+#define ANSI_COLOR_BLUE    "\x1b[34m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_CYAN    "\x1b[36m"
+#define ANSI_COLOR_RESET   "\x1b[0m"</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Most prompts print helpful information. Above, we use the
+system commands <code>gethostname</code>, <code>getcwd</code>, and <code>getpwuid(geteuid())</code> to get the
+machine name, the current working directory, and current user respectively.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+To check for valgrind errors, run valgrind with your executable as an argument
+</td>
+</tr>
+</table>
+</div>
+<h3 id="_submit_your_work_to_github" class="discrete">Submit your work to Github</h3>
+<div class="paragraph">
+<p>Add and check in your program using git and then push your changes to Github.
+Run the following command inside your <code>shell-USERNAME</code> directory.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ cd shell-USERNAME
+$ git add .
+$ git commit -m "Descriptive message"
+$ git push</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Run <code>git status</code> to check the result of the previous git command.
+Check the Github website to make sure that your program uploaded correctly.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_grading_rubric">4. Grading Rubric</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Assignment rubrics</strong></p>
+</div>
+<div class="paragraph">
+<p>Grades are out of 4 points.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>(1 points) Microcat</p>
+</li>
+<li>
+<p>(1.5 points) Parser</p>
+<div class="ulist">
+<ul>
+<li>
+<p>(0.1 points) style and header comment</p>
+</li>
+<li>
+<p>(0.65) Correct behavior: parses line and fills in struct Cmd</p>
+</li>
+<li>
+<p>(0.75) no memory errors</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>(1.5 points) Simple shell</p>
+<div class="ulist">
+<ul>
+<li>
+<p>(0.1 points) style and header comment</p>
+</li>
+<li>
+<p>(0.25 points) Displays unique prompt with current working directory</p>
+</li>
+<li>
+<p>(0.1 points) Uses <code>readline()</code> and <code>add_history()</code></p>
+</li>
+<li>
+<p>(0.1 points) Quits when the user types <code>exit</code>.</p>
+</li>
+<li>
+<p>(0.1 points) Forks a process to run the user&#8217;s command.</p>
+</li>
+<li>
+<p>(0.1 points) Reports the return status of the command when the child process completes.</p>
+</li>
+<li>
+<p>(0.75 points) no memory errors.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+When using <code>readline()</code>, valgrind will report that some of your memory is
+<em>still reachable</em>. This memory is not leaked. It hasn&#8217;t been cleaned up yet from
+`readline()&#8217;s internal memory. For example, output such as the following is ok
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>==3504== HEAP SUMMARY:
+==3504==     in use at exit: 204,143 bytes in 221 blocks
+==3504==   total heap usage: 453 allocs, 232 frees, 244,790 bytes allocated
+==3504==
+==3504== LEAK SUMMARY:
+==3504==    definitely lost: 0 bytes in 0 blocks
+==3504==    indirectly lost: 0 bytes in 0 blocks
+==3504==      possibly lost: 0 bytes in 0 blocks
+==3504==    still reachable: 204,143 bytes in 221 blocks
+==3504==         suppressed: 0 bytes in 0 blocks</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Code rubrics</strong></p>
+</div>
+<div class="paragraph">
+<p>For full credit, your C programs must be feature-complete, robust (e.g. run without memory errors or crashing) and
+have good style.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some credit lost for missing features or bugs, depending on severity of error</p>
+</li>
+<li>
+<p>-12.5% for style errors. See the <a href="../codingstandard.html">class coding style</a> here.</p>
+</li>
+<li>
+<p>-50% for memory errors</p>
+</li>
+<li>
+<p>-100% for failure to checkin work to Github</p>
+</li>
+<li>
+<p>-100% for failure to compile on linux using make</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2025-02-03 16:32:17 -0500
+</div>
+</div>
+</body>
+</html>

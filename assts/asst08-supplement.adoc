@@ -1,0 +1,722 @@
+include::header.adoc[]
+
+:title: Final Project Supplement
+:Author Initials: ASN
+:Date:    2020-08-15
+:Revision: 0.1
+:ASST: A08
+
+= {title}
+
+Because this is a large project, it is vital to subdivide the work so that you
+do not become overwhelmed. You can also start your implementation with limitations 
+to make things easier. For example,
+
+* Assume all directories and files fit in one block
+* Use fixed-size filenames
+* Don't worry about permissions
+* Don't worry about error cases, such as running out of memory or bad inputs
+
+[discrete]
+== Version 0.0
+
+Goals:
+
+* Create an empty disk with `format`
+* Load the empty disk when you start your shell.
+* See the contents of the empty disk using the `ls` command from your shell.
+* Quit your shell with `exit`.
+
+Recommendations:
+
+* Put the code for loading DISK into its own function, say `init_fs`. 
+* Implement a companion function, say `cleanup_fs`, that cleans up the filesystem. Test that valgrind reports no errors.
+* Use assert to add sanity tests that check for null pointers or values that should never occur. 
+* Use GDB to step through your code after you write it. Make sure that each line works as you expect. Don't forget that you can call `make` inside GDB. 
+
+= Tutorial
+
+== Version 0.1
+
+Goals:
+
+* Initialize the virtual file system when you load your disk. In other words, create a tree data structure consisting of vnodes that reflects the contents of the loaded disk. In this initial version, you only need to initialize the root, stored in `fs_root`.
+* List the contents of the root directory using `f_opendir`, `f_readdir`, and `f_closedir` (see below for specifications). You got this working with your physical file system in verion 0.0. Now, refactor your code so functionality is in these functions. 
+* Refactor your shell to use `f_opendir`, `f_readdir`, and `f_closedir`. 
+
+[source]
+----
+#include "vfs.h"
+int main()
+{
+  init_fs(); // loads DISK
+  vfd_t fd = f_opendir(fs_root, ""); // See below for specification
+  vdir_t* entry = f_readdir(fs_root, fd);
+  while (entry && entry->valid == 1)
+  {
+    printf("contents: %s", entry->filename); // you define vdir so this might look different for you
+    entry = f_readdir(fs_root, fd);
+  }
+  f_closedir(fs_root, fd);
+  cleanup_fs(); // frees allocated memory
+}
+----
+
+Recommendations:
+
+* Define a global array that holds the current positions of any open files. This array is a table that keeps track of where a caller to f_readdir is in the file. For directories, fd should increase by the size of a directory entry with each call.
+
+
+== Version 0.2
+
+Goals:
+
+* Write a new file using `f_open`, `f_write`, and `f_close`
+* Write a function to traverse your file tree and return a node based on a path
+* Write a function to save your file system so you can reload it later
+
+[source]
+----
+int main()
+{
+  init_fs();
+
+  unsigned int flags = 0600 | O_CREAT | O_WRONLY | O_TRUNC;
+  vfd_t fd = f_open(fs_root, "newfile.txt", flags); 
+  assert(fd > 0);
+
+  vnode_t* newnode = find(fs_root, "newfile.txt");
+
+  char data[64];
+  strncpy(data, "It's a festival. Not a restival.", 64);
+  size_t size = f_write(newnode, data, sizeof(char), 64, fd);
+  assert(size == 64);
+  f_close(newnode, fd);
+  
+  save_fs("DISK-newfile");
+  cleanup_fs();
+  return 0;
+}
+----
+
+Recommendations:
+
+* Test with valgrind after this point
+* Use hexedit to check that you updated your file system correctly
+
+Your implementation of create should update the underlying file system. For example, 
+
+. Assign a new inode and initialize its values
+. Assign a new block
+. Update free space management
+. Add an entry to directory fs_root
+. Add a new vnode as a child of the fs_root
+. Return an open file descriptor
+
+Your implementation of write should also update the underlying file system. For example, 
+
+. Increase the inode with the new file size 
+. Copy the data into the file's data block
+
+== Version 0.3
+
+Goals:
+
+* Read in the DISK you wrote out
+* Read an existing file using `f_open`, `f_stat`, `f_read`, and `f_close`
+
+[source]
+----
+int main()
+{
+  init_fs("DISK-newfile");
+
+  vnode_t* node = find(fs_root, "newfile.txt");
+
+  vstat_t stats;
+  f_stat(node, 0, &stats);
+  int size = stats.st_size;
+
+  char* contents = (char*) malloc(size);
+  vfd_t fd = f_open(node, "", O_RDONLY);
+  size_t rsize = f_read(node, contents, size, 1, fd);
+  if (rsize != (unsigned int) size)
+  {
+    printf("Error reading file.\n");
+  }
+  f_close(node, fd);
+  printf("%s", contents);
+  free(contents);
+
+  cleanup_fs();
+  return 0;
+}
+----
+
+== Version 0.4
+
+Refactor your shell to use your new functions. You now have code to omplement `ls`, `cat`, and `touch`.
+Congratulations! You have three vertical slices!
+
+Use this same process for the remaining functions. 
+
+. Implement the VFS functions first and test it in its own file. 
+. Then integrate the feature into your shell.
+
+I recommend saving the mount/umount features until last.
+
+= Handling errors
+
+Your VFS functions should return -1 on error and set a descriptive error code 
+in the global variable `fs_errno`. See the specifications below for details. 
+
+After you have the basic shell commands working (everything except mount),
+start integrating error checking into your shell. Checking error codes will
+allow you to report errors to the user and detect mistakes in your own code.
+For convenience, our specification re-uses the error codes and reporting
+functions from the Linux programmer interface.  For example, 
+
+[source]
+----
+int main()
+{
+  init_fs("DISK-newfile");
+
+  vfd_t fd = f_open(fs_root, "newfile.txt", O_CREAT);
+  if (fd <= 0)
+  {
+    printf("Could not create newfile.txt: %s\n", strerror(fs_errno));
+  }
+
+  cleanup_fs(); // frees allocated memory
+  return 0;
+}
+----
+
+The output looks as follows.
+
+[source]
+----
+$ ./test/create-eexist 
+Could not create newfile.txt: File exists
+----
+
+Be systematic with your implementation. You do not need to handle every case, but you shoudl be aware of which features have been implemented and which haven't. You should also be aware of the limitations in your current implementation.
+
+= Virtual File System (VFS) Programmer Interface
+
+The following functions must be implemented by your virtual file system. 
+You may change the definition of vnode_t. You should not change the function 
+specifications for the public VFS (e.g. the functions that start with f_). 
+Feel free to add as many new functions, classes, and structs as you like. 
+You can also use C++ types and data structures.
+
+In general, you can change the data stored in supporting objects, such as 
+vnode_t, vdir_t, and vfd_t, you should not change the function declarations.
+
+Below are detailed specifications for each of the functions you should 
+implement. The specifications are based on the man pages for the corresponding 
+calls in the link:https://www.man7.org/linux/man-pages/index.html[linux programming interface].
+
+== `f_open`
+
+[source]
+----
+vfd_t f_open(vnode_t *vn, const char* filename, int flags);
+----
+
+Opens the file specified by filename.
+
+If vnode corresponds to a directory and O_CREAT is specified, a new 
+file will be created inside that directory and then opened with the 
+parameters specified in `flags`. Otherwise, if vnode corresponds 
+to a file, it will be opened with the parameters given in `flags`.
+
+A call to open() returns a new open file description, an entry in
+the system-wide table of open files.  The open file description
+records the file offset and the file status flags (see below). 
+
+The argument flags must include one of the following access modes:
+O_RDONLY, O_WRONLY, or O_RDWR.  These request opening the file
+read-only, write-only, or read/write, respectively.
+
+In addition, zero or more file creation flags and file status
+flags can be bitwise ORed in flags.  The file creation flags are
+O_CREAT, O_APPEND, and O_TRUNC. The file status flags are all of the
+remaining flags listed below. The distinction between these two
+groups of flags is that the file creation flags affect the
+semantics of the open operation itself, while the file status
+flags affect the semantics of subsequent I/O operations.
+
+The full list of file creation flags and file status flags is as
+follows:
+
+`O_CREAT` 
+
+If pathname does not exist, create it as a regular file.
+The mode argument specifies the file mode bits to be
+applied when a new file is created.  If O_CREAT is not specified in flags, 
+then mode is ignored. If no mode is specified, some arbitrary bytes from
+the stack will be applied as the file mode.
+
+Note that mode applies only to future accesses of the newly
+created file; the open() call that creates a read-only file
+may well return a read/write file descriptor.
+
+The following symbolic constants are provided for mode:
+
+* S_IRUSR - 00400 user has read permission
+* S_IWUSR - 00200 user has write permission
+* S_IXUSR - 00100 user has execute permission
+
+`O_APPEND` 
+
+The file is opened in append mode. The file offset is positioned at
+the end of the file, as if with f_seek. 
+
+`O_TRUNC`
+
+If the file already exists and is a regular file and the
+access mode allows writing (i.e., is O_RDWR or O_WRONLY) it
+will be truncated to length 0.  
+
+_RETURN VALUE_ 
+
+On success, returns the new file descriptor (a nonnegative integer).  On
+error, -1 is returned and fs_errno is set to indicate the error.
+
+`EACCES` 
+
+The requested access to the file is not allowed. For example, 
+the O_WRONLY flag was set but the file does not have write permissions. 
+
+`EEXIST`
+
+O_CREAT was set but the filename already exists.
+
+`EINVAL` 
+
+Invalid value. For example, 
+
+* An invalid value in flags.
+* O_CREAT was specified in flags and the filename contains characters not allowed by the underlying file system.
+* vnode is null or contains invalid inode information.
+
+`EISDIR` 
+
+Filename refers to an existing directory and not a file.
+
+`ENFILE` 
+
+The limit on the number of open file descriptors has been reached.
+
+`ENAMETOOLONG`
+
+filename was too long.
+
+`ENOENT` 
+
+O_CREAT is not set and the named file does not exist.
+
+`ENOSPC` 
+
+Filename was to be created but there was no room for the new file.
+
+`ENOTDIR`
+         
+O_CREAT was specified but the vnode is not a directory.
+
+== `f_read`
+
+[source]
+----
+size_t f_read(vnode_t *vn, void *data, size_t size, int num, vfd_t fd);
+----
+
+Read the specified number of bytes from a file handle at the current position 
+and given vnode. Returns the number of bytes read, or an error.
+
+The read operation commences at the file offset, and the file offset is
+incremented by the number of bytes read.  If the file offset is at or past the
+end of file, no bytes are read, and read() returns zero.
+
+A read() with a count of 0 returns zero and has no other effects.
+
+_RETURN VALUE_ 
+
+On success, the number of bytes read is returned (zero indicates
+end of file), and the file position is advanced by this number.
+
+On error, -1 is returned, and fs_errno is set to indicate the error.
+In this case, it is left unspecified whether the file position (if
+any) changes.
+
+`EBADF`
+
+fd is not a valid file descriptor or is not open for reading.
+
+`EISDIR` 
+
+vnode refers to a directory.
+
+`EINVAL` 
+
+vnode is null or contains invalid inode information.
+
+`EPERM`
+
+fd is attached to a vnode which is unsuitable for reading, for example, the file has write-only permissions. 
+
+== `f_write`
+
+[source]
+----
+size_t f_write(vnode_t *vn, void *data, size_t size, int num, vfd_t fd);
+----
+
+Write some bytes to a file handle at the current position and given vnode. 
+The number of bytes written may be less than count if there is
+insufficient space.
+
+_RETURN VALUE_
+
+On success, the number of bytes written is returned. On error, -1 is returned,
+and fs_errno is set to indicate the error.
+
+`EBADF`
+
+fd is not a valid file descriptor or is not open for writing.
+
+`EISDIR` 
+
+vnode refers to a directory.
+
+`EINVAL` 
+
+vnode is null or contains invalid inode information.
+
+`EPERM`
+
+fd is attached to a vnode which is unsuitable for writing, for example, the file has read-only permissions. 
+
+`EFBIG`  
+
+An attempt was made to write a file that exceeds the
+maximum file size or the file size limit. 
+
+== `f_close`
+
+[source]
+----
+int f_close(vnode_t *vn, vfd_t fd);
+----
+
+Close a file handle
+
+_RETURN VALUE_
+
+Returns zero on success.  On error, -1 is returned, and fs_errno is set to
+indicate the error.
+
+`EBADF`
+
+fd is not a valid file descriptor.
+
+`EISDIR` 
+
+vnode refers to a directory.
+
+`EINVAL` 
+
+vnode is null or contains invalid inode information.
+
+== `f_seek`
+
+[source]
+----
+int f_seek(vnode_t *vn, vfd_t fd, off_t offset, int whence);
+----
+
+Repositions the file offset of the open file description
+associated with the file descriptor fd and file vnode. The file description 
+is moved to the argument offset according to the directive whence as follows:
+
+`SEEK_SET`
+
+The file offset is set to offset bytes.
+
+`SEEK_CUR`
+
+The file offset is set to its current location plus offset bytes.
+
+`SEEK_END`
+
+The file offset is set to the size of the file plus offset bytes.
+
+_RETURN VALUE_
+
+Upon successful completion, returns the resulting offset location as
+measured in bytes from the beginning of the file.  On error, the value (off_t)
+-1 is returned and fs_errno is set to indicate the error.
+
+`EBADF`
+
+fd is not a valid file descriptor.
+
+`EISDIR`
+
+vnode refers to a directory.
+
+`ENXIO`
+
+whence is SEEK_DATA and offset is beyond the end of the file 
+
+`EINVAL` 
+
+vnode is null or contains invalid inode information.
+
+== `f_stat`
+
+[source]
+----
+int f_stat(vnode_t *vn, vfd_t fd /* unused */, vstat_t* stats);
+----
+
+Retrieve information about a file or directory. Parameter `fd` is not used and 
+can be ignored.
+
+_RETURN VALUE_
+
+Fills in the `stats` with the information corresponding to vnode. 
+Returns zero on success. On error, -1 is returned and fs_errno is set to indicate the error.
+
+`EINVAL` 
+
+vnode is null or contains invalid inode information.
+
+== `f_remove`
+
+[source]
+----
+int f_remove(vnode_t *vn, vfd_t fd);
+----
+
+Delete a file. If `fd` is non-zero, also closes the and frees the file descriptor. 
+
+`EINVAL` 
+
+vnode is null or contains invalid inode information.
+
+`EISDIR`
+
+vnode refers to a directory.
+
+`EBADF`
+
+fd is not a valid file descriptor.
+
+== `f_opendir`
+
+[source]
+----
+vfd_t f_opendir(vnode_t *vn, const char* path /*unused*/);
+----
+
+Open the given vnode as a "directory file" for reading, and return a directory entry handle.
+
+_RETURN VALUE_
+
+Returns a file descriptor on success. Return -1 on error and sets the error code.
+
+`ENOTDIR`
+
+The vnode is not a directory.
+
+`EINVAL`
+
+The vnode is null or contains invalid inode information. 
+
+`ENFILE` 
+
+The limit on the number of open file descriptors has been reached.
+
+== `f_readdir`
+
+[source]
+----
+vdir_t* f_readdir(vnode_t *vn, vfd_t fd);
+----
+
+Returns a pointer to a "directory entry" structure representing the next directory entry.
+
+Reads sizeof(vdir_t) bytes from the directory corresponding to vnode at the current position specified by fd.
+Returns a pointer to the start of the vdir_t entry. 
+
+The read operation commences at the file offset, and the file offset is
+incremented by the number of bytes read.  If the file offset is at or past the
+end of file, no bytes are read, and readdir returns NULL.
+
+_RETURN VALUE_ 
+
+On success, the next vdir_t entry is returned, or NULL, if no more entries are available. 
+The file position is advanced by this number.
+
+On error, -1 is returned, and fs_errno is set to indicate the error.
+In this case, it is left unspecified whether the file position (if
+any) changes.
+
+`EBADF`
+
+fd is not a valid file descriptor or is not open for reading.
+
+`ENOTDIR`
+
+The vnode is not a directory.
+
+`EINVAL`
+
+The vnode is null or contains invalid inode information. 
+
+== `f_closedir`
+
+[source]
+----
+int f_closedir(vnode_t *vn, vfd_t fd);
+----
+
+Close an open directory file.
+
+_RETURN VALUE_ 
+
+On success, returns 0. On error, -1 is returned, and fs_errno is set to indicate the error.
+
+`EBADF`
+
+fd is not a valid file descriptor or is not open for reading.
+
+`ENOTDIR`
+
+The vnode is not a directory.
+
+`EINVAL`
+
+The vnode is null or contains invalid inode information. 
+
+== `f_mkdir`
+
+[source]
+----
+int f_mkdir(vnode_t *vn, const char* name);
+----
+
+Make a new directory with the given name at the location specified by vnode.
+
+_RETURN VALUE_ 
+
+On success, returns 0. On error, -1 is returned, and fs_errno is set to indicate the error.
+
+`EEXIST`
+
+Either the name corresponds to a directory that already exists, or it correspond to a file.
+
+`ENOTDIR`
+
+The vnode is not a directory.
+
+`EINVAL`
+
+* The vnode is null or contains invalid inode information. 
+* The given name contains invalid characters
+
+`ENAMETOOLONG`
+
+directory name was too long.
+
+`ENOSPC` 
+
+Directory was to be created but there was no room for the new file.
+
+== `f_rmdir`
+
+[source]
+----
+int f_rmdir(vnode_t *vn, const char* name);
+----
+
+Recursively deletes the directory specified by name, contained within the directory given by vnode. 
+
+_RETURN VALUE_ 
+
+On success, returns 0. On error, -1 is returned, and fs_errno is set to indicate the error.
+
+`ENOENT`
+
+The name does not exist within vnode. 
+
+`ENOTDIR`
+
+The vnode is not a directory.
+
+`EINVAL`
+
+The vnode is null or contains invalid inode information. 
+ 
+== `f_mount`
+
+[source]
+----
+int f_mount(vnode_t *vn, const char* sourcefile, const char* name);
+----
+
+Mount a specified file system into your directory tree at the location specified by vnode. 
+vnode must be a directory.
+
+_RETURN VALUE_
+
+Returns zero on success. Returns -1 on error and sets fs_errno to insidicate the error.
+
+`ENOTDIR`
+
+The vnode is not a directory.
+
+`EINVAL`
+
+The vnode is null or contains invalid inode information. 
+
+`ENAMETOOLONG`
+
+The given name is too long.
+
+`EINVAL`
+
+The given name contains invalid characters. 
+
+`ENOENT`
+
+The given sourcefile cannot be found. 
+
+== `f_umount`
+
+[source]
+----
+int f_unmount(vnode_t *vn, const char* name);
+----
+
+Unmount a specified file system. All resources associated with the file system should be destroyed.
+
+_RETURN VALUE_
+
+Returns zero on success. Returns -1 on error and sets fs_errno to insidicate the error.
+
+`ENOENT`
+
+The name does not exist within vnode. 
+
+`ENOTDIR`
+
+The vnode is not a directory.
+
+`EINVAL`
+
+The vnode is null or contains invalid inode information. 
+ 

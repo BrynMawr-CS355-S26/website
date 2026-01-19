@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.18">
+<title>Assignment 6: Memory Manager</title>
+<link rel="stylesheet" href="../style/cs21.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_assignment_6_memory_manager">Assignment 6: Memory Manager</a></li>
+<li><a href="#_memory_manager">Memory Manager</a>
+<ul class="sectlevel2">
+<li><a href="#_requesting_memory">Requesting Memory</a></li>
+<li><a href="#_interface">Interface</a></li>
+</ul>
+</li>
+<li><a href="#_design">Design</a></li>
+<li><a href="#_testing">Testing</a></li>
+<li><a href="#_other_requirements">Other requirements</a></li>
+<li><a href="#_grading_rubric">Grading Rubric</a></li>
+<li><a href="#_resubmission">Resubmission</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_assignment_6_memory_manager">Assignment 6: Memory Manager</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Due Sunday, March 30, before midnight</strong></p>
+</div>
+<div class="paragraph">
+<p>The goals for this assignment are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Write your own memory manager</p>
+</li>
+<li>
+<p>Work with blocks of memory using advanced pointers</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+We will use new starter code: <a href="https://classroom.github.com/a/d4XsWfhO">Start Code Link</a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_memory_manager">Memory Manager</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Assignment by Dianna Xu</em></p>
+</div>
+<div class="paragraph">
+<p>In this project, you will implement a memory allocator for the heap of a user-level process. In
+other words, you will build your own version of malloc() and free(). You will implement this as
+a dynamically linked library.</p>
+</div>
+<div class="paragraph">
+<p>Memory allocators have two distinct tasks.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>First, the memory allocator asks the operating system to
+expand the heap portion of the process’s address space by calling either sbrk() or mmap().</p>
+</li>
+<li>
+<p>Second, the memory allocator doles out this memory to the calling process. This involves managing the
+free list of memory and finding a contiguous chunk of memory that is large enough for the user’s
+request; when the user later frees memory, it is added back to this list.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The memory allocator is usually provided as part of a standard library and is not part of the OS.</p>
+</div>
+<div class="paragraph">
+<p>To be clear, the memory allocator operates entirely within the virtual address space of a single
+process and knows nothing about which physical pages have been allocated to this process or the
+mapping from logical addresses to physical addresses. Although only a small subset of what the OS
+does in terms of memory management, this project should still provide good insights into memory
+allocation.</p>
+</div>
+<div class="sect2">
+<h3 id="_requesting_memory">Requesting Memory</h3>
+<div class="paragraph">
+<p>Although a real memory allocator requests more memory from the OS whenever it
+cannot satisfy a request from the user (for example, typical implementation of malloc calls
+sbrk repeatedly and manages each chunk returned by sbrk), we simplify the implementation
+by asking that your memory allocator call mmap() only one time in <code>Mem_Init</code></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_interface">Interface</h3>
+<div class="paragraph">
+<p>An interface to the memory allocation library has been created for you. You
+will write your own implementation of this interface.</p>
+</div>
+<div class="paragraph">
+<p><code>int Mem_Init(long sizeOfRegion)</code></p>
+</div>
+<div class="paragraph">
+<p>Mem_Init is called one time by a process using your routines. <code>sizeOfRegion</code> is the
+number of bytes you should request from the OS using <code>mmap</code>.</p>
+</div>
+<div class="paragraph">
+<p>Note that you may need to round this amount so that you request memory in units of
+the page size (see the man page for getpagesize). Note also that you need to use this
+allocated memory for your own data structures as well; that is, your infrastructure for
+tracking the mapping from addresses to memory objects has to be placed in this region.</p>
+</div>
+<div class="paragraph">
+<p>Return value: Upon success (when the call to mmap is succesful), Mem_Init returns 0.
+Upon failure, Mem_Init should return −1 and set m_error to E_BAD_ARGS. Along with
+mmap failing, there are a few other cases where Mem_Init should return a failure:
+Along with mmap failing, there are a few other cases where Mem_Init should return a failure:
+<code>Mem_Init</code> is called more than once; <code>sizeOfRegion</code> is less than or equal to 0, etc.</p>
+</div>
+<div class="paragraph">
+<p><code>void *Mem_Alloc(long size)</code></p>
+</div>
+<div class="paragraph">
+<p><code>Mem_Alloc</code> takes as input the size in bytes of the object to be allocated and returns a
+pointer to the start of that object.</p>
+</div>
+<div class="paragraph">
+<p>Your allocator should use a Worst Fit (WF) policy to decide which chunk of free space
+to hand out; WF simply looks through your free list and finds the free space that is
+largest in size and returns the requested size to the user, keeping the rest of the chunk
+in its free list.</p>
+</div>
+<div class="paragraph">
+<p>For performance reasons, <code>Mem_Alloc</code> should return 8-byte aligned chunks of memory. For
+example, if a user allocates 1 byte of memory, your Mem_Alloc implementation should
+return 8 bytes of memory so that the next free block will be 8-byte aligned, too. To
+figure out whether you return 8-byte aligned pointers, you should print the pointer out
+with printf("%p", ptr) The last digit should be a multiple of 8 (i.e., 0 or 8).</p>
+</div>
+<div class="paragraph">
+<p>Return value: Upon success, Mem_Alloc returns a pointer to the start of the object. The
+function returns NULL if there is not enough contiguous free space within sizeOfRegion
+allocated by Mem_Init to satisfy this request (and sets m_error to E_NO_SPACE).</p>
+</div>
+<div class="paragraph">
+<p><code>int Mem_Free(void *ptr, int coalesce)</code></p>
+</div>
+<div class="paragraph">
+<p><code>Mem_Free</code> frees the memory object that ptr points to. Just like the standard free(),
+if ptr is NULL, then no operation is performed. The coalesce flag determines whether
+the Mem_Free routine should coalesce the freed space back into the bigger pool. Note
+that in the case of Mem_Free(NULL,1), you should still coalesce, even though you have
+not freed any memory.</p>
+</div>
+<div class="paragraph">
+<p><strong>Coalescing</strong>: Coalescing rejoins neighboring freed blocks into one bigger free chunk, thus
+ensuring that big chunks remain free for subsequent calls to Mem_Alloc. When coalesce
+is non-zero, Mem_Free will coalesce free space; specifically, when coalesce is 1, coalesce
+the entire list and coalesce wherever possible; when coalesce is 2, coalesce a local
+neighberhood whose size is upto you. If the coalesce flag is 0, no such coalescing should be
+done; this makes Mem_Free faster, but leaves small fragments in the free space. Note
+that in this setup, 0 is the fastest, 1 is the slowest, and 2 is inbetween, depending on
+how you optimize.</p>
+</div>
+<div class="paragraph">
+<p>Return value: Upon success, Mem_Free should return 0; on failure, it should return −1.</p>
+</div>
+<div class="paragraph">
+<p><code>void Mem_Dump()</code></p>
+</div>
+<div class="paragraph">
+<p>This is a debugging routine for your own use. Have it print the regions of free
+memory to the screen. For those of you who know how to generate PPM images, you can also
+visualize used vs. empty memory with an image.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_design">Design</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Make sure you spend time pondering the design of your memory allocator. In other words:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>What are you putting into those 32-byte headers?</p>
+</li>
+<li>
+<p>Where are you putting the headers and how are you going to organize those headers (note that the important thing is you are limited to 32 bytes per block. You are not limited to the “header” name. In other words, you can put it before, after (which makes them footers), as well as before AND after (you will have to split the 32 bytes then, of course)) . How are your data structures embedded and organized through the headers?</p>
+</li>
+<li>
+<p>How many lists? Singly or doubly or something else?</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Of course, the answers to the above questions are intertwined because what you wish to keep
+in the headers will depend on how you wish to organize them and through them, your lists.</p>
+</div>
+<div class="paragraph">
+<p>Once you think you have a design, I strongly advice you to do some drawings to better under-
+stand what is going on. Which bytes need to be updated when merging two blocks, three blocks,
+more blocks? What happens when a block is split (on allocation)?</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_testing">Testing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You need to provide tests to demonstrate that your memory allocator works.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>check for 8-byte</p>
+</li>
+<li>
+<p>simple 8-byte allocation</p>
+</li>
+<li>
+<p>a few aligned allocations</p>
+</li>
+<li>
+<p>several odd-sized allocations</p>
+</li>
+<li>
+<p>bad args to Mem_Init()</p>
+</li>
+<li>
+<p>worstfit allocation</p>
+</li>
+<li>
+<p>coalesce of free space</p>
+</li>
+<li>
+<p>simple allocation and free</p>
+</li>
+<li>
+<p>aligned allocation and free</p>
+</li>
+<li>
+<p>odd-sized allocation and free</p>
+</li>
+<li>
+<p>initialize with size of 1 page</p>
+</li>
+<li>
+<p>initialize and round up to 1 page</p>
+</li>
+<li>
+<p>no space left to allocate</p>
+</li>
+<li>
+<p>try to free a NULL pointer</p>
+</li>
+<li>
+<p>check that memory can be written to after allocation</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>You are heavily enouraged to test beyond this!</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_other_requirements">Other requirements</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>You are not allowed to use malloc() or any related function in any of your routines!</p>
+</li>
+<li>
+<p>You’ll need a header per allocated block; the maximum size of such a header is 32 bytes.</p>
+</li>
+<li>
+<p>You should not allocate any global arrays. You may allocate a few global variables (e.g., a pointer to the head of your free list).</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_grading_rubric">Grading Rubric</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Assignment rubrics</strong></p>
+</div>
+<div class="paragraph">
+<p>Grades are out of 4 points.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>(4 points) Memory Manager</p>
+<div class="ulist">
+<ul>
+<li>
+<p>(2.3 points) Memory API, Coalesce, valgrind</p>
+</li>
+<li>
+<p>(0.7 points) Performance</p>
+</li>
+<li>
+<p>(0.7 points) Test Suite</p>
+</li>
+<li>
+<p>(0.3 points) style and header comment</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Code rubrics</strong></p>
+</div>
+<div class="paragraph">
+<p>For full credit, your C programs must be feature-complete, robust (e.g. run without memory errors or crashing) and
+have good style.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some credit lost for missing features or bugs, depending on severity of error</p>
+</li>
+<li>
+<p>-12.5% for style errors. See the <a href="../codingstandard.html">class coding style</a> here.</p>
+</li>
+<li>
+<p>-50% for memory errors</p>
+</li>
+<li>
+<p>-100% for failure to check in work to Github</p>
+</li>
+<li>
+<p>-100% for failure to compile on linux using make</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_resubmission">Resubmission</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Your memory manager program (A06) is eligible for resubmission at the end of the term.
+Students can submit up to two times:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The first time for up to 3.7 credit</p>
+</li>
+<li>
+<p>The second time for up to 3.0 credit</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Resubmissions cannot be made for missed work. I reserve the right to judge whether an
+earnest effort has been made on the initial submission, but as a guideline, students
+must have received at least a C (2.0), for example, corresponding to a submission that
+has some features working but with memory errors.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2025-04-16 12:00:16 -0400
+</div>
+</div>
+</body>
+</html>

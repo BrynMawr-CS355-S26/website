@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.18">
+<title>Processes II</title>
+<link rel="stylesheet" href="../style/cs21.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_processes_ii">Processes II</a></li>
+<li><a href="#_dupee_dup2">1. Dupee Dup2</a></li>
+<li><a href="#_pipe_warm_up">2. Pipe Warm-up</a></li>
+<li><a href="#_pipe">3. Pipe</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_processes_ii">Processes II</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Lab exercises for Feb 6th. Due 5pm Feb 7</strong></p>
+</div>
+<div class="paragraph">
+<p>The goals for this assignment are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Working with processes, pipes, file descriptors</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>We will use the same repository as last week: <a href="https://classroom.github.com/a/K4qA5FE_">Labs Repo</a>.
+Click on the link and then accept and merge the pull request.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_dupee_dup2">1. Dupee Dup2</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the file, <code>filesort.c</code>, implement a program that runs the command <code>sort &lt; list.txt</code>
+using the system calls: open, close, fork, execlp, and dup2.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ <strong>cat list.txt</strong>
+banana
+apple
+orange
+kiwi
+$ <strong>./filesort</strong>
+apple
+banana
+kiwi
+orange
+Sort complete</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the above example, <code>filesort</code> performs the following steps:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Creates a child process with fork</p>
+</li>
+<li>
+<p>The child process does the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Opens the file "list.txt"</p>
+</li>
+<li>
+<p>Maps the file descripor for "list.txt" to stdard input</p>
+</li>
+<li>
+<p>Calls execlp with arguments that correspond to sort, e.g execlp("sort", "sort", (char*) NULL)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>The parent process does the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Waits for the child to complete</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Don&#8217;t forget to implement error handling. Check the return code of system calls and use perror to report errors if they occur.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_pipe_warm_up">2. Pipe Warm-up</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Use the command <code>man pipe</code> to read the man page about the pipe system call. In
+the file, <code>pipe.c</code>, copy the example from the man page. This example implements
+the followig demo.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>The following program creates a pipe, and then fork(2)s to create a child
+process; the child inherits a  duplicate  set of file descriptors that
+refer to the same pipe.  After the fork(2), each process closes the file
+descriptors that it doesn't need for the pipe (see pipe(7)).  The parent then
+writes the string contained in the program's command-line argument to the
+pipe, and the child reads this string a byte at a time from the pipe and echoes
+it on standard output.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Modify the example to print the parent and child PIDs like so:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ <strong>./pipe "mario takes the pipe to land 5"</strong>
+parent (3168) will send input to child: "mario takes the pipe to land 5"
+child (3169) will print output from parent
+mario takes the pipe to land 5</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the header comment of <code>pipe.c</code>, answer the following questions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>What do the descriptors pipefd[0] and pipefd[1] refer to?</p>
+</li>
+<li>
+<p>When you run valgrind on this example, the report is printed twice. Why?</p>
+</li>
+<li>
+<p>The example is careful to close the ends of the pipe. What happens when you do not call <code>close()</code>?</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_pipe">3. Pipe</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the file, <code>catsort.c</code>, implement a program that runs the command <code>cat list.txt | sort</code>
+using the system calls: pipe, fork, execlp, and dup2.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ <strong>cat list.txt</strong>
+banana
+apple
+orange
+kiwi
+$ <strong>./catsort</strong>
+apple
+banana
+kiwi
+orange
+Cat complete
+Sort complete</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the above example, <code>catsort</code> performs the following steps:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Creates a pipe</p>
+</li>
+<li>
+<p>Creates two child processes with fork</p>
+</li>
+<li>
+<p>Each child process does the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Uses dup2 to map one side of the pipe with either standard input or output.</p>
+</li>
+<li>
+<p>Closes the ends of the pipe</p>
+</li>
+<li>
+<p>Calls execlp with arguments that correspond to the command</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>The parent process does the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Closes the ends of its pipe</p>
+</li>
+<li>
+<p>Waits for both children to complete</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Don&#8217;t forget to implement error handling by checking the return code and printing the error with perror is the status of the system call is &lt; 0.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2025-02-06 17:16:23 -0500
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,187 @@
+include::header.adoc[]
+
+:title: Assignment 04: Trust the Process (Part 3)
+:Author Initials: ASN
+:Date:    2020-08-15
+:Revision: 0.1
+:ASST: shell-USERNAME
+
+= {title}
+
+**Due Sunday, Feb 16, before midnight**
+
+The goals for this assignment are:
+
+* Working with signals
+* Understanding process state: sleeping, running, stopped, terminated
+* Working with additional system calls: sigprocmask, tcgetpgrp, tcsetpgrp, setpgid
+* C practice/review
+
+NOTE: We will use the same starter code as last week: link:https://classroom.github.com/a/z8JKZurc[here]
+
+:sectnums:
+
+= Be your best Shell
+
+In the file, `shell.c`, extend the features of your shell from link:asst03.html[Assignment 02]. 
+
+Requirements:
+
+Your shell should satisfy the requirements of link:asst03.html[Assignment 03].
+Additionally, your shell should support the following features, outlined in the sections below.
+
+* Backgrounding with & 
+* Process suspension with Control-Z 
+* fg %<job_num>
+* bg %<job_num>
+* jobs
+* kill [-9] %<job_num> 
+
+NOTE: Even if your previous shell is incomplete, you can still implement the
+features of this assignment. Specifically, we will only be testing single
+commands (no pipes or redirection) to test the job control features in this assignment.
+
+== Backgrounding with &
+
+Extend your parser and `struct Cmd` structure to hold a flag that indicates 
+whether a job should be run in the foreground or background.
+
+NOTE: A job is a set of processes in the same group, started from the command line, and may contain multiple commands, pipes and redirections
+
+When a process is executing in the background, the shell should not block and
+wait but rather continue accepting commands. In our previous shell implementations, 
+we used `wait` to pause while our child executed. Now, we must detect when our 
+background processes complete. Because we do not want our parent process to pause 
+while waiting for children to finish, we will use a _non-blocking_ call to `waitpid` that 
+will trigger whenever the child's status changes, 
+e.g. `waitpid(pid, &status, WNOHANG | WUNTRACED | WCONTINUED)`  
+As discussed in class, we can update the status of our background processes either with 
+polling in the foreground process, or within a signal handler.
+
+You will also need to keep track of all running jobs. Use a linked list to keep
+track of all jobs.
+
+=== Process groups
+
+All processes have a process group. When a process is created, it receives the 
+same process group as its parent by default. When we send a signal, it is sent to 
+every process in the process group.   
+
+We will be using signals to control child processes. Thus, it is very important 
+that all jobs created by the shell have their own process group. Base the process 
+group ID using the first spawned process using the `setpgid()` command. Otherwise, 
+all jobs will receive the same signals along with the shell, e.g. commands intended 
+to kill a job will be sent to the shell as well. 
+
+When switching a job between the foreground and the background, we need to update which 
+job has access to the terminal, using the command `tcsetpgrp()`.
+
+== Control-Z
+
+When the user types Control-Z at the terminal, the foreground process will receive the 
+signal SIGSTP. When this happens the shell should
+
+* update the job list
+* send SIGSTP to the foreground process
+* return with a new prompt
+
+When a process is stopped, it remains in this state until it received a continue (SIGCONT)
+or terminate (SIGTERM, SIGKILL) signal.
+
+== fg
+
+The fg (foreground) command should bring a background process into the
+foreground. If a job ID is given, the specific job should be brought into the
+foreground if the ID corresponds to a background job.  If no job ID is given,
+the last process most recently put in the background should be made a foreground
+process. 
+
+If the given job is stopped, don't forget to send SIGCONT to continue it. 
+
+== bg
+
+The bg (background) command resumes a job suspended by control-Z to run as a background 
+process. If job # is omitted, shell should background the last job suspended, if any.
+
+== jobs
+
+Prints a list of jobs that are currently running or suspended/stopped. This list
+should include the job number, the command line that started the respective pro-
+gram and the status (Running or Suspended). 
+
+== kill
+
+Send a SIGTERM to the specified job and terminate it. You will notice that this does
+not terminate many applications, as they register signal handlers to catch SIGTERM.
+Implement also the -9 flag to send SIGKILL, which can not be caught.
+
+[discrete]
+== Submit your work to Github
+
+Add and check in your program using git and then push your changes to Github. 
+Run the following command inside your `{ASST}` directory.
+
+[source, subs="attributes"]
+----
+$ cd {ASST}
+$ git add .
+$ git commit -m "Descriptive message"
+$ git push
+----
+
+Run `git status` to check the result of the previous git command.
+Check the Github website to make sure that your program uploaded correctly. 
+
+= Grading Rubric
+
+*Assignment rubrics*
+
+Grades are out of 4 points.
+
+* (4 points) Shell
+** (0.3 points) style and header comment
+** (0.7 points) Backgrounding with &
+** (0.7 points) Ctrl-Z, fg, bg, jobs
+** (0.3 points) kill 
+** (2.0 points) Polish. Correct behavior. No memory errors. 
+
+NOTE: When using `readline()`, valgrind will report that some of your memory is
+_still reachable_. This memory is not leaked. It hasn't been cleaned up yet from 
+`readline()`'s internal memory. For example, output such as the following is ok
+[code]
+----
+==3504== HEAP SUMMARY:
+==3504==     in use at exit: 204,143 bytes in 221 blocks
+==3504==   total heap usage: 453 allocs, 232 frees, 244,790 bytes allocated
+==3504==
+==3504== LEAK SUMMARY:
+==3504==    definitely lost: 0 bytes in 0 blocks
+==3504==    indirectly lost: 0 bytes in 0 blocks
+==3504==      possibly lost: 0 bytes in 0 blocks
+==3504==    still reachable: 204,143 bytes in 221 blocks
+==3504==         suppressed: 0 bytes in 0 blocks
+---- 
+
+*Code rubrics*
+
+For full credit, your C programs must be feature-complete, robust (e.g. run without memory errors or crashing) and 
+have good style.
+
+* Some credit lost for missing features or bugs, depending on severity of error
+* -12.5% for style errors. See the link:../codingstandard.html[class coding style] here.
+* -50% for memory errors
+* -100% for failure to check in work to Github
+* -100% for failure to compile on linux using make
+
+= Resubmission
+
+Your shell program (A03-A04) is eligible for resubmission at the end of the term.
+Students can submit up to two times:
+
+* The first time for up to 3.7 credit
+* The second time for up to 3.0 credit
+
+Resubmissions cannot be made for missed work. I reserve the right to judge whether an 
+earnest effort has been made on the initial submission, but as a guideline, students 
+must have received at least a C (2.0), for example, corresponding to a submission that 
+has some features working but with memory errors. 

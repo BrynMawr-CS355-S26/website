@@ -1,0 +1,65 @@
+include::header.adoc[]
+
+:title: Study Guide: OS Exam I
+:Author Initials: ASN
+:Date:    2020-08-15
+:Revision: 0.1
+
+= {title}
+
+Exams are closed book. You can bring one written cheat sheet. 90 minutes in class.
+
+Topics:
+
+* Tanenbaum Chapter 1-2, 6
+* Command line and terminal
+* Files: stdin, stdout, stderr, text and binary files
+* System calls: files, processes, signals, context switching
+* Basic POSIX threads: pthread, wait, barrier, mutex, conditionals
+
+= Tanenbaum
+
+* Chapter 1: 1, 3, 6, 9, 10, 12, 13, 17, 20, 23, 26, 28, 30
+* Chapter 2: 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 18, 19, 25, 26, 30, 36, 40, 42, 43, 44, 45, 47, 48, 49, 50, 51, 64, 65
+* Chapter 6: 2, 3, 10, 14, 15, 16, 22, 24, 26, 27, 30, 34, 35, 39, 40
+
+= Additional practice
+
+== OS
+
+. What is an operating system?
+. What are examples of abstractions that the OS maintains that make using computer hardware easier? 
+. What is multiprogramming?
+. What are some challenges of designing/implementing an OS that supports multi-programming?
+. What are the two main purposes of the operating system?
+. What is the difference between an interrupt and a trap?
+. What features do interrupts and traps implement in an OS?
+. What is the advantage of using interrupts and traps for an OS implementation. In other words, if an OS were not designed with these features, how would it change the design of modern operating systems. 
+. What is the kernel?
+. What is the difference between kernel mode and user mode?
+. What is a system call? How are system calls different from user-defined functions?
+. How are errors reported with most system calls? 
+
+== Programming
+
+include::studyguide-programming.adoc[]
+
+== Shell, command line, files
+
+include::studyguide-shell.adoc[]
+
+== Processes 
+
+include::studyguide-processes.adoc[]
+
+== Threads
+
+include::studyguide-threads.adoc[]
+
+== Scheduling
+
+include::studyguide-scheduling.adoc[]
+
+== Deadlocks
+
+include::studyguide-deadlocks.adoc[]

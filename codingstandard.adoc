@@ -1,0 +1,291 @@
+include::header.adoc[]
+//override default to include table css
+:stylesheet: front.css
+:leveloffset: -1
+
+:course: CS223
+:title: Code Formatting Standards and Guidelines
+:term: Fall 2024
+
+= {course}: {title} -- {term}
+
+link:http://www.cs.haverford.edu/courses/cmsc106/style.pdf[This guide is based on the style guide for Data Structures (CS206) 
+written by Dianna Xu].
+
+Submitted code should adhere to the coding standard. 
+
+== Design Guide
+
+A good design is easy to implement in stages, easy to debug, and easy to change.
+
+=== Intentional Coding
+
+Submitted code should be clean and concise. 
+
+* Every line of code should have a deliberate effect on your program. Pointless lines of code are called _kruft_. There should be no kruft in your program. Remove all commented code, unused variables, and lines with no purpose from your programs.
+* Do not copy and paste code and then change small details. Instead, declare a method or function and parameterize it. 
+** Keep your programs DRY, e.g. Don't Repeat yourself!
+* Avoid magic numbers: constant numerical values that are scattered throughout your program and difficult to understand.
+* Do not guess when your programming!
+** Make sure you understand every line of code in your program.
+** Do not cut and paste code from the internet, hoping some random combination will work. (This is the SLOWEST and most inefficient way to program!).
+** Do not randomly make changes to your program, hoping it will work. Instead, systematically make hypotheses about what might be wrong and test it.
+* A bug is not truly fixed until
+** You understand why it happened 
+** You understand why changing the code fixed it
+
+=== Scoping and encapsulation
+
+* Declare variables in the smallest scope possible. Prefer local variable to instance variables. Avoid global variables.
+* Never use public instance variables. Use private or protected access and then define a getter method.
+
+NOTE: In traditional C, it is customary to declare all variables at
+this beginning of a function. You may follow this 
+convention, but I will use the more modern convention of 
+declaring variables close to where they are first used.
+
+=== Memory management design
+
+Typically, there will be many good ways to organize your program. A good 
+design will have the following properties.
+
+* Whenever you allocate memory (malloc), write the correspondong code to free that memory right away. Almost always the code to free the memory should be in the same scope as the allocation. For example, if you allocate memory in main, free it in main.
+* If a pointer variable might be re-used, ALWAYS set it to NULL after you free it. If you're not sure, reset freed pointers to NULL.
+
+=== Data Structure Design
+
+Typically, there will be many good ways to store data. A good design will have these
+properties:
+
+* Do not store the same thing more than once, or in more than one place.
+* Choose the smallest storage.
+* Choose storage based on how data will typically be accessed. For example, if data will mostly be accessed sequentially, store it in an array or vectors.
+
+
+== Naming Conventions
+
+* Use meaningful names! For example, if your program needs to a variable to represent a color, call it `color` instead of c. 
+* Use single letter variables for simple loop indices and occasionally generic integers.
+* The use of very obvious, common, meaningful abbreviations is permitted. For example,
+"number" can be abbreviated as "num" as in numStudents.
+* Use _camel case_ for variables, instance variables, and method names. Camel case starts with a lower-case letter and putting the first letter of subsequent words in uppercase. For example, `numStudents`.
+* Constants (static as well as #define) are written in ALL_CAPS.
+* Structs will typically be defined with camelCase. We will use the `struct` keyword whenever referring to a struct type, e.g. `struct node* first;`.
+
+== Whitespace
+
+The most-readable programs are written with prudent use of whitespace (including both blank lines
+and spaces).
+
+* Use blank lines to separate major parts of a source file or method. These are like paragraph breaks in English writing.
+* After every {, indent by least 2 spaces until the matching }. A good editor like emacs will help you with indentation - remember to keep pressing those tabs!
+** *Do not use tabs*. Instead, configure your editor to substitute spaces for tabs
+** You can configure the number of spaces in your editor.
+** Your editor should have a feature to automatically format your document. For example, in Vim, you do `gg=G` to fix the indentation within an entire file. 
+* Separate an operator from its operands by spaces.
+* There should never be a need for 2 blank lines in a row or two spaces in a row.
+
+== Line Length
+
+All lines should have length at most *80* characters. This makes it easier to read code on a potentially
+small screen. If you need to break a line in order to satisfy this, the rest of the line should be indented
+more than its current block. In cases where the line length is within a pair of parentheses, one good
+option is to indent the rest of the line to match with the opening parenthesis. For example:
+
+[source]
+----
+if (here is a long condition for an if statement and
+    the rest of the condition) {
+  here is a long statement inside the if statement and
+    the rest of the statement below it;
+}
+----
+
+== Comments
+
+Comments should be brief and informative.
+
+=== File header comments
+
+Every source code file should contain a header comment that describes the contents of the file and
+other pertinent information. It must include the following information (different order is fine):
+
+* A description of the contents of the file
+* Your name
+* Date
+* The file name (optional)
+
+For example:
+
+[source]
+----
+/**
+* The main driver program for Assignment 1.
+*
+* This program reads the file specified by the first command line
+* argument, counts the number of words, spaces, and characters and
+* displays the results in the format specified in the project
+* description.
+*
+* @author: Dianna Xu
+* @version: February 7, 2020
+*/
+----
+
+=== Variable comments
+
+All instance variables must be commented (it is okay to use a single comment to refer to more than one
+instance variable though). Most local variables should be commented, too.
+Method comments
+
+All methods must be commented. The comments should explain what the method does, what its
+parameters represent (not their types, we already know that), and what it returns. The 
+comment should describe how the function handles special cases (for example, if a given 
+index is out of range), domains for the input (for example, are negative values allowed?).
+You should use the javadoc method comment style, which lists and comments all
+parameters and return values, shown below:
+
+[source]
+----
+/**
+* Returns random integer in the interval [x, y)
+* @param x The start of the interval
+* @param y The end of the interval
+* @return A random value between x and y, not including y
+*/
+int randRange(int x, int y) {
+...
+}
+----
+
+== In-Line Comments
+
+You should strive for your code to be self-explanatory. However, it is inevitable that some lines of
+code are more intricate. In these cases, a comment describing the code is well-advised. The comment
+should not simply translate the code to English, but should explain what’s really going on. For
+example:
+
+[source]
+----
+// Unhelpful comment:
+starSides = 5; // set starSides to 5
+
+// Helpful comment:
+starSides = 5; // reset starSides to original value
+----
+
+Well-structured code will be broken into logical sections that each perform a simple task. Each of these
+sections of code (typically starting with an if statement or a loop) should be documented.
+An in-line comment too long to appear to the right of your code appears above the code to which it
+applies and is indented to the same level as the code. For example:
+
+[source]
+----
+// increment all the odd values in the array
+for (int i = 0; i < n; i++) {
+  // add 1 only to the odd values
+  if (array[i] % 2 == 1) {
+    array[i] = array[i] + 1;
+  }
+}
+----
+
+Remember, good comments tell us things we don't already know, or can't easily decipher among dense
+code blocks.
+
+== Indentation
+
+Choose one of the two styles and use it consistently (note how the braces are placed):
+
+[cols="a,a"]
+|===
+|[source]
+----
+if (condition) { 
+  ...
+} 
+else if (condition) { 
+  ...
+}
+else { 
+  ...
+}
+
+for (control expression) {
+  ...
+}
+
+while (condition) {
+  ...
+}
+
+switch(condition) {
+  case val1: ...
+    break;
+  case val2: ...
+    break;
+  default: ...
+}
+
+class ClassName {
+ public: // 1 space for access modifiers
+   returnType method(params) {
+    ...
+   }
+  ...
+};
+
+struct TypeName {
+  ...
+};
+----
+|[source]
+----
+if (condition) 
+{ 
+  ...
+} 
+else if (condition) 
+{ 
+  ...
+}
+else 
+{ 
+  ...
+}
+
+for (control expression) 
+{
+  ...
+}
+
+while (condition) 
+{
+  ...
+}
+
+switch(condition) 
+{
+  case val1: ...
+    break;
+  case val2: ...
+    break;
+  default: ...
+}
+
+class ClassName 
+{
+ public: // 1 space for access modifiers
+  returnType method(params) 
+  {
+    ...
+  }
+  ...
+};
+
+struct TypeName 
+{
+  ...
+};
+----
+|=== 

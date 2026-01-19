@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.18">
+<title>Study Guide: OS Exam I</title>
+<link rel="stylesheet" href="style/cs21.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_study_guide_os_exam_i">Study Guide: OS Exam I</a></li>
+<li><a href="#_tanenbaum">Tanenbaum</a></li>
+<li><a href="#_additional_practice">Additional practice</a>
+<ul class="sectlevel2">
+<li><a href="#_os">OS</a></li>
+<li><a href="#_programming">Programming</a></li>
+<li><a href="#_shell_command_line_files">Shell, command line, files</a></li>
+<li><a href="#_processes">Processes</a></li>
+<li><a href="#_threads">Threads</a></li>
+<li><a href="#_scheduling">Scheduling</a></li>
+<li><a href="#_deadlocks">Deadlocks</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_study_guide_os_exam_i">Study Guide: OS Exam I</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Exams are closed book. You can bring one written cheat sheet. 90 minutes in class.</p>
+</div>
+<div class="paragraph">
+<p>Topics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Tanenbaum Chapter 1-2, 6</p>
+</li>
+<li>
+<p>Command line and terminal</p>
+</li>
+<li>
+<p>Files: stdin, stdout, stderr, text and binary files</p>
+</li>
+<li>
+<p>System calls: files, processes, signals, context switching</p>
+</li>
+<li>
+<p>Basic POSIX threads: pthread, wait, barrier, mutex, conditionals</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_tanenbaum">Tanenbaum</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Chapter 1: 1, 3, 6, 9, 10, 12, 13, 17, 20, 23, 26, 28, 30</p>
+</li>
+<li>
+<p>Chapter 2: 5, 6, 7, 8, 12, 13, 14, 15, 16, 17, 18, 19, 25, 26, 30, 36, 40, 42, 43, 44, 45, 47, 48, 49, 50, 51, 64, 65</p>
+</li>
+<li>
+<p>Chapter 6: 2, 3, 10, 14, 15, 16, 22, 24, 26, 27, 30, 34, 35, 39, 40</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_practice">Additional practice</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_os">OS</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>What is an operating system?</p>
+</li>
+<li>
+<p>What are examples of abstractions that the OS maintains that make using computer hardware easier?</p>
+</li>
+<li>
+<p>What is multiprogramming?</p>
+</li>
+<li>
+<p>What are some challenges of designing/implementing an OS that supports multi-programming?</p>
+</li>
+<li>
+<p>What are the two main purposes of the operating system?</p>
+</li>
+<li>
+<p>What is the difference between an interrupt and a trap?</p>
+</li>
+<li>
+<p>What features do interrupts and traps implement in an OS?</p>
+</li>
+<li>
+<p>What is the advantage of using interrupts and traps for an OS implementation. In other words, if an OS were not designed with these features, how would it change the design of modern operating systems.</p>
+</li>
+<li>
+<p>What is the kernel?</p>
+</li>
+<li>
+<p>What is the difference between kernel mode and user mode?</p>
+</li>
+<li>
+<p>What is a system call? How are system calls different from user-defined functions?</p>
+</li>
+<li>
+<p>How are errors reported with most system calls?</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_programming">Programming</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>What is a function pointer?</p>
+</li>
+<li>
+<p>What is a void* pointer?</p>
+</li>
+<li>
+<p>What is a bit field?</p>
+</li>
+<li>
+<p>What is the output of the following program?</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>#include &lt;stdio.h&gt;
+
+typedef void (*functionType)(int a, int b);
+
+void example(int a, int b) {
+  printf("This is a function stored as data! %d %d\n", a, b);
+}
+
+int main() {
+  functionType myFunction = example;
+  (*myFunction)(10, 3);
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Draw the stack diagram for the following program. Then indicate which of the following dereferences are safe.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>#include &lt;stdio.h&gt;
+
+int main()
+{
+  void* generic = NULL;
+  int a = 3;
+  double b = 4.5;
+  generic = &amp;a;
+  generic = &amp;b;
+
+  printf("test %f\n", *generic);
+
+  double* double_ptr = (double *) generic;
+  printf("test %f\n", *double_ptr);
+
+  int* int_ptr = (int *) generic;
+  printf("test %d\n", *int_ptr);
+
+  generic = &amp;a;
+
+  double* double_ptr = (double *) generic;
+  printf("test %f\n", *double_ptr);
+
+  int* int_ptr = (int *) generic;
+  printf("test %d\n", *int_ptr);
+
+  return 0;
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Draw the stack diagram for the following program. What is the output?</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+char* foo(char* str, char c)
+{
+  int n = strlen(str);
+  for(int i = 0; i &lt; n; i++)
+  {
+    if (str[i] == c)
+    {
+      str[i] = '\0';
+      return str;
+    }
+  }
+  return NULL;
+}
+
+int main()
+{
+  char buffer[8];
+  strcpy(buffer, "a,b,c");
+
+  char* s = foo(buffer, ',');
+  printf("%s\n", s);
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Consider the following code. Assume that sigset_t is a 32-bit unsigned integer. Express your answers as a hexadecimal value.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>1 sigset_t newset;
+2 sigemptyset(&amp;newset);
+3 sigaddset(&amp;newset, SIGTTIN);
+4 sigaddset(&amp;newset, SIGTTOU);
+5 sigfillset(&amp;newset);</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>What is the value of <code>newset</code> after executing line 2.</p>
+</li>
+<li>
+<p>What is the value of <code>newset</code> after executing line 3. Assume that SIGTTIN has the value (0x1 &lt;&lt; 21).</p>
+</li>
+<li>
+<p>What is the value of <code>newset</code> after executing line 4. Assume that SIGTTOU has the value (0x1 &lt;&lt; 22).</p>
+</li>
+<li>
+<p>What is the value of <code>newset</code> after executing line 5.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>What is the output of the following program?</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>void f(){
+  int i = 0;
+  while (i &lt; 3) {
+    printf("i = %d\n", i);
+    i++;
+  }
+  swapcontext(&amp;uc, &amp;mainc);
+  while (i &lt; 6) {
+    printf("i = %d\n", i);
+    i++;
+  }
+}
+
+int main(int argc, char * argv[]){
+
+  getcontext(&amp;uc); // initialize context
+
+  // setup stack and signal handling
+  void* stack = malloc(STACKSIZE);
+  uc.uc_stack.ss_sp = stack;
+  uc.uc_stack.ss_size = STACKSIZE;
+  uc.uc_stack.ss_flags = SS_DISABLE;
+  sigemptyset(&amp;(uc.uc_sigmask));
+  uc.uc_link = &amp;mainc;
+  makecontext(&amp;uc, f, 0);
+
+  swapcontext(&amp;mainc, &amp;uc);
+  printf("Back in main 1\n");
+  swapcontext(&amp;mainc, &amp;uc);
+  printf("Back in main 2\n");
+  return 0;
+}</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_shell_command_line_files">Shell, command line, files</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>What is a file? A directory?</p>
+</li>
+<li>
+<p>What are some common file types?</p>
+</li>
+<li>
+<p>What is the difference between text and binary files?</p>
+</li>
+<li>
+<p>How do we distinguish between file types?</p>
+</li>
+<li>
+<p>In a file system, what is a path?</p>
+</li>
+<li>
+<p>What is the difference between an absolute and relative path?</p>
+</li>
+<li>
+<p>What is the current working directory?</p>
+</li>
+<li>
+<p>What is the difference between a foreground and background process in the terminal?</p>
+</li>
+<li>
+<p>What is a pipe? Give an example of a bash command that uses pipes.</p>
+</li>
+<li>
+<p>How is redirected input/output different from reading/writing a file?</p>
+</li>
+<li>
+<p>What is <code>job control</code> in regards to the bash terminal?</p>
+</li>
+<li>
+<p>How do you redirect output to a file in terminal?</p>
+</li>
+<li>
+<p>What do the file descriptors corresponding to values 0, 1, and 2 represent in terminal?</p>
+</li>
+<li>
+<p>What is a process group?</p>
+</li>
+<li>
+<p>What is a session?</p>
+</li>
+<li>
+<p>What is the controlling terminal for a process?</p>
+</li>
+<li>
+<p>What do the following symbols mean when they are in a path?</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>/</code></p>
+</li>
+<li>
+<p><code>.</code></p>
+</li>
+<li>
+<p><code>..</code></p>
+</li>
+<li>
+<p><code>~</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Suppose a file system has the following hierarchy</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>root
++ home
+++ ren
++++ A
+++ stimpy
++++ B
++++ C
+++++ hello.txt</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>What is the absolute path of <code>hello.txt</code>?</p>
+</li>
+<li>
+<p>If we are in the directory A, what is the relative path of hello.txt?</p>
+</li>
+<li>
+<p>If we are in the directory B, what is the relative path of hello.txt?</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Draw the directory hierarchy after the following commands</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ pwd
+/home/alinen
+$ mkdir A
+$ cd A
+$ mkdir Z
+$ touch talk.c
+$ cd ..
+$ touch listen.c
+$ cd
+$ touch sing.c</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Consider the following file properties listed with <code>ls -l</code></p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>-rw-r--r--  0 alinen alinen   70 Dec 10  2023 README.md</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>What does the above file permissions represent?</p>
+</li>
+<li>
+<p>What numeric value corresponds to the following permissions (in octal)? <code>–rw-r&#8212;&#8203;r--</code></p>
+</li>
+<li>
+<p>What numeric value corresponds to the following permissions (in octal)? <code>–rwxr-x&#8212;&#8203;x</code></p>
+</li>
+<li>
+<p>What permissions correspond to the value <code>0665</code>?</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Consider the following commands and associated diagram.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="img/processgroups.png" alt="processgroups" width="600">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Fill in the session ID for each of the processes</p>
+</li>
+<li>
+<p>Fill in the parent group IDs for each of the processes</p>
+</li>
+<li>
+<p>Fill in the process group IDs for each of the processes. Assume that children are created with the call <code>setpgid(0,0)</code></p>
+</li>
+<li>
+<p>In the above diagram, what processes are running in the foreground?</p>
+</li>
+<li>
+<p>In the above diagram, what processes are running in the background?</p>
+</li>
+<li>
+<p>Suppose a user sends the following signal command. <code>kill(658, SIGALRM)</code> Which processes receive the signal?</p>
+</li>
+<li>
+<p>Suppose a user sends the following signal command. <code>kill(-658, SIGALRM)</code> Which processes receive the signal?</p>
+</li>
+<li>
+<p>Suppose a user sends the following signal command. <code>kill(659, SIGALRM)</code> Which processes receive the signal?</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_processes">Processes</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>What is a process?</p>
+</li>
+<li>
+<p>What is the difference between a process and a C program?</p>
+</li>
+<li>
+<p>What are the different states that a process might be in?</p>
+</li>
+<li>
+<p>Why might a processed be in a blocked state?</p>
+</li>
+<li>
+<p>Why do we need special mechanisms, such as pipes or sockets, to communicate between processes?</p>
+</li>
+<li>
+<p>How can you kill a process using <code>ps</code> ?</p>
+</li>
+<li>
+<p>What is a zombie process?</p>
+</li>
+<li>
+<p>What is an orphan process?</p>
+</li>
+<li>
+<p>What is a signal? what is a signal handler?</p>
+</li>
+<li>
+<p>Some signals cannot be ignored. Name a signal that cannot be ignored and explain why a program cannot ignore it.</p>
+</li>
+<li>
+<p>Why might we want to register a signal handler?</p>
+</li>
+<li>
+<p>When a signal arrives to a process, list three ways the process can respond to the signal.</p>
+</li>
+<li>
+<p>What happens when multiple signals arrive to a process before a process is able to process them?</p>
+</li>
+<li>
+<p>When does the OS send the SIGSEGV signal?</p>
+</li>
+<li>
+<p>When does the OS send the SIGINT signal?</p>
+</li>
+<li>
+<p>When does the OS send the SIGCHD signal?</p>
+</li>
+<li>
+<p>What signal is sent when the user types Ctrl-Z at the terminal?</p>
+</li>
+<li>
+<p>What happens when a process calls fork?</p>
+</li>
+<li>
+<p>What happens when a signal arrives for a process?</p>
+</li>
+<li>
+<p>What type of event does SIGINT represent? Sketch a program that registers a signal handler for SIGINT?</p>
+</li>
+<li>
+<p>What does the <code>execv</code> family of commands do? How do <code>fork</code> and <code>execv</code> compare?</p>
+</li>
+<li>
+<p>What different regions are present within the memory layout of a process?</p>
+</li>
+<li>
+<p>What is the process control block?</p>
+</li>
+<li>
+<p>What is the program counter?</p>
+</li>
+<li>
+<p>When are processes created? destroyed? blocked?</p>
+</li>
+<li>
+<p>How many processes are created for the command <code>ls *.c | grep apple</code>?</p>
+</li>
+<li>
+<p>The following program creates a zombie process. Why?</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>void main() {
+  if (fork() == 0) { /*child */
+    printf("Child, PID = %d\n", getpid());
+    exit(0);
+  } else { /*parent */
+    printf("Parent, PID = %d\n", getpid());
+    while(1) {
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Draw the process timeline created by executing the following program. For each created process, list its output (e.g. what does each process print)?</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>int main() {
+  pid_t ret;
+
+  printf("A\n");
+
+  ret = fork();
+  if(ret == 0) {
+    printf("B\n");
+
+    ret = fork();
+    if(ret == 0) {
+      printf("C\n");
+    }
+    printf("D\n");
+  } else {
+    printf("E\n");
+
+    ret = fork();
+    printf("F\n");
+  }
+
+  printf("G\n");
+  return 0;
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Draw the process timeline created by executing the following program. For each created process, list its output (e.g. what does each process print)? How many processes are created?</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>int main() {
+  pid_t ret;
+
+  printf("A\n");
+
+  for (int i = 0; i &lt; 3; i++)
+  {
+     ret = fork();
+     if (ret == 0) // child
+     {
+        printf("B%d\n", i);
+     }
+  }
+
+  printf("Z\n");
+  return 0;
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Draw the process timeline created by executing the following program. For each created process, list its output (e.g. what does each process print)? How many processes are created?</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>int main() {
+  pid_t ret;
+
+  printf("A\n");
+
+  for (int i = 0; i &lt; 3; i++)
+  {
+     ret = fork();
+     if (ret == 0) // child
+     {
+        printf("B%d\n", i);
+        exit(0);
+     }
+  }
+
+  printf("Z\n");
+  return 0;
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Draw the process timeline created by executing the following program. For each created process, list its output (e.g. what does each process print)? How many processes are created?</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>int main() {
+  pid_t ret;
+
+  int value = 10;
+  printf("A%d\n", value);
+
+  ret = fork();
+  if (ret == 0) // child
+  {
+     value--;
+  }
+  else
+  {
+     value++;
+  }
+
+  printf("Z%d\n", value);
+  return 0;
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Implement a program whose behavior matches the given timeline.</p>
+<div class="imageblock">
+<div class="content">
+<img src="img/processes.png" alt="processes" width="400px">
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_threads">Threads</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>What is a thread? How does a thread differ from a process? How are threads similar?</p>
+</li>
+<li>
+<p>Why and when might we want to use multiple <em>threads</em> to implement a program?</p>
+</li>
+<li>
+<p>Why and when might we want to use multiple <em>processes</em> to implement a program?</p>
+</li>
+<li>
+<p>Explain how threads might improve the implementation of a word processor.</p>
+</li>
+<li>
+<p>Explain how threads might improve the implementation of a web server.</p>
+</li>
+<li>
+<p>Explain how threads might improve the implementation of a web server.</p>
+</li>
+<li>
+<p>How do threads created in user space differ from threads created in kernel space?</p>
+</li>
+<li>
+<p>What is a critical section?</p>
+</li>
+<li>
+<p>What is a race condition?</p>
+</li>
+<li>
+<p>What is mutual exclusion?</p>
+</li>
+<li>
+<p>What is deadlock? livelock?</p>
+</li>
+<li>
+<p>What is bounded liveness?</p>
+</li>
+<li>
+<p>What four criteria must be met to ensure mutual exclusion?</p>
+</li>
+<li>
+<p>Why is disabling interrupts not ideal for enforcing mutual exclusion?</p>
+</li>
+<li>
+<p>Sketch a multi-threaded program (N threads) that computes the average of a list of numbers. You can assume that the size of the list can be evenly divided by N.</p>
+</li>
+<li>
+<p>Draw the stack diagram for the following program with two threads.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>struct foo {
+   long id;
+   char message[16];
+};
+
+void *HelloWorld(void *id) {
+  struct foo *holder = (struct foo *) id;
+  printf("%s world! I am thread %ld\n", holder-&gt;message, holder-&gt;id);
+  return NULL;
+}
+
+int main(int argc, char **argv) {
+  struct foo holder1, holder2;
+  holder1.id = 1;
+  strcpy(holder1.message, "caio");
+
+  holder2.id = 2;
+  strcpy(holder2.message, "aloha");
+
+  long* retval1 = NULL, *retval2 = NULL;
+  pthread_t thread1, thread2;
+  pthread_create(&amp;thread1, NULL, HelloWorld, &amp;holder1);
+  pthread_create(&amp;thread2, NULL, HelloWorld, &amp;holder2);
+  pthread_join(thread1, NULL);
+  pthread_join(thread2, NULL);
+  return 0;
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Explain why the following program does not compute the correct answer for count.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>#define MAX 100000
+int count=0;
+
+void interleave() {
+  pthread_t th0, th1;
+  pthread_create(&amp;th0,0,test,0);
+  pthread_create(&amp;th1,0,test,0);
+  pthread_join(th0,0);
+  pthread_join(th1,0);
+  printf(“%d\n”, count);
+}
+
+void test() {
+  for(int j=0;j&lt;MAX;j++) count=count+1;
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>For the following sets of assembly instructions for processes 1 and 2, give an interleaving of instructions that results in v having the value 2.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>P1. MOVE V, r0			Q1. MOVE V, r1
+P2. INCR r0			    Q2. INCR r1
+P3. MOVE r0, V			Q3. MOVE r1, V</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>For the following sets of assembly instructions for processes 1 and 2, give an interleaving of instructions that results in v having the value 3.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>P1. MOVE V, r0			Q1. MOVE V, r1
+P2. INCR r0			    Q2. INCR r1
+P3. MOVE r0, V			Q3. MOVE r1, V</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Consider the following code for a process P0. Assume that the code for P1 is symmetric. Is it possible for both P0 and P1 to be in the same critical section at the same time?</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>Shared variable: turn :{0,1}
+while (TRUE) {
+  while (turn != 0);  /* busy waiting */
+  CS();
+  turn = 1; /* let the other enter */
+  Non_CS();
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Consider the following code for a process P0. Assume that the code for P1 is symmetric. Is it possible for both P0 and P1 to be in the same critical section at the same time?</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>Shared variable: interested[i] : int, init 0
+while (TRUE) {
+  interested[0] = 10;
+  while (interested[1] &gt; 0) interested[0]--;
+  CS();
+  interested[0] = 0;
+  Non_CS();
+}</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If P0 is in the critical section, what values should interested have?</p>
+</li>
+<li>
+<p>If P1 is in the critical section, what values should interested have?</p>
+</li>
+<li>
+<p>Is it possible for both P0 and P1 to be in the same critical section at the same time?</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Consider the following code for a process P0. Assume that the code for P1 is symmetric.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>Shared variables: interested[i] :boolean;
+                  turn :{0,1}
+interested[0] = FALSE;
+while (TRUE) {
+  interested[0] = TRUE;  /* declare interest */
+  turn = 0; /* takes care of race condition */
+  repeat if /* busy wait */
+   (interested[1] == TRUE &amp;&amp; turn == 0);
+  CS();
+  interested[0] = FALSE; /* unblock P1 */
+  Non_CS();
+}</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If P0 is in the critical section, what values should interested and turn have?</p>
+</li>
+<li>
+<p>If P1 is in the critical section, what values should interested and turn have?</p>
+</li>
+<li>
+<p>Is it possible for both P0 and P1 to be in the same critical section at the same time?</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Consider the producer/consumer problem discussed in class. Suppose the buffer has size 8 and contains the values -2,3,4,-5; that <code>in = 7</code> and <code>out = 3</code>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Draw the state of the buffer, in, out, and num_items.</p>
+</li>
+<li>
+<p>Suppose the producer adds one item. Draw the new state of the buffer.</p>
+</li>
+<li>
+<p>Suppose the consumer removes 3 items. Draw the new state of the buffer.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Consider the following implementation for two threads, one a producer and the other a consumer. Does the code below contain a race condition? If yes, explain how the current implementation can lead to inconsistent buffer state.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>//Producer Threads:
+int item;
+while(1) {
+  item = produce_item();
+  pthread_mutex_lock(&amp;mux);
+  buff[in] = item;
+  in = (in+1)%N;
+  pthread_mutex_unlock(&amp;mux);
+  num_items++;
+}
+//Consumer thread
+int item;
+while(1) {
+  pthread_mutex_lock(&amp;mux);
+  item = buff[out];
+  out = (out+1)%N;
+  pthread_mutex_unlock(&amp;mux);
+  num_items--;
+  consume_item(item);
+}</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_scheduling">Scheduling</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>How does a CPU-bound process differ from an IO-bound process?</p>
+</li>
+<li>
+<p>What does it mean for a scheduling algorithm to be preemptive? non-preemptive?</p>
+</li>
+<li>
+<p>What are the advantages and disadvantages of the FCFS scheduling algorithm. Give a class of applications where FCFS is the best scheduling policy.</p>
+</li>
+<li>
+<p>What are the advantages and disadvantages of the SJF scheduling algorithm. Give a class of applications where FCFS is the best scheduling policy.</p>
+</li>
+<li>
+<p>What are the advantages and disadvantages of the RR scheduling algorithm. Give a class of applications where FCFS is the best scheduling policy.</p>
+</li>
+<li>
+<p>How do the needs of real-time systems differ from other application domains?</p>
+</li>
+<li>
+<p>What is priority inversion? How can we avoid it?</p>
+</li>
+<li>
+<p>Suppose we have a batch system with the following jobs, scheduled with FCFS. Job 1: 15 units, Job 2: 8 units, Job 1: 1 units.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Show the timeline of jobs based on this scheduling strategy.</p>
+</li>
+<li>
+<p>What is the average waiting time?</p>
+</li>
+<li>
+<p>What is the average turnaround time?</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Suppose we have a batch system with the following jobs, scheduled with SJF. Job 1: 15 units, Job 2: 8 units, Job 1: 1 units.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Show the timeline of jobs based on this scheduling strategy.</p>
+</li>
+<li>
+<p>What is the average waiting time?</p>
+</li>
+<li>
+<p>What is the average turnaround time?</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Suppose we have a batch system with the following jobs, scheduled with RR and a quantum of 5. Job 1: 15 units, Job 2: 8 units, Job 1: 1 units.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Show the timeline of jobs based on this scheduling strategy.</p>
+</li>
+<li>
+<p>What is the average waiting time?</p>
+</li>
+<li>
+<p>What is the average turnaround time?</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Suppose we have a batch system with the following jobs, scheduled with HPF and a quantum of 5. Assume all jobs start with the same priority. Job 1: 15 units, Job 2: 8 units, Job 1: 1 units.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Show the timeline of jobs based on this scheduling strategy.</p>
+</li>
+<li>
+<p>What is the average waiting time?</p>
+</li>
+<li>
+<p>What is the average turnaround time?</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Suppose we have a batch system with the following jobs, scheduled with HPF and a quantum of 5. Assume Job 2 has higher priority than Jobs 1 and 2. Job 1: 15 units, Job 2: 8 units, Job 1: 1 units.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Show the timeline of jobs based on this scheduling strategy.</p>
+</li>
+<li>
+<p>What is the average waiting time?</p>
+</li>
+<li>
+<p>What is the average turnaround time?</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Suppose we are scheduling three tasks for a real-time system using EDF. What is the utilization of these tasks? Show the scheduling order.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Task T1 with period 10 and CPU time 3</p>
+</li>
+<li>
+<p>Task T2 with period 10 and CPU time 1</p>
+</li>
+<li>
+<p>Task T3 with period 15 and CPU time 8</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_deadlocks">Deadlocks</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>What is a deadlock?</p>
+</li>
+<li>
+<p>Name four conditions for deadlock.</p>
+</li>
+<li>
+<p>List four ways to deal with deadlock.</p>
+</li>
+<li>
+<p>Under what circumstances is ignoring deadlock a reasonable strategy? Under what circumstances is it unacceptable?</p>
+</li>
+<li>
+<p>What factors does the OS need to keep track of in order to detect deadlocks?</p>
+</li>
+<li>
+<p>List three ways that the OS can recover from deadlock if it is detected.</p>
+</li>
+<li>
+<p>Give an example of deadlock recovery through preemption.</p>
+</li>
+<li>
+<p>Give an example of deadlock recovery through rollback.</p>
+</li>
+<li>
+<p>Give an example of deadlock recovery through killing a process.</p>
+</li>
+<li>
+<p>Give an example of deadlock prevention by removing the need for "mutual exclusion".</p>
+</li>
+<li>
+<p>Give an example of deadlock prevention by avoid the need for "hold and wait" of resources.</p>
+</li>
+<li>
+<p>Give an example of deadlock prevention by allowing resources to be "preempted".</p>
+</li>
+<li>
+<p>Give an example of deadlock prevention by avoid the need for "circular wait" of resources.</p>
+</li>
+<li>
+<p>What is a safe state?</p>
+</li>
+<li>
+<p>Does an unsafe state guarantee a deadlock will occur? Why or why not?</p>
+</li>
+<li>
+<p>Consider 5 dining philosophers. Can the following code deadlock? Why or why not?</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>pthread_mutex_t mutex[N]
+struct thread_data {
+  int id;
+};
+
+void Philosophize(void* usr)
+{
+  struct thread_data* data = (struct thread_data*) usr;
+  printf("%d is hungry\n", data-&gt;id);
+
+  int leftFork = data-&gt;id;
+  int rightFork = (data-&gt;id + 1) % N;
+
+  pthread_mutex_lock(&amp;mutex[leftFork]);
+  pthread_mutex_lock(&amp;mutex[rightFork]);
+  printf("%d is eating\n", data-&gt;id);
+  sleep(duration);
+  pthread_mutex_unlock(&amp;mutex[leftFork]);
+  pthread_mutex_unlock(&amp;mutex[rightFork]);
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Consider 5 dining philosophers. Can the following code deadlock? Why or why not. Is the given solution fair?</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>pthread_mutex_t mutex[N]
+struct thread_data {
+  int id;
+};
+
+void Philosophize(void* usr)
+{
+  struct thread_data* data = (struct thread_data*) usr;
+  printf("%d is hungry\n", data-&gt;id);
+  if (data-&gt;id % 2 == 0) return;
+
+  int leftFork = data-&gt;id;
+  int rightFork = (data-&gt;id + 1) % N;
+
+  pthread_mutex_lock(&amp;mutex[leftFork]);
+  pthread_mutex_lock(&amp;mutex[rightFork]);
+  printf("%d is eating\n", data-&gt;id);
+  sleep(duration);
+  pthread_mutex_unlock(&amp;mutex[leftFork]);
+  pthread_mutex_unlock(&amp;mutex[rightFork]);
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Consider 5 dining philosophers. Can the following code deadlock? Why or why not. Is the given solution fair?</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>pthread_mutex_t mutex[N]
+struct thread_data {
+  int id;
+};
+
+void Philosophize(void* usr)
+{
+  struct thread_data* data = (struct thread_data*) usr;
+  printf("%d is hungry\n", data-&gt;id);
+  if (data-&gt;id % 2 == 0) return;
+
+  int leftFork = data-&gt;id;
+  int rightFork = (data-&gt;id + 1) % N;
+
+  pthread_mutex_lock(&amp;mutex[leftFork]);
+  pthread_mutex_lock(&amp;mutex[rightFork]);
+  printf("%d is eating\n", data-&gt;id);
+  sleep(duration);
+  pthread_mutex_unlock(&amp;mutex[leftFork]);
+  pthread_mutex_unlock(&amp;mutex[rightFork]);
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Visualize the following requests for resources using a resource allocation graph. Does deadlock occur?</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>A requests R
+B requests S
+C requests T
+A requests S
+B requestsT
+C requests R</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Visualize the following resource/usage state using matrices. Is there deadlock?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Suppose there are 2 instances of A and 3 of B</p>
+</li>
+<li>
+<p>Process P currently has 1 instance of A, and is requesting 1 instance of A and 3 instances of B</p>
+</li>
+<li>
+<p>Process Q currently has 1 instance of B, and is requesting 1 instance of A and 1 instance of B</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Is the following a safe state?</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>Process     Holding     Max
+A           4           6
+B           4           11
+C           2           7
+
+Unallocated: 2</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Is the follow state with multiple resources safe? If so, show the sequence of allocations that avoid deadlock. If so, show the sequence of allocations that avoid deadlock. Otherwise, show why deadlock is possible.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="img/BankersAlgorithmMultiResources.jpg" alt="BankersAlgorithmMultiResources" width="400px">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2025-03-03 13:57:27 -0500
+</div>
+</div>
+</body>
+</html>

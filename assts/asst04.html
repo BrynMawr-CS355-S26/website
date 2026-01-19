@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.18">
+<title>Assignment 04: Trust the Process (Part 3)</title>
+<link rel="stylesheet" href="../style/cs21.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_assignment_04_trust_the_process_part_3">Assignment 04: Trust the Process (Part 3)</a></li>
+<li><a href="#_be_your_best_shell">1. Be your best Shell</a>
+<ul class="sectlevel2">
+<li><a href="#_backgrounding_with">1.1. Backgrounding with &amp;</a></li>
+<li><a href="#_control_z">1.2. Control-Z</a></li>
+<li><a href="#_fg">1.3. fg</a></li>
+<li><a href="#_bg">1.4. bg</a></li>
+<li><a href="#_jobs">1.5. jobs</a></li>
+<li><a href="#_kill">1.6. kill</a></li>
+</ul>
+</li>
+<li><a href="#_grading_rubric">2. Grading Rubric</a></li>
+<li><a href="#_resubmission">3. Resubmission</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_assignment_04_trust_the_process_part_3">Assignment 04: Trust the Process (Part 3)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Due Sunday, Feb 16, before midnight</strong></p>
+</div>
+<div class="paragraph">
+<p>The goals for this assignment are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Working with signals</p>
+</li>
+<li>
+<p>Understanding process state: sleeping, running, stopped, terminated</p>
+</li>
+<li>
+<p>Working with additional system calls: sigprocmask, tcgetpgrp, tcsetpgrp, setpgid</p>
+</li>
+<li>
+<p>C practice/review</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+We will use the same starter code as last week: <a href="https://classroom.github.com/a/z8JKZurc">here</a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_be_your_best_shell">1. Be your best Shell</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the file, <code>shell.c</code>, extend the features of your shell from <a href="asst03.html">Assignment 02</a>.</p>
+</div>
+<div class="paragraph">
+<p>Requirements:</p>
+</div>
+<div class="paragraph">
+<p>Your shell should satisfy the requirements of <a href="asst03.html">Assignment 03</a>.
+Additionally, your shell should support the following features, outlined in the sections below.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Backgrounding with &amp;</p>
+</li>
+<li>
+<p>Process suspension with Control-Z</p>
+</li>
+<li>
+<p>fg %&lt;job_num&gt;</p>
+</li>
+<li>
+<p>bg %&lt;job_num&gt;</p>
+</li>
+<li>
+<p>jobs</p>
+</li>
+<li>
+<p>kill [-9] %&lt;job_num&gt;</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Even if your previous shell is incomplete, you can still implement the
+features of this assignment. Specifically, we will only be testing single
+commands (no pipes or redirection) to test the job control features in this assignment.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_backgrounding_with">1.1. Backgrounding with &amp;</h3>
+<div class="paragraph">
+<p>Extend your parser and <code>struct Cmd</code> structure to hold a flag that indicates
+whether a job should be run in the foreground or background.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+A job is a set of processes in the same group, started from the command line, and may contain multiple commands, pipes and redirections
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>When a process is executing in the background, the shell should not block and
+wait but rather continue accepting commands. In our previous shell implementations,
+we used <code>wait</code> to pause while our child executed. Now, we must detect when our
+background processes complete. Because we do not want our parent process to pause
+while waiting for children to finish, we will use a <em>non-blocking</em> call to <code>waitpid</code> that
+will trigger whenever the child&#8217;s status changes,
+e.g. <code>waitpid(pid, &amp;status, WNOHANG | WUNTRACED | WCONTINUED)</code>
+As discussed in class, we can update the status of our background processes either with
+polling in the foreground process, or within a signal handler.</p>
+</div>
+<div class="paragraph">
+<p>You will also need to keep track of all running jobs. Use a linked list to keep
+track of all jobs.</p>
+</div>
+<div class="sect3">
+<h4 id="_process_groups">1.1.1. Process groups</h4>
+<div class="paragraph">
+<p>All processes have a process group. When a process is created, it receives the
+same process group as its parent by default. When we send a signal, it is sent to
+every process in the process group.</p>
+</div>
+<div class="paragraph">
+<p>We will be using signals to control child processes. Thus, it is very important
+that all jobs created by the shell have their own process group. Base the process
+group ID using the first spawned process using the <code>setpgid()</code> command. Otherwise,
+all jobs will receive the same signals along with the shell, e.g. commands intended
+to kill a job will be sent to the shell as well.</p>
+</div>
+<div class="paragraph">
+<p>When switching a job between the foreground and the background, we need to update which
+job has access to the terminal, using the command <code>tcsetpgrp()</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_control_z">1.2. Control-Z</h3>
+<div class="paragraph">
+<p>When the user types Control-Z at the terminal, the foreground process will receive the
+signal SIGSTP. When this happens the shell should</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>update the job list</p>
+</li>
+<li>
+<p>send SIGSTP to the foreground process</p>
+</li>
+<li>
+<p>return with a new prompt</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>When a process is stopped, it remains in this state until it received a continue (SIGCONT)
+or terminate (SIGTERM, SIGKILL) signal.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_fg">1.3. fg</h3>
+<div class="paragraph">
+<p>The fg (foreground) command should bring a background process into the
+foreground. If a job ID is given, the specific job should be brought into the
+foreground if the ID corresponds to a background job.  If no job ID is given,
+the last process most recently put in the background should be made a foreground
+process.</p>
+</div>
+<div class="paragraph">
+<p>If the given job is stopped, don&#8217;t forget to send SIGCONT to continue it.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_bg">1.4. bg</h3>
+<div class="paragraph">
+<p>The bg (background) command resumes a job suspended by control-Z to run as a background
+process. If job # is omitted, shell should background the last job suspended, if any.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_jobs">1.5. jobs</h3>
+<div class="paragraph">
+<p>Prints a list of jobs that are currently running or suspended/stopped. This list
+should include the job number, the command line that started the respective pro-
+gram and the status (Running or Suspended).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_kill">1.6. kill</h3>
+<div class="paragraph">
+<p>Send a SIGTERM to the specified job and terminate it. You will notice that this does
+not terminate many applications, as they register signal handlers to catch SIGTERM.
+Implement also the -9 flag to send SIGKILL, which can not be caught.</p>
+</div>
+<h3 id="_submit_your_work_to_github" class="discrete">Submit your work to Github</h3>
+<div class="paragraph">
+<p>Add and check in your program using git and then push your changes to Github.
+Run the following command inside your <code>shell-USERNAME</code> directory.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ cd shell-USERNAME
+$ git add .
+$ git commit -m "Descriptive message"
+$ git push</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Run <code>git status</code> to check the result of the previous git command.
+Check the Github website to make sure that your program uploaded correctly.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_grading_rubric">2. Grading Rubric</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Assignment rubrics</strong></p>
+</div>
+<div class="paragraph">
+<p>Grades are out of 4 points.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>(4 points) Shell</p>
+<div class="ulist">
+<ul>
+<li>
+<p>(0.3 points) style and header comment</p>
+</li>
+<li>
+<p>(0.7 points) Backgrounding with &amp;</p>
+</li>
+<li>
+<p>(0.7 points) Ctrl-Z, fg, bg, jobs</p>
+</li>
+<li>
+<p>(0.3 points) kill</p>
+</li>
+<li>
+<p>(2.0 points) Polish. Correct behavior. No memory errors.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+When using <code>readline()</code>, valgrind will report that some of your memory is
+<em>still reachable</em>. This memory is not leaked. It hasn&#8217;t been cleaned up yet from
+`readline()&#8217;s internal memory. For example, output such as the following is ok
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>==3504== HEAP SUMMARY:
+==3504==     in use at exit: 204,143 bytes in 221 blocks
+==3504==   total heap usage: 453 allocs, 232 frees, 244,790 bytes allocated
+==3504==
+==3504== LEAK SUMMARY:
+==3504==    definitely lost: 0 bytes in 0 blocks
+==3504==    indirectly lost: 0 bytes in 0 blocks
+==3504==      possibly lost: 0 bytes in 0 blocks
+==3504==    still reachable: 204,143 bytes in 221 blocks
+==3504==         suppressed: 0 bytes in 0 blocks</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Code rubrics</strong></p>
+</div>
+<div class="paragraph">
+<p>For full credit, your C programs must be feature-complete, robust (e.g. run without memory errors or crashing) and
+have good style.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some credit lost for missing features or bugs, depending on severity of error</p>
+</li>
+<li>
+<p>-12.5% for style errors. See the <a href="../codingstandard.html">class coding style</a> here.</p>
+</li>
+<li>
+<p>-50% for memory errors</p>
+</li>
+<li>
+<p>-100% for failure to check in work to Github</p>
+</li>
+<li>
+<p>-100% for failure to compile on linux using make</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_resubmission">3. Resubmission</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Your shell program (A03-A04) is eligible for resubmission at the end of the term.
+Students can submit up to two times:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The first time for up to 3.7 credit</p>
+</li>
+<li>
+<p>The second time for up to 3.0 credit</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Resubmissions cannot be made for missed work. I reserve the right to judge whether an
+earnest effort has been made on the initial submission, but as a guideline, students
+must have received at least a C (2.0), for example, corresponding to a submission that
+has some features working but with memory errors.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2025-03-10 18:35:59 -0400
+</div>
+</div>
+</body>
+</html>

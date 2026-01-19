@@ -1,0 +1,21 @@
+
+=== Late Policy
+
+There are weekly or bi-weekly programming assignments as well as written
+homeworks (problem sets). You are encouraged to work together, but you should
+write up your own solutions (except for group programming assignments). 
+
+You may submit up to one day late for any reason no questions asked. You must
+ping the instructor if you plan to submit late. Beyond one day, no assignment or
+lab work will be accepted. 
+
+Some programming assignments will be eligible for resubmission. On these
+assignments, you are encouraged to submit partially complete work. To be
+eligible for resubmission, your submission must compile and have a minimal set
+of features implemented, as specified by the assignment. You may resubmit once
+to earn up to 90\% of the credit.  The resubmission policy is our way of
+acknowledging the implementation challenges you will face in this class, while 
+keeping you accountable. 
+
+Written homeworks (problem sets) are due in class on the day specified. Late
+written homeworks are not accepted. 

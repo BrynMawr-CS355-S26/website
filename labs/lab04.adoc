@@ -1,0 +1,164 @@
+include::header.adoc[]
+
+:title: Processes III
+:Author Initials: ASN
+:Date:    2020-08-15
+:Revision: 0.1
+:ASST: labs-USERNAME
+
+= {title}
+
+**Lab exercises for February 13th**
+
+The goal for this assignment are:
+
+* Working with system tools: `top H`
+* Understanding process state: sleeping, running, stopped, terminated
+* Working with additional system calls: sigprocmask, tcgetpgrp, tcsetpgrp, setpgid
+
+We will use the same repository as last week: link:https://classroom.github.com/a/K4qA5FE_[Labs Repo]. 
+Click on the link and then accept and merge the pull request.
+
+:sectnums:
+
+= Infinite
+
+Write a program, `infinite.c`, that calls `pause()` in an infinite loop. When you 
+run `ps w`, the status of infinite should be S. 
+
+[source, subs="quotes"]
+----
+$ **./infinite &**
+[1] 2320
+$ **ps w**
+  PID TTY      STAT   TIME COMMAND
+   10 pts/0    Ss     0:00 -bash
+  134 pts/2    Ss+    0:00 -bash
+  347 pts/3    Ss+    0:00 -bash
+  743 pts/1    Ss+    0:00 -bash
+ 2320 pts/0    S      0:00 ./infinite
+ 2321 pts/0    R+     0:00 ps w
+----
+
+Use your program to see how job control works in `bash`. Use the tools, `top H`
+and `ps w` to see how suspending (job status: T), foregrounding (job status:
+S+), and backgrounding (job status: S) change the state of the process. 
+
+[source, subs="quotes"]
+----
+$ **./infinite**
+^Z
+[1]+  Stopped                 ./infinite
+$ bg
+[1]+ ./infinite &
+$ **./infinite &**
+[2] 2302
+$ **./infinite &**
+[3] 2303
+$ **./infinite &**
+[4] 2304
+$ **./infinite &**
+[5] 2305
+$ **./infinite &**
+[6] 2306
+$ **jobs**
+[1]   Running                 ./infinite &
+[2]   Running                 ./infinite &
+[3]   Running                 ./infinite &
+[4]   Running                 ./infinite &
+[5]-  Running                 ./infinite &
+[6]+  Running                 ./infinite &
+$ **kill %2**
+$
+[2]   Terminated              ./infinite
+$ **jobs**
+[1]   Running                 ./infinite &
+[3]   Running                 ./infinite &
+[4]   Running                 ./infinite &
+[5]-  Running                 ./infinite &
+[6]+  Running                 ./infinite &
+$ **fg %5**
+./infinite
+----
+
+= Child Monitor
+
+Write a program, `monitor.c`, that forks a process whose state can be controlled by 
+the user separately from its parent (e.g. the child has its own process group). 
+Using a signal handler on SIGCHLD, report the status changes of the child process.
+
+[source, subs="quotes"]
+----
+alinen@sutekh:~/cs355/os-devel/labs/03$ ./monitor
+Monitoring child process 6242.
+quit
+
+6242 received signal Terminated
+----
+
+Requirements/Hints:
+
+* Make sure the child has a different process ID from the parent. 
+* Create a child that loops forever so it is convenient to change its process status.
+* From another terminal, use the command: `kill -STOP <pid>` to stop the process. 
+* From another terminal, use the command: `kill -CONT <pid>` to continue the process. 
+* From another terminal, use the command: `kill -TERM <pid>` to terminate the process. 
+* Try sending other signals, such as `kill -ALRM <pid>`, and see what happens to the process. Some signals, such as SIGTTOU will cause the process to stop; others will cause the process to quit.
+* Typing `quit` should quit the parent process and kill the child
+* Inside your signal handler, use a non-blocking `waitpid` call, configured to also return if the child process stops or continues (see the man page for details). 
+
+Use strace to better understand the signaling behavior, e.g. 
+
+[source, subs="quotes"]
+----
+$ **strace -e 'trace=!all' -f ./monitor**
+strace: Process 6254 attached
+Monitoring child process 6254.
+[pid  6254] --- SIGSTOP {si_signo=SIGSTOP, si_code=SI_USER, si_pid=743, si_uid=1000} ---
+[pid  6254] --- stopped by SIGSTOP ---
+[pid  6253] --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_STOPPED, si_pid=6254, si_uid=1000, si_status=SIGSTOP, si_utime=0, si_stime=0} ---
+
+6254 stopped.
+----
+
+Inside a header comment, answer the following questions:
+
+. What happens if the parent and child both belong to the same process group?
+. What happens when SIGCONT is sent to a process that is already running?
+. What happens when SIGSTP is sent to a process already stopped?
+. What happens when you send the signal SIGTTOU?
+. What happens when you send he signal SIGALRM?
+
+= Foreground/Background
+
+Implement a program, `fgbg.c`, that forks a process in the background and then allows the 
+user to switch it between the foreground and background using the commands, fg, bg, and control-Z. 
+
+[source, subs="quotes"]
+----
+$ **./fgbg**
+[1] Created process 6982 in the background
+$ **fg**
+^Zchild stopped.
+$ **bg**
+child continued.
+$ **fg**
+^Zchild stopped.
+$ **quit**
+child received signal Terminated
+----
+
+Requirements/Hints:
+
+* Make sure the child has a different process ID from the parent. 
+* Create a child that loops forever so it is convenient to change its process status.
+* Typing Control-Z should suspend the foreground process. 
+* Typing Control-C should exit the foreground process. If the foreground process is the parent, the child should also be exited.
+* Typing bg should move the child into the background
+* Typing fg should move the child into the foreground
+* Typing `quit` should quit the parent process and exit the child
+* Inside a signal handler, use a non-blocking `waitpid` call, configured to also return if the child process stops or continues (see the man page for details). 
+* Whenever the child is stopped, make sure to return the terminal to the parent.
+* Configure the parent to ignore SIGTTOU and SIGTTIN signals so it can modify ownership of the terminal, even when it is running in the background.
+* Use `top H` to monitor the terminal and process status of both the parent and child
+

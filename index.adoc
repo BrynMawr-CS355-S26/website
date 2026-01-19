@@ -1,0 +1,154 @@
+include::header.adoc[]
+//override default to include table css
+:stylesheet: front.css
+:leveloffset: -1
+
+:course: CMSC 355
+:title: Operating Systems
+:term: Spring 2026
+
+= {course}: {title} 
+
+Term: {term}
+
+Instructor: link:https://www.cs.brynmawr.edu/~alinen[Aline Normoyle]
+
+[.anns]
+
+* Welcome! To those about to rock, I salute you!
+
+== Course Info
+
+**Welcome to CS355: Operating Systems**! 
+
+image::octopus-os.jpg[]
+
+A practical introduction to modern operating systems, using case studies from UNIX,
+MSDOS and the Macintosh. Topics include computer and OS structures, process and
+thread management, process synchronization and communication, resource allocations,
+memory management, file systems, and select examples in protection and security. This
+is a challenging, implementation-oriented course with a strong lab component
+
+**Students should expect to spend at 15-20 hours of work each week, including 4.5 hours or class and lab time** 
+
+Learning Goals:
+
+* Processes and threads, Unix system calls
+* Synchronization, classic IPC problems such as race conditions and deadlocks,
+* Processor scheduling
+* Memory management internals
+* File system internals
+* I/O and disks
+* Other OS topic such as multi-processor, visualization and the cloud, OS security, etc
+* Kernel design and implementation
+* Performance profiling and debugging
+* Experience in low-level systems programming in a realistic development environment
+* programming assignments enable students to further develop the analytical skills required to manage system complexity, creative problem solving, and engages student in collaborative and in-depth application of their high-level operating system knowledge.
+
+Learning Outcomes
+
+* Understanding fundamental OS components and structure.
+* Understanding OS design challenges and algorithms
+* Knowledge of the services provided by the OS and details of major OS concepts.
+* Experience in developing low-level operating system code.
+* Understanding the performance and design trade-offs in complex software systems
+* Experience in developing benchmarks and test suites to evaluate the performance and robustness of system
+
+=== Meeting Times
+
+[.center,options="header,autowidth"]
+|===
+| Activity | Location | Time
+
+| Lecture | Park TBD | Tuesday and Thursday 11:10 PM - 1:00 PM 
+| Lab | Park TBD | Thursdays 2:40 PM - 4:00 PM 
+| Office Hours - Prof. Aline Normoyle | Park TBD | Tuesdays and Thursdays, 4-5 PM, Wednesdays by appointment
+| Office Hours - Rebecca Lassman | Park 231 | 
+
+|===
+
+== **Schedule**
+
+The syllabus may change during the semester. Please check here every week for updates 
+on lecture content, worksheets, and assignments.
+
+include::schedule.adoc[]
+
+== Text and Tools
+
+* Modern Operating Systems, 4th Edition, by Andrew S. Tanenbaum, Prentice Hall, 2015. ( Note that there is a newer 5th Edition, but there is little difference in the materials we cover and the 4th Edition is significantly cheaper.)
+* The Linux Programming Interface, by Michael Kerrisk, No Starch Press, 2010. link:https://nostarch.com/tlpi/[Available from No Starch Press]
+* link:https://diveintosystems.org/[Dive Intro Systems] 
+* **Github Account** Please go to link:https://github.com/[github.com] and register. You will be using github to submit assignments. 
+* **Slack** Please go to link:https://slack.com/signin[slack.com]. Our workspace is BrynMawr-CS355-S25. You can ask questions and access course content on Slack. Course announcements will also be made on Slack. 
+
+=== Unix, Bash, Makefiles
+    
+* link:https://www.tutorialspoint.com/unix/index.htm[Unix Tutorial]
+* link:https://www.gnu.org/software/bash/manual/bash.pdf[Bash Manual]
+* link:https://oit.ua.edu/wp-content/uploads/2020/12/Linux_bash_cheat_sheet-1.pdf[Bash Cheatsheet]
+* link:https://www.gnu.org/software/make/manual/html_node/Introduction.html[Makefiles]
+* link:https://makefiletutorial.com/[Makefile Tutorial]
+* link:http://linuxcommand.org/lc3_learning_the_shell.php[Learning the shell]
+* link:https://www.cs.swarthmore.edu/~newhall/unixhelp/os_stats.php[Tools for examining system state]
+
+=== Editors
+
+* link:http://www.tldp.org/HOWTO/Emacs-Beginner-HOWTO.html[Emacs howto]
+* link:https://openvim.com/[VIM Interactive Tutorial]
+* link:https://vim.rtorr.com/[VIM Cheat Sheet]
+
+=== Git
+
+* link:https://docs.github.com/en/get-started/start-your-journey/about-github-and-git[Getting started with git and Github]
+* link:https://education.github.com/git-cheat-sheet-education.pdf[Git cheat sheet]
+
+=== C/C++ Language
+
+* link:https://en.cppreference.com/w/cpp[C++ Reference]
+* link:https://usuaris.tinet.cat/bertolin/pdfs/c_programming_language.pdf[The C programming language] 
+* link:https://www.bell-labs.com/usr/dmr/www/chist.html[History of C (by Dennis M. Ritchie)]
+
+=== GDB 
+
+* link:https://diveintosystems.org/singlepage/#_debugging_with_gdb[GDB Getting Started]
+* link:https://darkdust.net/files/GDB%20Cheat%20Sheet.pdf[GDB Cheatsheet]
+
+=== Valgrind
+
+* link:https://diveintosystems.org/singlepage/#_debugging_memory_with_valgrind[Valgrind Getting Started]
+* link:https://www.cs.brynmawr.edu/Courses/cs355/info/Valgrind.html[Valgrind tutorial]
+* link:https://cs3157.github.io/www/2022-9/guides/valgrind.html[Understanding Valgrind Errors]
+* link:https://www.cs.swarthmore.edu/~newhall/unixhelp/valgrind.php[Valgrind Guide]
+* link:https://student.cs.uwaterloo.ca/~cs241/valgrind/[Debugging Valgrind Errors]
+
+== Grading Policies
+
+All graded work will receive a grade, 4.0, 3.7, 3.3, 3.0, 2.7, 2.3, 2.0, 1.7,
+1.3, 1.0, or 0.0. At the end of the semester, final grades will be calculated
+as a weighted average of all grades according to the following weights:
+
+|===
+|30% | Exams
+|60% | Assignments, labs, projects, oral exam
+| 5% | Reading quizzes
+| 5% | Participation
+|===
+
+include::latePolicy.adoc[]
+
+include::integrity.adoc[]
+
+include::accomodations.adoc[]
+
+include::covidpolicy.adoc[]
+
+== Academic support
+ 
+* link:https://www.brynmawr.edu/academicsupport/academic-and-student-support-services[Academic Support, including help with math and quantitative skills!]
+
+include::legal.adoc[]
+
+[unstyled]
+ * This site was generated with link:https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/[asciidoctor]
+t cheat

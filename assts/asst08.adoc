@@ -1,0 +1,272 @@
+include::header.adoc[]
+
+:title: Final Project: File System
+:Author Initials: ASN
+:Date:    2020-08-15
+:Revision: 0.1
+:ASST: A08
+
+= {title}
+
+**Due Sunday, April 27, before midnight**
+
+The goals for this assignment are:
+
+* Write your own file system 
+* Design and implement a non-trivial program
+
+NOTE: We will use new starter code: link:https://classroom.github.com/a/pnwA1hqz[Start Code Link]
+
+= File System
+
+_Based on the project by Dianna Xu_
+
+In this project, you will implement a file system from scratch. A "disk" in this project is a single
+Unix file that is "formatted" so that it is understandable to your "OS". You can think of such a file
+as a disk image. You must provide a shell that will be able to navigate this file system and execute
+commands that allow a user to perform normal file system related activities. See below for details.
+
+Your file system should have a hierarchical tree structure, support file
+permissions and mounting.  You should also provide a separate "format" utility
+that creates and initializes your disk files. The format program should run
+separately from your shell. You may base your implementation on previous work
+from any team member.
+
+= Overview
+
+The design of the file system internals is entirely up to you. Either a MS-DOS
+compatible FAT system or a Unix-like inode-based system are logical choices. As
+before, you should implement reasonable emulations of true FAT or inodes.  In
+other words, if you do FAT, then it needs to be at least FAT-12 and if you do
+inodes, it needs to be at least as sophisticated as early Unix V7. Whichever
+type you choose it must support a hierarchical directory system. When making
+decisions, you should go with conventions and make sizes powers of two. For
+example, you should stick with the standard block size of 512 bytes (even if you
+choose FAT, you can assume that your disk isn’t going to be large enough to
+require a bigger block size), and not assume too small a maximum file size. That
+is, design your data structures so that it is possible for a single file to take
+up many GBs, even if your current disk isn’t even remotely large enough.
+
+Tanenbaum discusses physical implementations of file systems in Chapter 4, and in Sections
+10.6 and 11.8, which are good references. As usual, you are encouraged to research widely and use
+any resources you find useful, but are cautioned against taking large amounts of code that you do
+not understand.
+
+= File System Functions
+
+A file system should have two components: 
+
+* the physical structure and 
+* the virtual structure. 
+
+== The Virtual File System
+
+A Virtual File System (VFS) is a robust interface to multiple physical disks of varying types (you
+may only have one, of course). The basic idea behind VFS is to provide a generic representation
+of the hierarchical file system in memory, as well as a set of functions to access parts of the file
+system.
+
+The basic structure of the VFS is the vnode. A vnode can represent a file, a directory or a mount
+point. The vnode contains generic information about what it represents (name, permissions, etc).
+It also contains specific information depending on the file system (physical inode, FAT pointer),
+and a pointer to a set of functions specific to that file system type. In general, you want to use the
+vnode to store the structure of the file system (i.e. location in hierarchy, location on disk, etc) and
+the physical layer to store individual file data.
+
+[source]
+----
+typedef struct vnode {
+    int vnode_number;
+    char name[255];
+    struct vnode *parent;
+    int permissions;
+    int type;
+    union {
+        struct unix_fs { /* these structs need to be fleshed out by you */
+            int inode;
+        } unixfs;
+        struct dos_fs {
+            int fat_ptr;
+        } dosfs;
+        struct ram_fs {
+            unsigned long offset;
+        } ramfs;
+    } fs_info; /* file system specific info */
+} vnode_t;
+----
+
+You are not absolutely required to implement the full VFS. As long as you fully implement the
+required file system library functions (see subsection below). However, in that case, your file system
+is hard-wired into one design only and there is no easy way to accept another differently formatted
+and designed one without replacing the entire library.
+
+== File System Library Functions
+
+In the files, `vfs.h` and `vfs.c`, implement an API for interacting with your file system. These 
+files will be compiled into a dynamic library, `libvfs.so`.
+
+As part of the VFS you need to create programmer-level library functions to provide access to your
+file system operations. A list of library functions that you should implement has been outlined for
+you. The listed calls are very similar to the equivalent standard ANSI C library functions. 
+
+link:asst08-supplement.html[Consult the specification for specific semantics that you should emulate. This 
+document also includes a tutorial to help you get started]. 
+
+Your shell should call the appropriate functions from your library when implementing the list
+of related built-in commands.
+
+. `f_open`: open the specified file with the specified access (read, write, read/write, append). If the file does not exist, handle accordingly. (rule of thumb: create file if writing/appending, return error if reading is involved). Returns a file handle if successful.
+. `f_read`: read the specified number of bytes from a file handle at the current position. Returns the number of bytes read, or an error.
+. `f_write`: write some bytes to a file handle at the current position. Returns the number of bytes written, or an error.
+. `f_close`: close a file handle
+. `f_seek`: move to a specified position in a file
+. `f_rewind`: move to start of a file
+. `f_stat`: retrieve information about a file
+. `f_remove`: delete a file
+. `f_opendir`: recall that directories are handled as special cases of files. open a “directory file” for reading, and return a directory handle.
+. `f_readdir`: returns a pointer to a “directory entry” structure representing the directory entry in the directory file specified.
+. `f_closedir`: close an open directory file
+. `f_mkdir`: make a new directory at the specified location
+. `f_rmdir`: delete a specified directory. Be sure to remove entire contents and the contents of all subdirectorys from the filesystem. Do NOT simply remove pointer to directory.
+. `f_mount`: mount a specified file system into your directory tree at a specified location.
+. `f_umount`: unmount a specified file system
+
+== The Shell
+
+You should extend your shell to work with the new file system. This shell does
+not need to support pipes or job control. Thus, you can use your "baby shell"
+as a starting point.  Make sure that your shell supports commands such as echo, ps, etc.
+
+. On start-up, look (in the same directory) for a file called "DISK" where your file system is located. If it is not found, please print a message asking the user to run the format command to make one. For more details on format, see Section 4.
+. Once your shell has found the file system, it should mount it at the root directory and display a log-in prompt.
+. Support redirections. You need to support parsing for >, and >>. `>>` appends text to a file. 
+. The following file-system related commands must now be implemented as built-in commands in your shell. You are not allowed to use the Unix-provided ones, not that they will work with your file system anyways.
+.. `ls` - lists all the files in the current or specified directory. Support flags -a and -l.
+.. `chmod` - changes the permissions mode of a file. Support absolute mode and symbolic mode.
+.. `mkdir` - creates a directory
+.. `rmdir` - removes a directory
+.. `cd` - changes the current working directory according to the specified path, or to the home directory if no argument is given. Support . and ..
+.. `pwd` - prints the current working directory
+.. `touch` - creates an empty file
+.. `cat` - displays the content of one or more files to the output.
+.. `rm` - deletes a file
+.. `mv` - renames a file or directory
+.. `stat` - reports the system information for a file
+
+== Format
+
+The format utility program is a separate program that you should make available.
+format <name of file> will format a file with your file system design and data structures.
+If the file doesn’t exist, create it. The default size for such a disk image should start at
+1MB. Add a "-s #" flag to allow the creation of different-sized disks, where # is a number in
+megabytes.
+
+== Testing
+
+To initialize a new filesystem, use your format utility
+
+[source, subs="quotes"]
+----
+$ ./format <disk_name>
+----
+
+This command will create a disk containing a boot block, superblock, free space management, and
+initialized root directory. A disk created by format should be passed to your shell to use as the file 
+system. When the shell exits, your filesystem should be saved. 
+
+When the shell loads a filesystem, it should read it into your vnode data structure. The layout of the 
+file system specifies how the file is stored on disk. The vode tree is the representation that you can 
+use to work with files from your shell.
+
+[source, subs="quotes"]
+----
+$ **./shell**
+myshell$> ls
+. ..
+myshell$> mount <disk_name> /newdir
+myshell$> ls
+. .. newdir
+myshell$> cd newdir
+myshell$> ls
+. .. A.txt B.txt C.txt usr
+$ **./shell**
+myshell$> ls
+. .. A.txt B.txt C.txt usr
+myshell$> echo "roses are red" > f1.txt
+myshell$> ls
+. .. A.txt B.txt C.txt f1.txt usr
+----
+
+In addition to commands listed above, make sure your shell can execute commands such as
+
+* echo "roses are red" > f1.txt
+* echo "violets are blue" >>f1.txt
+* echo "honey is sweet" > f2.txt
+* cat f1.txt f2.txt > f3.txt
+* ls > f4.txt
+* ps > f5.txt
+
+Implementation Tips:
+
+Start with your file system design (Due at the end of Lab, April 10th). After 
+your decide your design, you should implement `format` and use it to create an 
+empty file system. Your empty file system should only contain a root directory.
+
+Implementing your shell and file system in vertical slices, one test-able feature at a time. 
+For example, the first thing you can implement is *creating a file*. To start, you would 
+implement `fopen` and `fclose`, focusing on the ability to create files. 
+You should test these functions in their own test program. Then implement `cat`
+in your new shell to write to this file (include >). Note that you should not use `exec` to
+call cat. You should use your own `cat` routine that works with your file
+system.
+
+Here are other features you can implement similarly:
+
+* Saving your file system to file so it can be loaded again the next time you start your shell (f_mount, f_unmount, mount)
+* Listing a file's system status (stat)
+* Editing a file (f_read, f_write, f_seek, f_rewind, >>, cat)
+* Editing permissions (chmod)
+* Listing a directory (ls, f_opendir)
+* Creating a new directory (mkdir, f_createdir)
+* Removing a file or directory (f_unlink)
+* Editing names (mv)
+* Testing bad data (for example, files/directories that do not exist. Implement error codes in your VFS API)
+* Testing other shell commands (should be forked with exec)
+
+= Grading Rubric
+
+*Project rubrics*
+
+Grades are out of 4 points.
+
+Your grade will be based on fully-functional feature sets. Not all
+feature sets must be implemented to receive a good grade. Focus on implementing 
+complete demos that are well-defined and well-encapsulated, based on the categories 
+defined below. 
+
+* (3 points) File System 
+** Format disk, load/save disk
+** Basic shell commands: ls, cat, touch, mkdir, rmdir, pwd, cd, mv, rm, stat
+** Advanced shell commands: mount, umount
+** Shell redirection: writing and appending to files from the shell
+** Errors: supporting bad inputs from the user in your shell. reporting errors from your VFS functions.
+** VFS implementation: unit tests that show that your VFS works
+** Supporting files larger than 1 block. Checking for limits when creating files and directories.
+** Supporting and enforcing permissions for files and file descriptors. Implementing chmod.
+* (1 points) File System demo and design (Oral Exam)
+** Your grade will be based on your ability to demonstrate several working features of your file system and describe how they work.
+
+*Code rubrics*
+
+For full credit, your C programs must be feature-complete, robust (e.g. run without memory errors or crashing) and 
+have good style.
+
+* Some credit lost for missing features or bugs, depending on severity of error
+* -12.5% for style errors. See the link:../codingstandard.html[class coding style] here.
+* -50% for memory errors
+* -100% for failure to check in work to Github
+* -100% for failure to compile on linux using make
+
+= Resubmission
+
+This project is not eligible for resubmission at the end of the term.

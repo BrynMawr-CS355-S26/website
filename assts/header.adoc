@@ -1,0 +1,13 @@
+:lang: en
+:stylesdir: ../style
+:stylesheet: cs21.css
+:linkcss:
+:icons: font
+:imagesdir: img
+:xrefstyle: short
+:leveloffset: +1
+:toc: left
+:asnweb: https://alinen.net/
+:csweb: https://brynmawr-cs355-s25.github.io/website/assts/
+:repo: https://github.com/BrynMawr-CS223-S25
+:semester: s25

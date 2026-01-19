@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.18">
+<title>Study Guide: OS Exam II</title>
+<link rel="stylesheet" href="style/cs21.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_study_guide_os_exam_ii">Study Guide: OS Exam II</a></li>
+<li><a href="#_tanenbaum">Tanenbaum</a></li>
+<li><a href="#_additional_practice">Additional practice</a>
+<ul class="sectlevel2">
+<li><a href="#_programming_with_pointers">Programming with pointers</a></li>
+<li><a href="#_memory">Memory</a></li>
+<li><a href="#_files">Files</a></li>
+<li><a href="#_io">IO</a></li>
+<li><a href="#_security">Security</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_study_guide_os_exam_ii">Study Guide: OS Exam II</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Exams are closed book. You can bring one written cheat sheet. 90 minutes in class.</p>
+</div>
+<div class="paragraph">
+<p>Topics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Tanenbaum Chapters 3,4,5,9</p>
+</li>
+<li>
+<p>Programming with pointer arithmetic; Working with binary files and formats.</p>
+</li>
+<li>
+<p>Memory: Strategies for loading processes into memory, TLB, virtual memory, paging algorithms</p>
+</li>
+<li>
+<p>Files: File system features, such as backups, consistency, and journaling. Methods for storing files/directories and managing free space (inodes, FAT tables, etc)</p>
+</li>
+<li>
+<p>I/O: I/O software layers, drivers, disks, keyboard/mouse input, windows systems</p>
+</li>
+<li>
+<p>Security: Terminology, buffer exploits, basic cryptography, malware, defenses</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_tanenbaum">Tanenbaum</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Chapter 3: 4, 5, 6, 7, 11, 15, 17, 20, 28, 30, 33, 36, 38, 47</p>
+</li>
+<li>
+<p>Chapter 4: 20, 21, 24, 28, 30, 40, 41</p>
+</li>
+<li>
+<p>Chapter 5: 5, 10, 13, 14, 16</p>
+</li>
+<li>
+<p>Chapter 9: 1, 6, 7, 8, 9, 19, 28, 29, 38, 39, 40, 49, 50</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_practice">Additional practice</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_programming_with_pointers">Programming with pointers</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>For each of the following variables, say whether its a pointer or not</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>char buffer[128];</code></p>
+</li>
+<li>
+<p><code>char* a = NULL;</code></p>
+</li>
+<li>
+<p><code>const char* message = "hello";</code></p>
+</li>
+<li>
+<p><code>char a;</code></p>
+</li>
+<li>
+<p><code>struct mystery* m = malloc(sizeof(struct mystery));</code></p>
+</li>
+<li>
+<p><code>struct mystery** m = malloc(sizeof(struct mystery*)*10);</code></p>
+</li>
+<li>
+<p><code>argv[0]</code> where argv is a list of command line arguments passed to main</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the following code, indicate which casts from void* are safe.</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>#include &lt;stdio.h&gt;
+
+int main()
+{
+  void* generic = NULL;
+  int a = 3;
+  double b = 4.5;
+  generic = &amp;a;
+  generic = &amp;b;
+
+  printf("test %f\n", *generic);
+  double* double_ptr = (double *) generic;
+  printf("test %f\n", *double_ptr);
+
+  int* int_ptr = (int *) generic;
+  printf("test %d\n", *int_ptr);
+
+  generic = &amp;a;
+
+  double* double_ptr = (double *) generic;
+  printf("test %f\n", *double_ptr);
+
+  int* int_ptr = (int *) generic;
+  printf("test %d\n", *int_ptr);
+
+  return 0;
+}</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Draw the stack for the following code.</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>int main()
+{
+  char vals[3] = {'h','I','\0'};
+  char* valptr = vals;
+  char v1 = vals[2];
+  char* v1ptr = valptr + 2;
+  char v2 = *v1ptr;
+  printf("%c %c\n", v1, v2);
+  // Draw stack here
+  for (int i = 0; i &lt; 3; i++) {
+    printf("%c\n", vals[i]);
+  }
+  for (char* ptr = vals; ptr &lt; vals+3; ptr++) {
+    printf("%p %c\n", ptr, *ptr);
+  }
+}</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Draw the stack diagram for the following code</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>struct chunk {
+  int size;
+  struct chunk *next;
+};
+int main() {
+  int size = sizeof(int) * 5;
+  void *memory = malloc(size + sizeof(struct chunk));
+  if (memory == NULL) {
+    return 1;
+  }
+  struct chunk *cnk = (struct chunk*) memory;
+  cnk-&gt;size = size;
+  void* data = (void*) (cnk + 1);
+  int* array = (int*) data;
+  for (int i = 0; i &lt; 5; i++) {
+    array[i] = i;
+  }</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Suppose the address of x is 0x4c568000. For each of the following expressions, give the new address of x;</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>int* x = &amp;a; x++;</code></p>
+</li>
+<li>
+<p>`char* x = &amp;c; x--
+*</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>struct m {
+    int q;
+    char buff[4];
+};
+struct m* x = &amp;data;
+x+=2;</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Write code that reads in a binary file with the following specification:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The first 4 bytes is an integer that contains the size of the file</p>
+</li>
+<li>
+<p>The second 16 bytes is a character field containing the Author</p>
+</li>
+<li>
+<p>The next three values are unsigned integers that contain a month, day, and year</p>
+</li>
+<li>
+<p>The remaining N bytes store textural data, terminated with the null character.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_memory">Memory</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Describe the levels of the memory hierarchy.</p>
+</li>
+<li>
+<p>Name 3 types of secondary storage.</p>
+</li>
+<li>
+<p>Name 3 types of primary storage.</p>
+</li>
+<li>
+<p>How do primary storage and secondary storage differ in terms of their characteristics?</p>
+</li>
+<li>
+<p>Give two disadvantages of a simple process memory model in which the entire process is loaded contiguously in memory?</p>
+</li>
+<li>
+<p>What is virtual memory?</p>
+</li>
+<li>
+<p>List two advantages of decoupling the process address space from the machine&#8217;s physical memory.</p>
+</li>
+<li>
+<p>Suppose we are using a 10K blocksize. Give the bitmap that represents the free blocks in memory.</p>
+<div class="imageblock">
+<div class="content">
+<img src="img/memory.png" alt="memory" width="100px">
+</div>
+</div>
+</li>
+<li>
+<p>Suppose we are using a 10K blocksize. Give the linked list that represents the free blocks in memory.  Assume each node in the linked list contains the process ID, or H if it a hole, a start location, a size, and a pointer to the next record.</p>
+<div class="imageblock">
+<div class="content">
+<img src="img/memory.png" alt="memory" width="100px">
+</div>
+</div>
+</li>
+<li>
+<p>Fill in the following figure with the bitmap and linked list that corresponds to the given memory block.</p>
+<div class="imageblock">
+<div class="content">
+<img src="img/memory-free.png" alt="memory free" width="600px">
+</div>
+</div>
+</li>
+<li>
+<p>Suppose we have processes in memory as follows. Suppose a new process requests 15K, which hole should we use if we were using a strategy of best fit, worst fit, and first fit?</p>
+<div class="imageblock">
+<div class="content">
+<img src="img/memory.png" alt="memory" width="600px">
+</div>
+</div>
+</li>
+<li>
+<p>Suppose we are using bitmaps to manage free space for a 1 GB disk. How big must the bitmap be if we use 4 KB blocks? What about if we use 16 KB blocks? What is the disadvantage of using larger blocks?</p>
+</li>
+<li>
+<p>Suppose we are using linked lists to manage free space for a 1 GB disk. How much additional space do we need if we use 4 KB blocks? What about if we use 16 KB blocks?</p>
+</li>
+<li>
+<p>What is the memory mapping unit (MMU)?</p>
+</li>
+<li>
+<p>What is a page? What is a page frame?</p>
+</li>
+<li>
+<p>What is paging? What is a page fault?</p>
+</li>
+<li>
+<p>Suppose we have the following specifications: 16-bit addresses, 32 KB of physical memory, and 4KB page sizes.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>What is the possible range of virtual addresses?</p>
+</li>
+<li>
+<p>How many pages do we have?</p>
+</li>
+<li>
+<p>How many page frames do we have?</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Compute physical addresses for the virtual addresses using the commands below.</p>
+<div class="imageblock">
+<div class="content">
+<img src="img/paging.png" alt="paging" width="600px">
+</div>
+</div>
+</li>
+<li>
+<p>Suppose we have 4 KB pages 16-bit addresses. Also suppose our page table looks as follows. Convert the address 0x2004.</p>
+<div class="imageblock">
+<div class="content">
+<img src="img/paging-2.png" alt="paging 2" width="200px">
+</div>
+</div>
+</li>
+<li>
+<p>What is the translation lookaside buffer? What is its purpose?</p>
+</li>
+<li>
+<p>Suppose we have 32-bit addresses, 4 KB page sizes, and the a two-level page table. The first 10 bits are an index into the first page table. The next 10 bits are an index into the second page table. Compute the indices into the page tables and offset for the following addresses:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>0x00403004</p>
+</li>
+<li>
+<p>0x00c0500a</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>What is the advantage of multi-level page tables? What about inverted page tables?</p>
+</li>
+<li>
+<p>What would the optimal page replacement algorithm be in a perfect world?</p>
+</li>
+<li>
+<p>In the NRU algorithm, list the 4 categories of pages.</p>
+</li>
+<li>
+<p>Suppose we execute the following sequence of instructions.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>mov 0x0, reg
+mov $0x19, 0x2000
+clock interrupt
+mov reg, 0x90a3
+mov 0x5014, reg</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Suppose we have 16 pages of virtual memory and 8 pages of physical memory (4 KB page sizes). Which frames will each instruction reference?</p>
+</li>
+<li>
+<p>How will the R and M flags change if all are set the 0 to start?</p>
+</li>
+<li>
+<p>What NRU class is each page in after executing these instructions.</p>
+</li>
+<li>
+<p>What page would be removed by the NRU algorithm?</p>
+</li>
+<li>
+<p>What page would be removed by the FIFO algorithm?</p>
+</li>
+<li>
+<p>What page would be removed by the Second chance algorithm?</p>
+</li>
+<li>
+<p>What page would be removed by the clock algorithm?</p>
+</li>
+<li>
+<p>Suppose we are using LRU. What would the aged values be for each page?</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>What is the primary limitation of the NFU algorithm?</p>
+</li>
+<li>
+<p>What is the primary limitation of the FIFO algorithm?</p>
+</li>
+<li>
+<p>What is the primary limitation of the NRU algorithm?</p>
+</li>
+<li>
+<p>What is demand paging and why is it efficient?</p>
+</li>
+<li>
+<p>What is thrashing?</p>
+</li>
+<li>
+<p>What is the working set?</p>
+</li>
+<li>
+<p>What does the function w(k,t) represent? Why is w(k,t) monotonically nondecreasing?</p>
+</li>
+<li>
+<p>Suppose we are using the working set page replacement algorithm. tau = 800 and the current virtual time is 2204.</p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Page</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Time of Last use</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">R Bit</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">M Bit</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2084</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2003</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1980</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1213</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2014</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2020</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2032</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1620</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+</tr>
+</tbody>
+</table>
+<div class="ulist">
+<ul>
+<li>
+<p>Which pages are in the current working set?</p>
+</li>
+<li>
+<p>Which pages would be removed from the page table?</p>
+</li>
+<li>
+<p>Which pages would have its time of last use updated?</p>
+</li>
+<li>
+<p>Suppose we are using the WSClock algorithm and the starting page is page 3. What page will be replaced?</p>
+</li>
+<li>
+<p>Suppose we are using the WSClock algorithm and the starting page is page 3. How will the table change on a clock interrupt?</p>
+</li>
+<li>
+<p>Suppose we are using the WSClock algorithm and the starting page is page 3. How will the table change on a clock interrupt?</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_files">Files</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>What is a file?</p>
+</li>
+<li>
+<p>What is a file system?</p>
+</li>
+<li>
+<p>Give some examples of file attributes?</p>
+</li>
+<li>
+<p>Give two different designs for storing file attributes in a file system.</p>
+</li>
+<li>
+<p>Give two possible designs for managing free space within a file system.</p>
+</li>
+<li>
+<p>How does the block size for files possibly affect fragmentation?</p>
+</li>
+<li>
+<p>What is the root directory? the current working directory?</p>
+</li>
+<li>
+<p>What is the difference between absolute and relative paths?</p>
+</li>
+<li>
+<p>Give a possible file system design for a system that has a single-level directory system.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Explain how multiple users might be supported in a single-level file system.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>What is a symbolic link?</p>
+</li>
+<li>
+<p>Describe a possible file system design that supports symbolic links.</p>
+</li>
+<li>
+<p>Describe the process of booting a computer.</p>
+</li>
+<li>
+<p>What is the Master Boot Record (MBR)?</p>
+</li>
+<li>
+<p>What is a partition?</p>
+</li>
+<li>
+<p>Define internal versus external fragmentation.</p>
+</li>
+<li>
+<p>List 4 goals of file system design.</p>
+</li>
+<li>
+<p>Consider the following set of files: A has 2 blocks. B has 5 blocks. C has 1 block. Assume they are stored on a system with 4 KB block sizes. Draw how we would store the files</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>using contiguous allocation</p>
+</li>
+<li>
+<p>using linked lists having nodes stored with each block</p>
+</li>
+<li>
+<p>using a file allocation table (FAT)</p>
+</li>
+<li>
+<p>using inodes</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Consider the following series of commands. Assume the starting current working directory is root. Draw the corresponding file system hierarchy.</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ mkdir B
+$ cd B
+$ mkdir A
+$ touch 6.txt</pre>
+</div>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>If we were using inodes, how many inodes would we need to represent the above file system?</p>
+</li>
+<li>
+<p>Suppose directories store the contents of the directory. Each entry of the table contains the following information: inode id, name (8 bytes), extension (3 bytes), and flags (4 bytes). The least significant bit of flags is 0 for files and 1 for directories. The most significant bit is 1 for a non-empty entry and 0 for an empty entry.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Define a struct type that represents the entries inside a directory. Make sure that all data types are properly byte-aligned.</p>
+</li>
+<li>
+<p>Write pseudocode that tests whether a directory entry is valid of not.</p>
+</li>
+<li>
+<p>Write pseudocode that tests whether a directory entry corresponds to a file or directory.</p>
+</li>
+<li>
+<p>Draw the contents of directory B as a table.</p>
+</li>
+<li>
+<p>Describe how you would redesign the directory entries in order to support variable-sized filenames.</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Suppose we are using inodes. Describe the steps needed to lookup the file with path <code>/usr/ast/mbox</code></p>
+</li>
+<li>
+<p>Suppose we are using FAT. Describe the steps needed to lookup the file with path <code>/usr/ast/mbox</code></p>
+</li>
+<li>
+<p>Suppose we are using inodes. Describe the steps needed to lookup the file with path <code>../ast/mbox</code></p>
+</li>
+<li>
+<p>Consider a hierarchical file system. What three things need to happen when a file is deleted?</p>
+</li>
+<li>
+<p>If a crash occurs while deleting a file, how might the system become in an inconsistent state?</p>
+</li>
+<li>
+<p>Explain how journaling can help a file system recover from crashes.</p>
+</li>
+<li>
+<p>Why do journaling systems rely on indempotent actions?</p>
+</li>
+<li>
+<p>When using disks, why are bigger blocksizes more efficient?</p>
+</li>
+<li>
+<p>Suppose we are analyzing a disk system for time and size efficiency. The blocksize is 1 MB and the file is 64 KB.</p>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>If the disk uses 1 MB per track, has a combined seek and delay time of 9 ms, and a rotation time of 8.33 ms / MB, how much time is needed to fetch the file? (Recall the time = seek + delay + rotation * (k/1MB), where k is the number of bytes).</p>
+</li>
+<li>
+<p>How much space is wasted?</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Suppose we are analyzing a disk system for time and size efficiency. The blocksize is 1 KB and the file is 64 KB.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>If the disk uses 1 MB per track, has a combined seek and delay time of 9 ms, and a rotation time of 8.33 ms / MB, how much time is needed to fetch the file? (Recall the time = seek + delay + rotation * (k/1MB), where k is the number of bytes).</p>
+</li>
+<li>
+<p>How much space is wasted?</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>What is the difference between soft and hard caps in quota systems.</p>
+</li>
+<li>
+<p>Why might a quota system be necessary in a multiuser system?</p>
+</li>
+<li>
+<p>List three challenges of creating a good backup system.</p>
+</li>
+<li>
+<p>How does an incremental backup work?</p>
+</li>
+<li>
+<p>List two methods for making backups faster.</p>
+</li>
+<li>
+<p>What is the difference between a physical and logical dump?</p>
+</li>
+<li>
+<p>List three limitations of physical dumps.</p>
+</li>
+<li>
+<p>List the steps needed to created a logical dump.</p>
+</li>
+<li>
+<p>List the steps needed to restore a logical dump.</p>
+</li>
+<li>
+<p>How can inodes be checked for inconsistencies?</p>
+</li>
+<li>
+<p>How can directories be checked for inconsistencies?</p>
+</li>
+<li>
+<p>Suppose we have an inode based file system for which we are checking for inconsistencies. Is the following system consistent?</p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1112%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Blocks in use</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Free blocks</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>Suppose we have an inode based file system for which we are checking for inconsistencies. Is the following system consistent?</p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1112%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Blocks in use</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Free blocks</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>Suppose we have an inode based file system for which we are checking for inconsistencies. Is the following system consistent?</p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1112%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Blocks in use</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Free blocks</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>Suppose we have an inode based file system for which we are checking for inconsistencies. Is the following system consistent?</p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1112%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Blocks in use</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Free blocks</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>A file contains a link count of two. What does this mean?</p>
+</li>
+<li>
+<p>A file contains a link count of three, but it is only listed in two directories. What problems might result due to this inconsistency?</p>
+</li>
+<li>
+<p>A file contains a link count of one, but it is listed in two directories. What problems might results due to this inconsistency?</p>
+</li>
+<li>
+<p>List three features that improve disk read/write performance.</p>
+</li>
+<li>
+<p>What is a write-through cache?</p>
+</li>
+<li>
+<p>Suppose we are using caching for a file system in order to increase its performance. What is the risk of writing file blocks infrequently back to disk?</p>
+</li>
+<li>
+<p>Suppose we are using caching for a file system in order to increase its performance. What is the risk of writing inode blocks infrequently back to disk?</p>
+</li>
+<li>
+<p>Suppose we are using caching for a file system in order to increase its performance. What is the drawback of writing data back to disk too frequently?</p>
+</li>
+<li>
+<p>Describe how block read-ahead works.</p>
+</li>
+<li>
+<p>What is file system defragmentation? When should we use it?</p>
+</li>
+<li>
+<p>Suppose we have an inode file system with the following properties:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Blocksize: 16 bytes</p>
+</li>
+<li>
+<p>10 direct blocks</p>
+</li>
+<li>
+<p>4 indirect blocks</p>
+</li>
+<li>
+<p>1 double-indirect block</p>
+</li>
+<li>
+<p>1 triple-indirect block</p>
+</li>
+<li>
+<p>Block ids are 4-byte integers</p>
+</li>
+<li>
+<p>sizeof(indode) = 128 bytes</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>How many block IDS can we store in an indirect block?</p>
+</li>
+<li>
+<p>What is the max file size we can store using direct blocks?</p>
+</li>
+<li>
+<p>What is the max file size we can store using indirect blocks?</p>
+</li>
+<li>
+<p>What is the max file size we can store using double-indirect blocks?</p>
+</li>
+<li>
+<p>What is the max file size we can store using triple-indirect blocks?</p>
+</li>
+<li>
+<p>Suppose we have 300 byte file. Sketch a picture of how these blocks would be stored in an inode.</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Suppose we are using a FAT for a file system that contains one directory (/) which contains two files: A.txt and B.txt.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>All directories fit inside a 1 KB block.</p>
+</li>
+<li>
+<p>Suppose the root directory is at block 0</p>
+</li>
+<li>
+<p>Suppose A.txt uses blocks 2, 6, 7</p>
+</li>
+<li>
+<p>Suppose B.txt uses blocks 3, 4, 8</p>
+</li>
+<li>
+<p>Draw the contents of the first 10 FAT entries</p>
+</li>
+<li>
+<p>Draw the contents of the root directory block. Assume the blocks stores the file names and FAT table IDs.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Consider the CP/M file system which stored all files under a single directory. Sketch a program that would format a disk capable of holding 100 files.</p>
+<div class="imageblock">
+<div class="content">
+<img src="img/CPM.png" alt="CPM" width="600px">
+</div>
+</div>
+</li>
+<li>
+<p>Suppose a FAT table has 64 entries and the blocksize is 4 KB. What is the maximum number of bytes we can store? What is the maximum possible number of files?</p>
+</li>
+<li>
+<p>How does the ext2 system initialize files to avoid external fragmentation?</p>
+</li>
+<li>
+<p>How does the ext2 system arrange blocks to try to improve performance?</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_io">IO</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Give an example of a block device</p>
+</li>
+<li>
+<p>Give an example of a character device</p>
+</li>
+<li>
+<p>What is the difference between block and character devices?</p>
+</li>
+<li>
+<p>Name the five I/O software layers found in UNIX systems.</p>
+</li>
+<li>
+<p>Why is I/O organized into layers, e.g. what is the advantage of this approach?</p>
+</li>
+<li>
+<p>Name the two components of device controllers</p>
+</li>
+<li>
+<p>Name two types of registers that typically come with hardware devices.</p>
+</li>
+<li>
+<p>Name two approaches for communicating with devices from the OS.</p>
+</li>
+<li>
+<p>What is an I/O port?</p>
+</li>
+<li>
+<p>What is an I/O space?</p>
+</li>
+<li>
+<p>What is the advantage of using memory-mapped I/O over supporting separate spaces for memory and devices?</p>
+</li>
+<li>
+<p>What are some challenges/disadvantages of using memory-mapped I/O?</p>
+</li>
+<li>
+<p>How does the OS communicate with devices when using a separate space for memory and devices?</p>
+</li>
+<li>
+<p>How does the OS communicate with devices when using memory-mapped I/O?</p>
+</li>
+<li>
+<p>What is the purpose of Direct Memory Access (DMA)?</p>
+</li>
+<li>
+<p>In the following diagram, show how the CPU can use a DMA controller to read data from disk storage. (Answer: Fig 5-4 in Tanenbaum)</p>
+<div class="imageblock">
+<div class="content">
+<img src="img/DMA.jpg" alt="DMA" width="600px">
+</div>
+</div>
+</li>
+<li>
+<p>List four steps that happen when an interrupt occurs due to a device event.</p>
+</li>
+<li>
+<p>List three approaches to I/O handling</p>
+</li>
+<li>
+<p>Suppose we want to read N bytes from a device. Briefly describe how the following code accomplishes this. What approach is the code taking to event handling?</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>for (i=0; i&lt;N; i++) {
+  while (*status != READY) ;
+  *data = buffer[i];
+}</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>What is a device driver?</p>
+</li>
+<li>
+<p>What is the goal of the device-independent software layer?</p>
+</li>
+<li>
+<p>Name three different techniques that enable different devices to be accessed in a similar way.</p>
+</li>
+<li>
+<p>What is buffering? How does buffering relate to I/O?</p>
+</li>
+<li>
+<p>What is spooling? Give an example of a device that performs spooling.</p>
+</li>
+<li>
+<p>Consider the five layers of the I/O system. What is the primary functions of the</p>
+<div class="ulist">
+<ul>
+<li>
+<p>user process layer?</p>
+</li>
+<li>
+<p>device-independent software layer?</p>
+</li>
+<li>
+<p>device drivers?</p>
+</li>
+<li>
+<p>interrupt handlers?</p>
+</li>
+<li>
+<p>hardware?</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Why is device independence an important principle of I/O programming?</p>
+</li>
+<li>
+<p>Why is handling errors as close to the hardware as possible a principle of I/O Programming?</p>
+</li>
+<li>
+<p>Give an example of how hardware can handle errors without notifying the user.</p>
+</li>
+<li>
+<p>Give an example of a hardware error that requires reporting an error to the user.</p>
+</li>
+<li>
+<p>Give an example of how names are used to provide device-independence on UNIX systems.</p>
+</li>
+<li>
+<p>What is the difference between synchronous and asynchronous transfers of data.</p>
+</li>
+<li>
+<p>What is the difference between sharable and dedicated devices? Give an example of each.</p>
+</li>
+<li>
+<p>Give five examples of user-triggered events that are common in graphical user interfaces.</p>
+</li>
+<li>
+<p>Give five examples of widgets that are common in graphical user interfaces.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_security">Security</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In the context of security,</p>
+<div class="ulist">
+<ul>
+<li>
+<p>what is a vulnerability?</p>
+</li>
+<li>
+<p>what is an exploit?</p>
+</li>
+<li>
+<p>what is a malware?</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Describe how a buffer overflow vulnerability can be used as an exploit to call a function.</p>
+</li>
+<li>
+<p>List three OS/compiler features that make buffer overflow exploits more difficult.</p>
+</li>
+<li>
+<p>Name three categories of security threats.</p>
+</li>
+<li>
+<p>Give an example of an application that requires integrity and availability, but not confidentiality.</p>
+</li>
+<li>
+<p>What is cryptography?</p>
+</li>
+<li>
+<p>What is software hardening?</p>
+</li>
+<li>
+<p>What is the difference between a trusted system and a secure system?</p>
+</li>
+<li>
+<p>What is the principle of least authority?</p>
+</li>
+<li>
+<p>What is a protection domain?</p>
+</li>
+<li>
+<p>In the context of protection domains, give an example of an object, a domain, and a right.</p>
+</li>
+<li>
+<p>Consider the following protection domain.</p>
+<div class="imageblock">
+<div class="content">
+<img src="img/ProtectionDomain.png" alt="ProtectionDomain" width="600px">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Represent the protection domains above as protection matrix</p>
+</li>
+<li>
+<p>Represent the protection domains above using an Access Control List</p>
+</li>
+<li>
+<p>Represent the protection domains above using Capabilities. Assume each user is running a single process with the same file needs as the diagram.</p>
+</li>
+<li>
+<p>Why aren&#8217;t protection matrices used for storing protection rights?</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In the domain of cryptography, what is authentication?</p>
+</li>
+<li>
+<p>What is Kerckhoff&#8217;s Principle?</p>
+</li>
+<li>
+<p>What major limitation of secret-key cryptography does public-key cryptography solve?</p>
+</li>
+<li>
+<p>What property does secret-key cryptography have?</p>
+</li>
+<li>
+<p>What property does public-key cryptography have?</p>
+</li>
+<li>
+<p>What property does one-way function cryptography have?</p>
+</li>
+<li>
+<p>Secure Hash Algorithms are an example of one type of cryptographic function?</p>
+</li>
+<li>
+<p>How does a signature block work for digitally-signed documents?</p>
+</li>
+<li>
+<p>What is the purpose of a certificate authority? E.g. what problem do they solve?</p>
+</li>
+<li>
+<p>List 3 basic principles of identity authentication.</p>
+</li>
+<li>
+<p>Describe how passwords can be stored securely within a system file.</p>
+</li>
+<li>
+<p>Describe how a leaked password file could be used to break into other systems, even if the password file is encrypted.</p>
+</li>
+<li>
+<p>What is meant by security through obscurity?</p>
+</li>
+<li>
+<p>Suppose a system takes stores 8 character passwords. Assume that the password is not a dictionary and contains lowercase letters and digits. How many passwords would we need to test if we use brute force to guess the password. How many passwords would we need to test if we store these passwords with 12 bits of salt. Suppose a 1000 passwords can be tested in 1 second. How long will it take to break this system using brute force?</p>
+</li>
+<li>
+<p>Give three examples of insider attacks.</p>
+</li>
+<li>
+<p>What is a botnet?</p>
+</li>
+<li>
+<p>What is a trojan horse?</p>
+</li>
+<li>
+<p>What is a drive-by-download?</p>
+</li>
+<li>
+<p>What is ransomware?</p>
+</li>
+<li>
+<p>Name five different types of viruses.</p>
+</li>
+<li>
+<p>Describe how the Morris worm worked.</p>
+</li>
+<li>
+<p>Why did the Morris worm sometimes bring down computers so they could not be used at all?</p>
+</li>
+<li>
+<p>What is a rootkit?</p>
+</li>
+<li>
+<p>Give an example of a rootkit.</p>
+</li>
+<li>
+<p>What is spyware?</p>
+</li>
+<li>
+<p>Give some examples of how spyware might modify your computer.</p>
+</li>
+<li>
+<p>Give 4 examples of defenses against malware.</p>
+</li>
+<li>
+<p>Sketch code that implements an overwrite virus on a machine in which permissions are not setup correctly for user accounts.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2025-04-25 13:37:04 -0400
+</div>
+</div>
+</body>
+</html>

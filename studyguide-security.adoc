@@ -1,0 +1,50 @@
+. In the context of security, 
++
+* what is a vulnerability?
+* what is an exploit?
+* what is a malware?
+. Describe how a buffer overflow vulnerability can be used as an exploit to call a function. 
+. List three OS/compiler features that make buffer overflow exploits more difficult. 
+. Name three categories of security threats.
+. Give an example of an application that requires integrity and availability, but not confidentiality.
+. What is cryptography?
+. What is software hardening?
+. What is the difference between a trusted system and a secure system? 
+. What is the principle of least authority?
+. What is a protection domain?
+. In the context of protection domains, give an example of an object, a domain, and a right.
+. Consider the following protection domain.
++
+image::ProtectionDomain.png[width=600px]
+* Represent the protection domains above as protection matrix
+* Represent the protection domains above using an Access Control List
+* Represent the protection domains above using Capabilities. Assume each user is running a single process with the same file needs as the diagram.
+* Why aren't protection matrices used for storing protection rights?
+. In the domain of cryptography, what is authentication?
+. What is Kerckhoff's Principle?
+. What major limitation of secret-key cryptography does public-key cryptography solve?
+. What property does secret-key cryptography have?
+. What property does public-key cryptography have?
+. What property does one-way function cryptography have?
+. Secure Hash Algorithms are an example of one type of cryptographic function?
+. How does a signature block work for digitally-signed documents?
+. What is the purpose of a certificate authority? E.g. what problem do they solve?
+. List 3 basic principles of identity authentication.
+. Describe how passwords can be stored securely within a system file. 
+. Describe how a leaked password file could be used to break into other systems, even if the password file is encrypted.
+. What is meant by security through obscurity?
+. Suppose a system takes stores 8 character passwords. Assume that the password is not a dictionary and contains lowercase letters and digits. How many passwords would we need to test if we use brute force to guess the password. How many passwords would we need to test if we store these passwords with 12 bits of salt. Suppose a 1000 passwords can be tested in 1 second. How long will it take to break this system using brute force?
+. Give three examples of insider attacks.
+. What is a botnet?
+. What is a trojan horse?
+. What is a drive-by-download?
+. What is ransomware?
+. Name five different types of viruses.
+. Describe how the Morris worm worked.
+. Why did the Morris worm sometimes bring down computers so they could not be used at all?
+. What is a rootkit?
+. Give an example of a rootkit.
+. What is spyware?
+. Give some examples of how spyware might modify your computer.
+. Give 4 examples of defenses against malware.
+. Sketch code that implements an overwrite virus on a machine in which permissions are not setup correctly for user accounts.

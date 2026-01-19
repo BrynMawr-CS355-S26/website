@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.18">
+<title>Assignment 01: Hello CS355!</title>
+<link rel="stylesheet" href="../style/cs21.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_assignment_01_hello_cs355">Assignment 01: Hello CS355!</a></li>
+<li><a href="#_try_slack">1. Try slack</a></li>
+<li><a href="#_check_your_github_configuration">2. Check your Github configuration</a></li>
+<li><a href="#_read_the_class_web_pages">3. Read the class web pages</a></li>
+<li><a href="#_hello_c">4. Hello C++</a></li>
+<li><a href="#_optional_set_up_a_remote_development_environment_with_our_server_goldengate">5. (Optional) Set up a remote development environment with our server goldengate</a></li>
+<li><a href="#_optional_set_up_your_own_local_development_environment">6. (Optional) Set up your own local development environment</a>
+<ul class="sectlevel2">
+<li><a href="#_windows">6.1. Windows</a></li>
+<li><a href="#_macos">6.2. MacOS</a></li>
+</ul>
+</li>
+<li><a href="#_grading_rubric">7. Grading Rubric</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_assignment_01_hello_cs355">Assignment 01: Hello CS355!</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Due Sunday, January 26, before midnight</strong></p>
+</div>
+<div class="paragraph">
+<p>The goals for this assignment are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Try slack</p>
+</li>
+<li>
+<p>Check your Github configuration</p>
+</li>
+<li>
+<p>Look at the website</p>
+</li>
+<li>
+<p>Write a C++ program</p>
+</li>
+<li>
+<p>(Optional) Setup your development environment on your own machine</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_try_slack">1. Try slack</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>I will be inviting you all to join the course slack channel. In the
+<code>#social</code> channel, say and introduce yourself:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>What is your preferred name and pronouns?</p>
+</li>
+<li>
+<p>Share with us your favorite emojji. :)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>We will use Slack for</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Course announcements</p>
+</li>
+<li>
+<p>Links to zoom and calend.ly</p>
+</li>
+<li>
+<p>Questions and errata for assignments and labs</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can also use Slack to talk directly to me and the TAs, or even to each other.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_check_your_github_configuration">2. Check your Github configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Please go to github.com to register if you do not yet have a Github account. We
+will use github for assignments.  <strong>Email the instructor (anormoyle at
+brynmawr.edu) with your github username.</strong></p>
+</div>
+<div class="paragraph">
+<p>*You will need to setup an SSH key for Github. <a href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh">Click here for instructions</a>.</p>
+</div>
+<div class="paragraph">
+<p>Your work for this class will be <strong>closed source</strong>. You will have repositories created
+for you within our class organization on Github. See below for details.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The repository configuration is different from CS223 (Systems Programming), so
+read carefully!
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_read_the_class_web_pages">3. Read the class web pages</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Start by reading through <strong>all</strong> of the <a href="../index.html">class webpage</a>!
+Bookmark this page on your browser, or use some other method that helps you
+keep this information handy. All course materials will be
+posted on the course webpage!</p>
+</div>
+<div class="paragraph">
+<p>Pay special attention to the <a href="../index.html#_schedule">Schedule</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_hello_c">4. Hello C++</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Verify that you can use Github, git, and C/C++. You can try this using a lab machine, or your own
+machine if you have setup your development environment there.</p>
+</div>
+<h3 id="_clone_the_repository" class="discrete">Clone the repository</h3>
+<div class="paragraph">
+<p>Navigate to this URL: <a href="https://classroom.github.com/a/OfNvNh5v">https://classroom.github.com/a/OfNvNh5v</a></p>
+</div>
+<div class="paragraph">
+<p>Click on your username. This will create a repository for you. Next, clone it to your local machine.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>git clone git@github.com:BrynMawr-CS355-S25/a01-USERNAME</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will download a local copy of the repository to your computer.</p>
+</div>
+<h3 id="_hello" class="discrete">Hello</h3>
+<div class="paragraph">
+<p>In the directory <code>a01-USERNAME</code>, create a file named <code>hello.cpp</code>. Implement a
+program that prints "Hello World" to the console.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ make hello
+$ ./hello
+Hello World</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check in your file.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ git add hello.cpp
+$ git commit -m "proof of concept"
+$ git push</code></pre>
+</div>
+</div>
+<h3 id="_base16" class="discrete">Base16</h3>
+<div class="paragraph">
+<p>In the directory, <code>a01-USERNAME</code> edit the file <code>base16.cpp</code>.
+Implement a program that inputs a binary file and outputs its contents to a text file as a hexadecimal string.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ <strong>make</strong>
+g++ -g -Wno-unused-variable -Wno-unused-but-set-variable base16.cpp -o base16
+$ <strong>./base16</strong>
+usage: ./base16 < filename >
+$ <strong>./base16 float.bin</strong>
+00002040
+$ <strong>cat float.txt</strong>
+00002040
+$ <strong>hexedit float.bin</strong>
+00000000   00 00 20 40  .. @</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Requirements:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Compiles with <code>make</code>. (Do not modify the Makefile)</p>
+</li>
+<li>
+<p>Accepts a file as a command line argument. If not file is given, output a usage message.</p>
+</li>
+<li>
+<p>Reads in a <em>binary</em> file and outputs a <em>text</em> file. The above implementation also prints the contents to the console, in addition to writing the output to a file.</p>
+</li>
+<li>
+<p>The input file should have the extension <code>.bin</code>. The output file should have the same base name but with extension <code>.txt</code></p>
+</li>
+<li>
+<p>No memory errors using <code>valgrind</code></p>
+</li>
+<li>
+<p>Adheres to the style guidelines and includes a header comment</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+To check for valgrind errors, run your program like so. Look for the
+message "no leaks are possible". Make sure there are no errors reported. We will talk
+more about valgrind in week 2 and 3.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ valgrind ./base16
+==5184== Memcheck, a memory error detector
+==5184== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==5184== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==5184== Command: ./base16
+==5184==
+==5184==
+==5184== HEAP SUMMARY:
+==5184==     in use at exit: 0 bytes in 0 blocks
+==5184==   total heap usage: 2 allocs, 2 frees, 2,048 bytes allocated
+==5184==
+==5184== All heap blocks were freed -- no leaks are possible
+==5184==
+==5184== For lists of detected and suppressed errors, rerun with: -s
+==5184== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)</code></pre>
+</div>
+</div>
+<h3 id="_submit_your_work_to_github" class="discrete">Submit your work to Github</h3>
+<div class="paragraph">
+<p>Add and check in your program using git and then push your changes to Github.
+Run the following command inside your <code>a01-USERNAME</code> directory.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ cd a01-USERNAME
+$ git add *.c
+$ git commit -m "Descriptive message"
+$ git push</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Run <code>git status</code> to check the result of the previous git command.
+Check the Github website to make sure that your program uploaded correctly.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_optional_set_up_a_remote_development_environment_with_our_server_goldengate">5. (Optional) Set up a remote development environment with our server goldengate</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A remote development environment will allow you to run code from goldengate, a remote
+server, from within an integrated development environment.</p>
+</div>
+<div class="paragraph">
+<p>For this option, your need to use VS Code with the Remote-SSH extension to VS Code.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://code.visualstudio.com/">VS Code</a></p>
+</li>
+<li>
+<p><a href="https://code.visualstudio.com/docs/remote/ssh">Remote SSH Tutorial</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_optional_set_up_your_own_local_development_environment">6. (Optional) Set up your own local development environment</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A local development environment allows you to write code on your own desktop or
+laptop. With a local development environment, you will be able to run your code even
+after you graduate from college.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+All programs must run on the lab&#8217;s Linux environment. Make sure you test
+your work on the lab machines if you work on your laptop!
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_windows">6.1. Windows</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Open PowerShell and install wsl2: <code>wsl --install</code>. See <a href="https://docs.microsoft.com/en-us/windows/wsl/install">documentation</a>. Note that you may need to open powershell as an administrator.</p>
+</li>
+<li>
+<p>From the windows store, <a href="https://ubuntu.com/wsl">install <code>Ubuntu</code></a>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Once installed, you can setup your development environment from a bash shell.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Open PowerShell</p>
+</li>
+<li>
+<p>Type <code>wsl</code> to start the windows subsystem for linux. This will give your a bash prompt</p>
+</li>
+<li>
+<p>Then install your development tools</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p><code>sudo apt-get install cmake</code></p>
+</li>
+<li>
+<p><code>sudo apt-get install git</code></p>
+</li>
+<li>
+<p><code>sudo apt-get install g++</code></p>
+</li>
+<li>
+<p><code>sudo apt-get install vim</code></p>
+</li>
+<li>
+<p><code>sudo apt-get install libc6-dev-i386</code></p>
+</li>
+<li>
+<p><code>sudo apt-get install gcc-multilib</code></p>
+</li>
+<li>
+<p><code>sudo apt-get install hexedit</code></p>
+</li>
+<li>
+<p><code>sudo apt-get install valgrind</code></p>
+</li>
+<li>
+<p><code>sudo apt-get install gdb</code></p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>For example, you get something like the following</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+PS C:\Users\alinen&gt; wsl
+WSL alinen@Balthazar:~$ sudo apt-get install make
+
+etc</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+A quick way to open powershell is to type &lt;WindowsKey&gt;-'Q' and type 'powershell'.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_macos">6.2. MacOS</h3>
+<div class="paragraph">
+<p>From terminal, run command <code>xcode-select --install</code></p>
+</div>
+<div class="paragraph">
+<p>You can follow the instructions <a href="https://www.ics.uci.edu/~pattis/common/handouts/macclion/clang.html">here</a></p>
+</div>
+<div class="paragraph">
+<p>Then, to install additional dependencies, execute the following commands form terminal</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ brew install vim
+$ brew install git
+$ brew install cmake</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+A quick way to open terminal is to use spotlight. From the keyboard, type the &lt;cmd&gt; and &lt;spacebar&gt;. Then type terminal at the popup edit field.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Unfortunately, <code>valgrind</code> and <code>gdb</code> cannot be run natively on mac. However, you may try running <code>leaks</code> or <code>lldb</code> which are similar. However, we recommend you still test on goldengate or a lab machine.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_grading_rubric">7. Grading Rubric</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Assignment rubrics</strong></p>
+</div>
+<div class="paragraph">
+<p>Grades are out of 4 points.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Github setup and hello.cpp (1 point)</p>
+</li>
+<li>
+<p>Slack setup and introduction (0.5 points)</p>
+</li>
+<li>
+<p>C program (2.5 points)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Code rubrics</strong></p>
+</div>
+<div class="paragraph">
+<p>For full credit, your C programs must be feature-complete, robust (e.g. run without memory errors or crashing) and
+have good style.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some credit lost for missing features or bugs, depending on severity of error</p>
+</li>
+<li>
+<p>-12.5% for style errors. See the <a href="../codingstandard.html">class coding style</a> here.</p>
+</li>
+<li>
+<p>-50% for memory errors</p>
+</li>
+<li>
+<p>-100% for failure to checkin work to Github</p>
+</li>
+<li>
+<p>-100% for failure to compile on linux using make</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2025-01-26 11:44:42 -0500
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,166 @@
+[cols="1,2,6a", options="header"]
+|===
+| Week 
+| Date 
+| Agenda
+
+//-----------------------------
+| 1
+| January 20, 22 anchor:week01[]
+| *Introduction, C/C++ Review, Bash shell review, Git* 
+
+* Topics: History, Bash, Compiling and Building, C/C++, System calls, OS concepts
+* link:labs/lab01.html[Lab Jan 22: Git!]
+* link:assts/asst01.html[Assignment 01]: Due January 27
+
+* Reading: Tanenbaum 1.1-1.6
+* Optional reading: Dive into systems
+* Recommended study questions (Thurs): Tanenbaum pgs 81-83: 1, 6, 9, 10, 12, 20, 26, 28, 30
+
+//-----------------------------
+| 2 
+| January 27, 29 anchor:week02[]
+| *Processes* 
+
+* Topics: Processes, Fork
+* link:labs/lab02.[Lab Jan 29: Files and processes]
+* link:assts/asst02.[Assignment 02]: Due Feb 3
+
+* Reading: Tanenbaum 2.1
+* Optional reading: Dive into systems
+* Recommended questions (Tues): Tanenbaum pgs 174-180: 1, 5, 6, 7, 8, 39
+
+//-----------------------------
+|3
+|February 3, 5 anchor:week03[]
+|*Job Control* 
+
+* Topics: Signals. Advanced shell concepts, Pipes, Process and terminal properties
+* link:labs/lab03.[Lab Feb 5: File descriptors]
+* link:assts/asst03.[Assignment 03]: Due Feb 10
+
+* Reading: Kerrisk Chpt 34
+
+//-----------------------------
+|4
+|February 10, 12 anchor:week04[]
+|*Threads*
+
+* Topics: Threads, pthreads 
+* link:labs/lab04.[Lab Feb 12: ]
+* link:assts/asst04.[Assignment 04]: Due Feb 17
+
+* Read: Tanenbaum 2.2
+* Optional reading: Dive into systems
+* Recommended study questions (Tues): Tanenbaum pgs 174-180: 9, 13, 14, 15, 16, 17, 18 
+
+//-----------------------------
+|5
+|February 17, 19 anchor:week05[]
+|*Thread synchronization* 
+
+* link:labs/lab05.[Lab Feb 19]
+* link:assts/asst05.[Assignment 05]: Due Feb 24
+
+* Read: Tanenbaum 2.3, 2.5
+* Optional reading: Dive into systems
+* Recommended study questions (Tues): Tanenbaum pgs 174-180: 19, 21, 24, 25, 26, 27, 30
+
+//-----------------------------
+|6
+|February 24, 26 anchor:week06[]
+|*Scheduling and Deadlock* 
+
+* Lab Feb 26: Userthread library demos
+* link:assts/asst06.[Assignment 06]: Due March 3
+
+* Read: Tanenbaum 2.4, 6
+* Recommended study questions (Tues): Tanenbaum pgs 174-180: 40, 42, 43, 44, 45, 47, 48, 49, 50, 51 
+* Recommended study questions (Thurs): Tanenbaum pgs 465-470: 2, 3, 10, 14, 15, 16, 21, 22, 24, 26, 27, 34 
+
+//-----------------------------
+|7
+|March 3, 5 anchor:week07[]
+|*Midterm I* 
+
+* link:studyguide1.html[Study Guide 01]
+* Review and **Exam 01** In Class, March 5 (80 minutes, closed book. One written cheat sheet)
+
+//-----------------------------
+|8
+|March 10, 12 anchor:week08[]
+|*Spring Break*
+
+* *NO LECTURES, LABS, HOMEWORKS*
+
+//-----------------------------
+|9
+|March 17, 19 anchor:week09[]
+|*Malloc/Free, Memory Management*
+
+* link:labs/lab06.[Lab March 19: Simple memory allocators]
+* link:assts/asst06.[Assignment 06]: Due March 24
+
+* Read: Kernihan TBD
+* Read: Tanenbaum 3.1-3.3
+* Recommended study questions (Tues): Tanenbaum pgs 254-262, 4, 5, 6, 7
+
+//-----------------------------
+|10
+|March 24, 26 anchor:week10[]
+|*Virtual Memory and Paging* 
+
+* Read: Tanenbaum 3.4-3.6
+* Lab March 27: Memory management demos
+* Recommended study questions (Tues): Tanenbaum pgs 254-262, 15, 20, 28, 30, 33, 36, 47
+
+//-----------------------------
+|11
+|March 31, April 2 anchor:week10[]
+|*File Systems I* 
+
+* Read: Tanenbaum Chapter 4.1-4.3, 4.5
+* link:labs/lab07.[Lab April 2]
+* link:assts/asst07.[Assignment 07]: Defragmentor, Due Sunday, April 6
+* Recommended study questions (Tues): Tanenbaum pgs 332-336, 6, 10, 18, 19, 21, 24, 26
+
+//-----------------------------
+|12
+|April 7, 9 anchor:week11[]
+|*File Systems II* 
+
+* Read: Tanenbaum Chapter 4.4 
+* link:labs/lab08.[Lab April 10]
+* link:assts/asst08.[Project]: File System, Due Sunday, April 27
+* Recommended study questions (Tues): Tanenbaum pgs 332-336, 28, 30, 33, 40, 41
+
+//-----------------------------
+|13
+|April 14, 16 anchor:week12[]
+|*I/O, Virtualization* 
+
+* Read: Tanenbaum Chapter 5.1-5.3, 7.1-7.11
+* Lab April 17: File System checkins: format, writing files
+* Recommended study questions: Tanenbaum pgs 332-336, 
+
+//-----------------------------
+|14
+|April 21, 23 anchor:week13[]
+|*Security and Protection* 
+
+* Read: Tanenbaum Chapter 9
+* Lab April 24: File System checkins: simple shell integration
+* Recommended study questions: Tanenbaum pgs 332-336, 
+
+//-----------------------------
+|15
+|April 28, 30 anchor:week14[]
+|*Review and Midterm* 
+
+* Review
+* April 30, *Exam 02*, link:studyguide2.html[Study Guide 02]
+* *No lab April 30*
+
+|===
+
+

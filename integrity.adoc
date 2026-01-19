@@ -1,0 +1,59 @@
+== Academic Integrity
+
+At Bryn Mawr, we assume students are trustworthy and work with honesty and
+integrity.
+link:https://www.brynmawr.edu/deans/academic-and-community-integrity[Look here
+for information about Bryn Mawr's Honor Code.]. Obviously, quizzes and exams must 
+be your own work. However, you will be allowed to work with others on assignments; 
+although *everyone must submit their own work.* 
+
+Collaboration is not allowed on exams or quizzes.
+
+Programming is a creative skill that takes practice and effort to develop.  It's
+_essential_ that you develop your own skills for developing algorithms and
+implementing them through programs. 
+
+You are encouraged to discuss the lecture material, projects and problems with other
+students, subject to the following restriction: the only "product" of your discussion
+should be your memory/understanding of it - you may not write up solutions together,
+or exchange written work or computer files. Group projects are the only exceptions
+to this - in this case, these collaboration rules apply to students outside of your group.
+
+Code should not be copied without permission from the author. If permission is given,
+code should be cited at the location it is used with a comment. If your solution is inspired
+by any outside resources, you MUST cite them.
+
+You understand the code you wrote if you can do the following:
+
+* Explain how your code works to someone else, without looking at your code
+* Explain the system calls necessary to complete your assignment without looking them up online
+* Write a similar program within a few minutes, without looking up help online
+
+Here is advice of what has helped me the most to improve as an engineer and programmer: 
+
+* Most beneficial: Writing my own programs from scratch, followed by stepping line by line using a debugger to make sure it worked as intended
+* When stuck, debugging the program with the help of a more experienced developer
+* Comparing my solutions with others _after I finished my own solution_
+
+I do not recommend relying on stack overflow, copying old solutions, and using Chat-GPT. 
+*The absolute worst way to program is by cutting and pasting code you don't understand, guessing your 
+way to something that kind of works.* 
+
+I am not going to police how you study and develop skills. But I will be assessing you on the results 
+of your effort. If you're not doing well, you need to figure out how to work differently. 
+
+Guidelines: 
+
+* DO discuss ideas and approaches with your classmates.
+* DO discuss ideas and approaches with your TAs and instructor.
+* DO search for documentation and sample programs for built-in C functions and C syntax.
+* DO use code from our text books and class (with attribution).
+
+* DON'T use Chat-GPT (or other LLMs) to generate solutions.
+* DON'T copy full solutions, from online tutorials, previous students, etc
+* DON'T use functions and C syntax that is disallowed by the Makefile. We are deliberately using simple and portable C.
+* DON'T modify any basecode that comes with your assignment. 
+* DON'T ever share your code with other students.
+
+It's ultimately up to you to learn and develop skills. No one can do it for you. You must do the work. 
+

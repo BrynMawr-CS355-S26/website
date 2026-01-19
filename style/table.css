@@ -1,0 +1,42 @@
+.colorTable table{
+  border-collapse: collapse;
+  border: 1px solid;
+  padding: 0.3em;
+}
+
+.colorTable TD {border: 1px solid; padding: 0.3em;}
+
+.colorTable TR.odd {background: #FFFFFF;}
+.colorTable TR.even {background: #D8DFE7;}
+.colorTable TR.evenodd {background: #F8CFE7;}
+
+.colorTable TD.break {
+  background: #407140;
+}
+
+.colorTable p.break, p.exam{
+  font-weight: bold;
+  text-align: center;
+  color: white;
+}
+
+.colorTable p{
+  margin:0;
+  border:0;
+  padding:0;
+}
+
+.colorTable span.quiz{
+  color: #004400;
+  font-weight: bold;
+  padding: 0;
+  border: 0;
+  margin:0;
+}
+
+.colorTable TD.exam {
+   background: #DD3346;
+   font-weight: bold;
+   text-align: center;
+   border: 1px solid;
+}

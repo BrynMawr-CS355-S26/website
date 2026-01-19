@@ -1,0 +1,7 @@
+@import "cs21.css";
+@import "table.css";
+
+div.anns {
+ background: #fe88a0;
+ padding: 2%;
+}

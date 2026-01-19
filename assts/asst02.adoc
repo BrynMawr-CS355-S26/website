@@ -1,0 +1,278 @@
+include::header.adoc[]
+
+:title: Assignment 02: Trust the Process (Part 1)
+:Author Initials: ASN
+:Date:    2020-08-15
+:Revision: 0.1
+:ASST: shell-USERNAME
+
+= {title}
+
+**Due Sunday, Feb 2, before midnight**
+
+The goals for this assignment are:
+
+* Working with stdout, stdin, and files
+* Understanding redirection and pipes at the command line
+* Working with system calls: read, write, open, fork, exec, wait
+* C practice/review
+
+NOTE: Get the starter code link:https://classroom.github.com/a/z8JKZurc[here]
+
+:sectnums:
+
+= Microcat
+
+_By Dianna Xu_
+
+In the file, `microcat.c`, implement a C program that concatenates and prints files 
+to standard output. If no arguments are given, it takes input from stdin. 
+
+[source, subs="quotes"]
+----
+$ **./microcat lyrics.txt**
+What a beautiful face
+I have found in this place
+That is circling all round the sun
+What a beautiful dream
+That could flash on the screen
+In a blink of an eye and be gone from me
+Soft and sweet
+Let me hold it close and keep it here with me
+$ **cat lyrics.txt | ./microcat**
+What a beautiful face
+I have found in this place
+That is circling all round the sun
+What a beautiful dream
+That could flash on the screen
+In a blink of an eye and be gone from me
+Soft and sweet
+Let me hold it close and keep it here with me
+$ **./microcat < lyrics.txt**
+What a beautiful face
+I have found in this place
+That is circling all round the sun
+What a beautiful dream
+That could flash on the screen
+In a blink of an eye and be gone from me
+Soft and sweet
+Let me hold it close and keep it here with me
+$ **./microcat**
+**hello**
+hello
+**nice hat**
+nice hat
+$ **./microcat B.txt A.txt C.txt D.txt**
+World
+Hello
+!!!
+All life is precious
+----
+
+Requirements/Hints:
+
+* This is basically the Unix `cat` command with no flags. 
+* When working with the standard input and standard output streams, either use the defined file descriptors (e.g. `STDOUT_FILENO`, `STDIN_FILENO`), or defined file pointers (e.g. `stdin`, `stdout`), with either `read` or `fread`.
+* Your program should use the system calls, link:https://www.man7.org/linux/man-pages/man2/read.2.html[read], link:https://www.man7.org/linux/man-pages/man2/write.2.html[write], and link:https://www.man7.org/linux/man-pages/man2/open.2.html[open]. 
+* Ctrl-d will quit your application when reading from stdin
+
+= Parser
+
+NOTE: This question is from link:https://www.cs.swarthmore.edu/~kwebb/cs45/s24/labs/lab1.html[this lab].
+
+In the file, `parser.c`, implement a function that parses command line input. 
+This function should fill in a `struct Cmd` that holds the information needed to execute. Your struct should look as follows. 
+
+[source]
+----
+struct Cmd {
+  char **cmd1_argv;
+  char **cmd2_argv;
+  char *cmd1_fds[3];
+  char *cmd2_fds[3];
+}
+----
+
+Sample output from your program should look as follows:
+
+Plain command: `ls -l`
+
+[source]
+----
+cmd1_args: ["ls", "-l", NULL]  /* three-element dynamically-allocated array */
+cmd2_args: NULL  /* There is no second command here. */
+
+cmd1_fds[0]: NULL  /* With no I/O redirects, all descriptors are NULL */
+cmd1_fds[1]: NULL
+cmd1_fds[2]: NULL
+
+cmd2_fds[0]: NULL
+cmd2_fds[1]: NULL
+cmd2_fds[2]: NULL
+----
+
+Pipe only command: `ls | sort`
+
+[source]
+----
+cmd1_args: ["ls", NULL]  /* two-element dynamically-allocated array containing */
+cmd2_args: ["sort", NULL]  /* two-element dynamically-allocated array containing */
+
+cmd1_fds[0]: NULL  /* With no I/O redirects, all descriptors are NULL */
+cmd1_fds[1]: NULL
+cmd1_fds[2]: NULL
+
+cmd2_fds[0]: NULL
+cmd2_fds[1]: NULL
+cmd2_fds[2]: NULL
+----
+
+Redirects only: `ls -l 1> out.txt 2> error.txt`
+
+[source]
+----
+cmd1_args: ["ls", "-l", NULL]  /* three-element dynamically-allocated array */
+
+cmd2_args: NULL  /* There is no second command here. */
+
+cmd1_fds[0]: NULL
+cmd1_fds[1]: "out.txt"
+cmd1_fds[2]: "error.txt"
+
+cmd2_fds[0]: NULL  /* There is no second command here. */
+cmd2_fds[1]: NULL
+cmd2_fds[2]: NULL
+----
+
+Combined: `grep -i blah < input.txt | sort 1> output.txt`
+
+[source]
+----
+cmd1_args: ["grep", "-i", "blah", NULL]  /* four-element dynamically-allocated array */
+cmd2_args: ["sort", NULL]  /* two-element dynamically-allocated array containing */
+
+cmd1_fds[0]: "input.txt"
+cmd1_fds[1]: NULL
+cmd1_fds[2]: NULL
+
+cmd2_fds[0]: NULL
+cmd2_fds[1]: "output.txt"
+cmd2_fds[2]: NULL
+----
+
+Requirements/Hints:
+
+* Use only C commands, such as malloc/free, for this program
+* The comments above are to help you understand what memory you should allocate. Don't print the information in the comments. 
+* Make sure you have no memory errors!
+* You can extend the above struct if you like, but don't change the given data types!
+* You can assume that you will have at most one pipe
+* Note that the 2> error.txt, |, and & portions of the command are instructions to the shell and are NOT command ARGV tokens.
+* To simplify parsing, you may assume that nothing other than white space (spaces, newlines, etc.) will appear after an ampersand (&), there will be at most one ampersand, and that ampersands will not appear for any reason other than to specify background tasks.
+
+= Simple Shell
+
+In the file, `shell.c`, write a program that implements a simple shell. 
+
+image::RainbowShell.png[width=640px]
+
+Requirements:
+
+* Your program should print a prompt. At minimum, your prompt should show the current working directory and look distinct from the lab machine prompts. In other words, it should be easy to tell what shell if running from the terminal.
+* Use the `readline()` function to get user input. This function supports backspace, tab completion, and more. link:https://www.man7.org/linux/man-pages/man3/readline.3.html[Documentation for readline can be found here].
+* Use the `add_history()` function to save user history. This will allow arrow keys to work. link:https://www.man7.org/linux/man-pages/man3/readline.3.html[Documentation for readline can be found here].
+* Your program should quit if the users types `exit`.
+* When the user gives a command, split it into a command and arguments using link:https://www.man7.org/linux/man-pages/man3/exec.3.html[execvp]and then fork a command to execute it. 
+* Compiles with `make`. (Do not modify the Makefile)
+* No memory errors using `valgrind`
+* Adheres to the style guidelines and includes a header comment
+* Your terminal should wait for the command to finish. If the command terminates with an error, report the error.
+
+NOTE: `readline` is a package that is installed on goldengate and in our labs. However, you may need to install it on your own machine. On Unix systems, this can be done by running `sudo apt install libreadline-dev`  
+
+NOTE: You can print with colors to the console using ANSI escape sequences (see below). 
+For example, `printf(ANSI_COLOR_GREEN "Green Text" ANSI_COLOR_RESET);` will print green text. link:https://azrael.digipen.edu/~mmead/www/mg/ansicolors/index.html[Here is a good guide!]
+
+[code]
+----
+// Helpful macros for working with color
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+#define ANSI_COLOR_YELLOW  "\x1b[33m"
+#define ANSI_COLOR_BLUE    "\x1b[34m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_CYAN    "\x1b[36m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
+----
+
+NOTE: Most prompts print helpful information. Above, we use the 
+system commands `gethostname`, `getcwd`, and `getpwuid(geteuid())` to get the 
+machine name, the current working directory, and current user respectively. 
+
+
+NOTE: To check for valgrind errors, run valgrind with your executable as an argument
+
+[discrete]
+== Submit your work to Github
+
+Add and check in your program using git and then push your changes to Github. 
+Run the following command inside your `{ASST}` directory.
+
+[source, subs="attributes"]
+----
+$ cd {ASST}
+$ git add .
+$ git commit -m "Descriptive message"
+$ git push
+----
+
+Run `git status` to check the result of the previous git command.
+Check the Github website to make sure that your program uploaded correctly. 
+
+= Grading Rubric
+
+*Assignment rubrics*
+
+Grades are out of 4 points.
+
+* (1 points) Microcat
+* (1.5 points) Parser
+** (0.1 points) style and header comment
+** (0.65) Correct behavior: parses line and fills in struct Cmd
+** (0.75) no memory errors
+* (1.5 points) Simple shell 
+** (0.1 points) style and header comment
+** (0.25 points) Displays unique prompt with current working directory
+** (0.1 points) Uses `readline()` and `add_history()`
+** (0.1 points) Quits when the user types `exit`.
+** (0.1 points) Forks a process to run the user's command. 
+** (0.1 points) Reports the return status of the command when the child process completes.
+** (0.75 points) no memory errors. 
+
+NOTE: When using `readline()`, valgrind will report that some of your memory is
+_still reachable_. This memory is not leaked. It hasn't been cleaned up yet from 
+`readline()`'s internal memory. For example, output such as the following is ok
+[code]
+----
+==3504== HEAP SUMMARY:
+==3504==     in use at exit: 204,143 bytes in 221 blocks
+==3504==   total heap usage: 453 allocs, 232 frees, 244,790 bytes allocated
+==3504==
+==3504== LEAK SUMMARY:
+==3504==    definitely lost: 0 bytes in 0 blocks
+==3504==    indirectly lost: 0 bytes in 0 blocks
+==3504==      possibly lost: 0 bytes in 0 blocks
+==3504==    still reachable: 204,143 bytes in 221 blocks
+==3504==         suppressed: 0 bytes in 0 blocks
+---- 
+
+*Code rubrics*
+
+For full credit, your C programs must be feature-complete, robust (e.g. run without memory errors or crashing) and 
+have good style.
+
+* Some credit lost for missing features or bugs, depending on severity of error
+* -12.5% for style errors. See the link:../codingstandard.html[class coding style] here.
+* -50% for memory errors
+* -100% for failure to checkin work to Github
+* -100% for failure to compile on linux using make

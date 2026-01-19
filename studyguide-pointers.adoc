@@ -1,0 +1,99 @@
+. For each of the following variables, say whether its a pointer or not
+* `char buffer[128];`
+* `char* a = NULL;`
+* `const char* message = "hello";`
+* `char a;`
+* `struct mystery* m = malloc(sizeof(struct mystery));`
+* `struct mystery** m = malloc(sizeof(struct mystery*)*10);`
+* `argv[0]` where argv is a list of command line arguments passed to main
+. In the following code, indicate which casts from void* are safe.
+[source]
+----
+#include <stdio.h>
+
+int main()
+{
+  void* generic = NULL;
+  int a = 3;
+  double b = 4.5;
+  generic = &a;
+  generic = &b;
+
+  printf("test %f\n", *generic);
+  double* double_ptr = (double *) generic;
+  printf("test %f\n", *double_ptr);
+
+  int* int_ptr = (int *) generic;
+  printf("test %d\n", *int_ptr);
+
+  generic = &a;
+
+  double* double_ptr = (double *) generic;
+  printf("test %f\n", *double_ptr);
+
+  int* int_ptr = (int *) generic;
+  printf("test %d\n", *int_ptr);
+
+  return 0;
+}
+----
+. Draw the stack for the following code.
+[source]
+----
+int main()
+{
+  char vals[3] = {'h','I','\0'};
+  char* valptr = vals;
+  char v1 = vals[2]; 
+  char* v1ptr = valptr + 2;
+  char v2 = *v1ptr; 
+  printf("%c %c\n", v1, v2);
+  // Draw stack here
+  for (int i = 0; i < 3; i++) {
+    printf("%c\n", vals[i]);
+  }
+  for (char* ptr = vals; ptr < vals+3; ptr++) {
+    printf("%p %c\n", ptr, *ptr);
+  }
+}
+----
+. Draw the stack diagram for the following code
+[source]
+----
+struct chunk {
+  int size;
+  struct chunk *next;
+};
+int main() {
+  int size = sizeof(int) * 5;
+  void *memory = malloc(size + sizeof(struct chunk));
+  if (memory == NULL) {
+    return 1;
+  } 
+  struct chunk *cnk = (struct chunk*) memory;
+  cnk->size = size;
+  void* data = (void*) (cnk + 1);
+  int* array = (int*) data;
+  for (int i = 0; i < 5; i++) {
+    array[i] = i;
+  }
+----
+. Suppose the address of x is 0x4c568000. For each of the following expressions, give the new address of x;
+* `int* x = &a; x++;`
+* `char* x = &c; x--
+*
+[source]
+----
+struct m {
+    int q;
+    char buff[4];
+};
+struct m* x = &data; 
+x+=2; 
+----
+. Write code that reads in a binary file with the following specification:
+* The first 4 bytes is an integer that contains the size of the file
+* The second 16 bytes is a character field containing the Author
+* The next three values are unsigned integers that contain a month, day, and year
+* The remaining N bytes store textural data, terminated with the null character.
+

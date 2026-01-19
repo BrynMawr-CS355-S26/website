@@ -1,0 +1,149 @@
+. What is a process? 
+. What is the difference between a process and a C program?
+. What are the different states that a process might be in?
+. Why might a processed be in a blocked state?
+. Why do we need special mechanisms, such as pipes or sockets, to communicate between processes?
+. How can you kill a process using `ps` ?
+. What is a zombie process?
+. What is an orphan process?
+. What is a signal? what is a signal handler?
+. Some signals cannot be ignored. Name a signal that cannot be ignored and explain why a program cannot ignore it. 
+. Why might we want to register a signal handler?
+. When a signal arrives to a process, list three ways the process can respond to the signal.
+. What happens when multiple signals arrive to a process before a process is able to process them?
+. When does the OS send the SIGSEGV signal?
+. When does the OS send the SIGINT signal?
+. When does the OS send the SIGCHD signal?
+. What signal is sent when the user types Ctrl-Z at the terminal? 
+. What happens when a process calls fork?
+. What happens when a signal arrives for a process?
+. What type of event does SIGINT represent? Sketch a program that registers a signal handler for SIGINT?
+. What does the `execv` family of commands do? How do `fork` and `execv` compare?
+. What different regions are present within the memory layout of a process?
+. What is the process control block?
+. What is the program counter?
+. When are processes created? destroyed? blocked?
+. How many processes are created for the command `ls *.c | grep apple`?
+
+. The following program creates a zombie process. Why?
++
+[source]
+----
+void main() {
+  if (fork() == 0) { /*child */
+    printf("Child, PID = %d\n", getpid());
+    exit(0);
+  } else { /*parent */
+    printf("Parent, PID = %d\n", getpid());
+    while(1) {
+    }
+  }
+}
+----
+
+. Draw the process timeline created by executing the following program. For each created process, list its output (e.g. what does each process print)?
++
+[source]
+----
+int main() {
+  pid_t ret;
+
+  printf("A\n");
+
+  ret = fork();
+  if(ret == 0) {
+    printf("B\n");
+
+    ret = fork();
+    if(ret == 0) {
+      printf("C\n");
+    }
+    printf("D\n");
+  } else {
+    printf("E\n");
+
+    ret = fork();
+    printf("F\n");
+  }
+
+  printf("G\n");
+  return 0;
+}
+----
+
+. Draw the process timeline created by executing the following program. For each created process, list its output (e.g. what does each process print)? How many processes are created?
++
+[source]
+----
+int main() {
+  pid_t ret;
+
+  printf("A\n");
+
+  for (int i = 0; i < 3; i++)
+  {
+     ret = fork();
+     if (ret == 0) // child
+     {
+        printf("B%d\n", i); 
+     }
+  }
+
+  printf("Z\n");
+  return 0;
+}
+----
+
+. Draw the process timeline created by executing the following program. For each created process, list its output (e.g. what does each process print)? How many processes are created?
++
+[source]
+----
+int main() {
+  pid_t ret;
+
+  printf("A\n");
+
+  for (int i = 0; i < 3; i++)
+  {
+     ret = fork();
+     if (ret == 0) // child
+     {
+        printf("B%d\n", i); 
+        exit(0);
+     }
+  }
+
+  printf("Z\n");
+  return 0;
+}
+----
+
+. Draw the process timeline created by executing the following program. For each created process, list its output (e.g. what does each process print)? How many processes are created?
++
+[source]
+----
+int main() {
+  pid_t ret;
+
+  int value = 10;
+  printf("A%d\n", value);
+
+  ret = fork();
+  if (ret == 0) // child
+  {
+     value--;
+  }
+  else
+  {
+     value++;
+  }
+
+  printf("Z%d\n", value);
+  return 0;
+}
+----
+
+. Implement a program whose behavior matches the given timeline.
++
+image::processes.png[width=400px]
+

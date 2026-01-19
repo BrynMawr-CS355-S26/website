@@ -1,0 +1,44 @@
+. How does a CPU-bound process differ from an IO-bound process?
+. What does it mean for a scheduling algorithm to be preemptive? non-preemptive?
+. What are the advantages and disadvantages of the FCFS scheduling algorithm. Give a class of applications where FCFS is the best scheduling policy.
+. What are the advantages and disadvantages of the SJF scheduling algorithm. Give a class of applications where FCFS is the best scheduling policy.
+. What are the advantages and disadvantages of the RR scheduling algorithm. Give a class of applications where FCFS is the best scheduling policy.
+. How do the needs of real-time systems differ from other application domains?
+. What is priority inversion? How can we avoid it?
+
+. Suppose we have a batch system with the following jobs, scheduled with FCFS. Job 1: 15 units, Job 2: 8 units, Job 1: 1 units.
++
+* Show the timeline of jobs based on this scheduling strategy.
+* What is the average waiting time?
+* What is the average turnaround time?
+
+. Suppose we have a batch system with the following jobs, scheduled with SJF. Job 1: 15 units, Job 2: 8 units, Job 1: 1 units.
++
+* Show the timeline of jobs based on this scheduling strategy.
+* What is the average waiting time?
+* What is the average turnaround time?
+
+. Suppose we have a batch system with the following jobs, scheduled with RR and a quantum of 5. Job 1: 15 units, Job 2: 8 units, Job 1: 1 units.
++
+* Show the timeline of jobs based on this scheduling strategy.
+* What is the average waiting time?
+* What is the average turnaround time?
+
+. Suppose we have a batch system with the following jobs, scheduled with HPF and a quantum of 5. Assume all jobs start with the same priority. Job 1: 15 units, Job 2: 8 units, Job 1: 1 units.
++
+* Show the timeline of jobs based on this scheduling strategy.
+* What is the average waiting time?
+* What is the average turnaround time?
+
+. Suppose we have a batch system with the following jobs, scheduled with HPF and a quantum of 5. Assume Job 2 has higher priority than Jobs 1 and 2. Job 1: 15 units, Job 2: 8 units, Job 1: 1 units.
++
+* Show the timeline of jobs based on this scheduling strategy.
+* What is the average waiting time?
+* What is the average turnaround time?
+
+. Suppose we are scheduling three tasks for a real-time system using EDF. What is the utilization of these tasks? Show the scheduling order.
+
+* Task T1 with period 10 and CPU time 3
+* Task T2 with period 10 and CPU time 1
+* Task T3 with period 15 and CPU time 8
+

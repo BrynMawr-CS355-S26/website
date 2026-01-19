@@ -1,0 +1,129 @@
+. Describe the levels of the memory hierarchy. 
+. Name 3 types of secondary storage.
+. Name 3 types of primary storage.
+. How do primary storage and secondary storage differ in terms of their characteristics?
+. Give two disadvantages of a simple process memory model in which the entire process is loaded contiguously in memory?
+. What is virtual memory? 
+. List two advantages of decoupling the process address space from the machine's physical memory.
+. Suppose we are using a 10K blocksize. Give the bitmap that represents the free blocks in memory. 
++
+image::memory.png[width=100px]
+
+. Suppose we are using a 10K blocksize. Give the linked list that represents the free blocks in memory.  Assume each node in the linked list contains the process ID, or H if it a hole, a start location, a size, and a pointer to the next record.
++
+image::memory.png[width=100px]
+
+. Fill in the following figure with the bitmap and linked list that corresponds to the given memory block.
++
+image::memory-free.png[width=600px]
+
+. Suppose we have processes in memory as follows. Suppose a new process requests 15K, which hole should we use if we were using a strategy of best fit, worst fit, and first fit?
++
+image::memory.png[width=600px]
+
+. Suppose we are using bitmaps to manage free space for a 1 GB disk. How big must the bitmap be if we use 4 KB blocks? What about if we use 16 KB blocks? What is the disadvantage of using larger blocks?
+. Suppose we are using linked lists to manage free space for a 1 GB disk. How much additional space do we need if we use 4 KB blocks? What about if we use 16 KB blocks? 
+. What is the memory mapping unit (MMU)?
+. What is a page? What is a page frame?
+. What is paging? What is a page fault?
+. Suppose we have the following specifications: 16-bit addresses, 32 KB of physical memory, and 4KB page sizes. 
++
+* What is the possible range of virtual addresses?
+* How many pages do we have?
+* How many page frames do we have?
+
+. Compute physical addresses for the virtual addresses using the commands below.
++
+image::paging.png[width=600px]
+. Suppose we have 4 KB pages 16-bit addresses. Also suppose our page table looks as follows. Convert the address 0x2004. 
++
+image::paging-2.png[width=200px]
+. What is the translation lookaside buffer? What is its purpose?
+. Suppose we have 32-bit addresses, 4 KB page sizes, and the a two-level page table. The first 10 bits are an index into the first page table. The next 10 bits are an index into the second page table. Compute the indices into the page tables and offset for the following addresses:
++
+* 0x00403004
+* 0x00c0500a
+. What is the advantage of multi-level page tables? What about inverted page tables?
+. What would the optimal page replacement algorithm be in a perfect world?
+. In the NRU algorithm, list the 4 categories of pages.  
+. Suppose we execute the following sequence of instructions. 
++
+[source]
+----
+mov 0x0, reg
+mov $0x19, 0x2000
+clock interrupt 
+mov reg, 0x90a3
+mov 0x5014, reg
+----
+* Suppose we have 16 pages of virtual memory and 8 pages of physical memory (4 KB page sizes). Which frames will each instruction reference?
+* How will the R and M flags change if all are set the 0 to start?
+* What NRU class is each page in after executing these instructions.
+* What page would be removed by the NRU algorithm?
+* What page would be removed by the FIFO algorithm?
+* What page would be removed by the Second chance algorithm?
+* What page would be removed by the clock algorithm?
+* Suppose we are using LRU. What would the aged values be for each page?
+. What is the primary limitation of the NFU algorithm?
+. What is the primary limitation of the FIFO algorithm?
+. What is the primary limitation of the NRU algorithm?
+. What is demand paging and why is it efficient?
+. What is thrashing? 
+. What is the working set?
+. What does the function w(k,t) represent? Why is w(k,t) monotonically nondecreasing?
+. Suppose we are using the working set page replacement algorithm. tau = 800 and the current virtual time is 2204.
++
+[cols="1,2,1,1"]
+|===
+|Page
+|Time of Last use
+|R Bit
+|M Bit
+
+|7
+|2084
+|1
+|1
+
+|6
+|2003
+|1
+|1
+
+|5
+|1980
+|1
+|0
+
+|4
+|1213
+|0
+|0
+
+|3
+|2014
+|1
+|1
+
+|2
+|2020
+|1
+|1
+
+|1
+|2032
+|1
+|1
+
+|0
+|1620
+|0
+|1
+|===
++
+* Which pages are in the current working set?
+* Which pages would be removed from the page table?
+* Which pages would have its time of last use updated?
+* Suppose we are using the WSClock algorithm and the starting page is page 3. What page will be replaced?
+* Suppose we are using the WSClock algorithm and the starting page is page 3. How will the table change on a clock interrupt?
+* Suppose we are using the WSClock algorithm and the starting page is page 3. How will the table change on a clock interrupt?

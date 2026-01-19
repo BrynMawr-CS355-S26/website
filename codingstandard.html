@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.18">
+<title>Code Formatting Standards and Guidelines</title>
+<link rel="stylesheet" href="style/front.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<h1>CS223: Code Formatting Standards and Guidelines&#8201;&#8212;&#8201;Fall 2024</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_design_guide">Design Guide</a>
+<ul class="sectlevel2">
+<li><a href="#_intentional_coding">Intentional Coding</a></li>
+<li><a href="#_scoping_and_encapsulation">Scoping and encapsulation</a></li>
+<li><a href="#_memory_management_design">Memory management design</a></li>
+<li><a href="#_data_structure_design">Data Structure Design</a></li>
+</ul>
+</li>
+<li><a href="#_naming_conventions">Naming Conventions</a></li>
+<li><a href="#_whitespace">Whitespace</a></li>
+<li><a href="#_line_length">Line Length</a></li>
+<li><a href="#_comments">Comments</a>
+<ul class="sectlevel2">
+<li><a href="#_file_header_comments">File header comments</a></li>
+<li><a href="#_variable_comments">Variable comments</a></li>
+</ul>
+</li>
+<li><a href="#_in_line_comments">In-Line Comments</a></li>
+<li><a href="#_indentation">Indentation</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="http://www.cs.haverford.edu/courses/cmsc106/style.pdf">This guide is based on the style guide for Data Structures (CS206)
+written by Dianna Xu</a>.</p>
+</div>
+<div class="paragraph">
+<p>Submitted code should adhere to the coding standard.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_design_guide">Design Guide</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A good design is easy to implement in stages, easy to debug, and easy to change.</p>
+</div>
+<div class="sect2">
+<h3 id="_intentional_coding">Intentional Coding</h3>
+<div class="paragraph">
+<p>Submitted code should be clean and concise.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Every line of code should have a deliberate effect on your program. Pointless lines of code are called <em>kruft</em>. There should be no kruft in your program. Remove all commented code, unused variables, and lines with no purpose from your programs.</p>
+</li>
+<li>
+<p>Do not copy and paste code and then change small details. Instead, declare a method or function and parameterize it.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Keep your programs DRY, e.g. Don&#8217;t Repeat yourself!</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Avoid magic numbers: constant numerical values that are scattered throughout your program and difficult to understand.</p>
+</li>
+<li>
+<p>Do not guess when your programming!</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Make sure you understand every line of code in your program.</p>
+</li>
+<li>
+<p>Do not cut and paste code from the internet, hoping some random combination will work. (This is the SLOWEST and most inefficient way to program!).</p>
+</li>
+<li>
+<p>Do not randomly make changes to your program, hoping it will work. Instead, systematically make hypotheses about what might be wrong and test it.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>A bug is not truly fixed until</p>
+<div class="ulist">
+<ul>
+<li>
+<p>You understand why it happened</p>
+</li>
+<li>
+<p>You understand why changing the code fixed it</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_scoping_and_encapsulation">Scoping and encapsulation</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Declare variables in the smallest scope possible. Prefer local variable to instance variables. Avoid global variables.</p>
+</li>
+<li>
+<p>Never use public instance variables. Use private or protected access and then define a getter method.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+In traditional C, it is customary to declare all variables at
+this beginning of a function. You may follow this
+convention, but I will use the more modern convention of
+declaring variables close to where they are first used.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_memory_management_design">Memory management design</h3>
+<div class="paragraph">
+<p>Typically, there will be many good ways to organize your program. A good
+design will have the following properties.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Whenever you allocate memory (malloc), write the correspondong code to free that memory right away. Almost always the code to free the memory should be in the same scope as the allocation. For example, if you allocate memory in main, free it in main.</p>
+</li>
+<li>
+<p>If a pointer variable might be re-used, ALWAYS set it to NULL after you free it. If you&#8217;re not sure, reset freed pointers to NULL.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_data_structure_design">Data Structure Design</h3>
+<div class="paragraph">
+<p>Typically, there will be many good ways to store data. A good design will have these
+properties:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Do not store the same thing more than once, or in more than one place.</p>
+</li>
+<li>
+<p>Choose the smallest storage.</p>
+</li>
+<li>
+<p>Choose storage based on how data will typically be accessed. For example, if data will mostly be accessed sequentially, store it in an array or vectors.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_naming_conventions">Naming Conventions</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Use meaningful names! For example, if your program needs to a variable to represent a color, call it <code>color</code> instead of c.</p>
+</li>
+<li>
+<p>Use single letter variables for simple loop indices and occasionally generic integers.</p>
+</li>
+<li>
+<p>The use of very obvious, common, meaningful abbreviations is permitted. For example,
+"number" can be abbreviated as "num" as in numStudents.</p>
+</li>
+<li>
+<p>Use <em>camel case</em> for variables, instance variables, and method names. Camel case starts with a lower-case letter and putting the first letter of subsequent words in uppercase. For example, <code>numStudents</code>.</p>
+</li>
+<li>
+<p>Constants (static as well as #define) are written in ALL_CAPS.</p>
+</li>
+<li>
+<p>Structs will typically be defined with camelCase. We will use the <code>struct</code> keyword whenever referring to a struct type, e.g. <code>struct node* first;</code>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_whitespace">Whitespace</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The most-readable programs are written with prudent use of whitespace (including both blank lines
+and spaces).</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Use blank lines to separate major parts of a source file or method. These are like paragraph breaks in English writing.</p>
+</li>
+<li>
+<p>After every {, indent by least 2 spaces until the matching }. A good editor like emacs will help you with indentation - remember to keep pressing those tabs!</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Do not use tabs</strong>. Instead, configure your editor to substitute spaces for tabs</p>
+</li>
+<li>
+<p>You can configure the number of spaces in your editor.</p>
+</li>
+<li>
+<p>Your editor should have a feature to automatically format your document. For example, in Vim, you do <code>gg=G</code> to fix the indentation within an entire file.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Separate an operator from its operands by spaces.</p>
+</li>
+<li>
+<p>There should never be a need for 2 blank lines in a row or two spaces in a row.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_line_length">Line Length</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>All lines should have length at most <strong>80</strong> characters. This makes it easier to read code on a potentially
+small screen. If you need to break a line in order to satisfy this, the rest of the line should be indented
+more than its current block. In cases where the line length is within a pair of parentheses, one good
+option is to indent the rest of the line to match with the opening parenthesis. For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>if (here is a long condition for an if statement and
+    the rest of the condition) {
+  here is a long statement inside the if statement and
+    the rest of the statement below it;
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_comments">Comments</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Comments should be brief and informative.</p>
+</div>
+<div class="sect2">
+<h3 id="_file_header_comments">File header comments</h3>
+<div class="paragraph">
+<p>Every source code file should contain a header comment that describes the contents of the file and
+other pertinent information. It must include the following information (different order is fine):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A description of the contents of the file</p>
+</li>
+<li>
+<p>Your name</p>
+</li>
+<li>
+<p>Date</p>
+</li>
+<li>
+<p>The file name (optional)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>/**
+* The main driver program for Assignment 1.
+*
+* This program reads the file specified by the first command line
+* argument, counts the number of words, spaces, and characters and
+* displays the results in the format specified in the project
+* description.
+*
+* @author: Dianna Xu
+* @version: February 7, 2020
+*/</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_variable_comments">Variable comments</h3>
+<div class="paragraph">
+<p>All instance variables must be commented (it is okay to use a single comment to refer to more than one
+instance variable though). Most local variables should be commented, too.
+Method comments</p>
+</div>
+<div class="paragraph">
+<p>All methods must be commented. The comments should explain what the method does, what its
+parameters represent (not their types, we already know that), and what it returns. The
+comment should describe how the function handles special cases (for example, if a given
+index is out of range), domains for the input (for example, are negative values allowed?).
+You should use the javadoc method comment style, which lists and comments all
+parameters and return values, shown below:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>/**
+* Returns random integer in the interval [x, y)
+* @param x The start of the interval
+* @param y The end of the interval
+* @return A random value between x and y, not including y
+*/
+int randRange(int x, int y) {
+...
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_in_line_comments">In-Line Comments</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You should strive for your code to be self-explanatory. However, it is inevitable that some lines of
+code are more intricate. In these cases, a comment describing the code is well-advised. The comment
+should not simply translate the code to English, but should explain what’s really going on. For
+example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>// Unhelpful comment:
+starSides = 5; // set starSides to 5
+
+// Helpful comment:
+starSides = 5; // reset starSides to original value</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Well-structured code will be broken into logical sections that each perform a simple task. Each of these
+sections of code (typically starting with an if statement or a loop) should be documented.
+An in-line comment too long to appear to the right of your code appears above the code to which it
+applies and is indented to the same level as the code. For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>// increment all the odd values in the array
+for (int i = 0; i &lt; n; i++) {
+  // add 1 only to the odd values
+  if (array[i] % 2 == 1) {
+    array[i] = array[i] + 1;
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Remember, good comments tell us things we don&#8217;t already know, or can&#8217;t easily decipher among dense
+code blocks.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_indentation">Indentation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Choose one of the two styles and use it consistently (note how the braces are placed):</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>if (condition) {
+  ...
+}
+else if (condition) {
+  ...
+}
+else {
+  ...
+}
+
+for (control expression) {
+  ...
+}
+
+while (condition) {
+  ...
+}
+
+switch(condition) {
+  case val1: ...
+    break;
+  case val2: ...
+    break;
+  default: ...
+}
+
+class ClassName {
+ public: // 1 space for access modifiers
+   returnType method(params) {
+    ...
+   }
+  ...
+};
+
+struct TypeName {
+  ...
+};</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>if (condition)
+{
+  ...
+}
+else if (condition)
+{
+  ...
+}
+else
+{
+  ...
+}
+
+for (control expression)
+{
+  ...
+}
+
+while (condition)
+{
+  ...
+}
+
+switch(condition)
+{
+  case val1: ...
+    break;
+  case val2: ...
+    break;
+  default: ...
+}
+
+class ClassName
+{
+ public: // 1 space for access modifiers
+  returnType method(params)
+  {
+    ...
+  }
+  ...
+};
+
+struct TypeName
+{
+  ...
+};</code></pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2025-01-15 17:10:52 -0500
+</div>
+</div>
+</body>
+</html>

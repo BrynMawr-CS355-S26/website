@@ -1,0 +1,8 @@
+Written Questions (Week03):
+
+1. What is a process?
+2. What is multiprogramming?
+3. What information must the OS keep track of in order to switch between processes? E.g., How can the OS support multipgramming?
+4. What is the difference between a foreground and background process?
+
+Tannenbaum: pg 174: Questions 1, 5 

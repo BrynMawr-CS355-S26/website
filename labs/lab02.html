@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.18">
+<title>C no evil</title>
+<link rel="stylesheet" href="../style/cs21.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_c_no_evil">C no evil</a></li>
+<li><a href="#_stdout_stderr">1. stdout, stderr</a></li>
+<li><a href="#_environment">2. Environment</a></li>
+<li><a href="#_advanced_c_strings">3. Advanced C strings</a></li>
+<li><a href="#_stack_diagram">4. Stack diagram</a></li>
+<li><a href="#_submission">5. Submission</a>
+<ul class="sectlevel2">
+<li><a href="#_submit_your_work_to_github">5.1. Submit your work to Github</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_c_no_evil">C no evil</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Lab exercises: Due January 30th 5PM (24 hr late period allowed)</strong></p>
+</div>
+<div class="paragraph">
+<p>The goals for this assignment are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Working with stdout and stderr</p>
+</li>
+<li>
+<p>Working with environment variables</p>
+</li>
+<li>
+<p>Working with C strings</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To get started, clone the repository <a href="https://classroom.github.com/a/K4qA5FE_">here</a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_stdout_stderr">1. stdout, stderr</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Write a program, <code>outerr.c</code>, that outputs the even integers between 0 and 10 to standard out
+and the odd integers between 1 and 10 to standard error.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ <strong>./outerr</strong>
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+$ <strong>./outerr > even.txt 2> odd.txt</strong>
+$ <strong>cat even.txt</strong>
+0
+2
+4
+6
+8
+$ <strong>cat odd.txt</strong>
+1
+3
+5
+7
+9</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_environment">2. Environment</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Write a program, <code>myenv.c</code>, that loops through the process&#8217;s environment variables and
+prints the value for PATH. Use the code below, based on pointer arithmetic,
+as a starting point.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>int main(int argc, char** argv, char** envp)
+{
+  while(*envp)
+  {
+    printf("%s\n",*envp++);
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ <strong>./myenv</strong>
+PATH=/home/alinen/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+$ <strong>env | grep PATH</strong>
+PATH=/home/alinen/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The shell command <code>env</code> prints the environment
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The paths above were truncated for brevity. Yours will be much longer!
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_advanced_c_strings">3. Advanced C strings</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In assignment 02, you need to dynamically allocate a list of command line arguments.
+For example, if the command line is <code>ls -l -a</code>, you need to create a null-terminated
+list of strings, <code>[ls, -l, -a, NULL]</code>.</p>
+</div>
+<div class="paragraph">
+<p>In the file, <code>argv.c</code>, implement a program that tokenizes a string into
+a null-terminated array of strings created dynamically with malloc.
+Then implement a function to print the array of strings using pointer arithmetic.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ <strong>./argv</strong>
+[ls, -l, -a, NULL]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Requirements/Hints:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Use <code>strtok</code> to tokenize a string.</p>
+</li>
+<li>
+<p>Use malloc and free to create the list you pass to print.</p>
+</li>
+<li>
+<p>Do not store the length of the list of strings.</p>
+</li>
+<li>
+<p>Use valgrind to make sure you do not have memory leaks.</p>
+</li>
+<li>
+<p>Do not use standard template library data structures.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_stack_diagram">4. Stack diagram</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Draw a stack diagram for the program <code>argv.c</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_submission">5. Submission</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Hand-in the stack diagram for your team.</p>
+</li>
+<li>
+<p>One team member (or both) should submit their code.</p>
+</li>
+</ol>
+</div>
+<div class="sect2">
+<h3 id="_submit_your_work_to_github">5.1. Submit your work to Github</h3>
+<div class="paragraph">
+<p>Add and check in your program using git and then push your changes to Github.
+Run the following command inside your <code>labs-USERNAME</code> directory.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ cd labs-USERNAME
+$ git add .
+$ git commit -m "Descriptive message"
+$ git push</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Run <code>git status</code> to check the result of the previous git command.
+Check the Github website to make sure that your program uploaded correctly.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2025-02-06 15:26:47 -0500
+</div>
+</div>
+</body>
+</html>

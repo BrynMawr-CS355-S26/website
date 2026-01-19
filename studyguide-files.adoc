@@ -1,0 +1,187 @@
+. What is a file?
+. What is a file system?
+. Give some examples of file attributes?
+. Give two different designs for storing file attributes in a file system.
+. Give two possible designs for managing free space within a file system.
+. How does the block size for files possibly affect fragmentation?
+. What is the root directory? the current working directory?
+. What is the difference between absolute and relative paths?
+. Give a possible file system design for a system that has a single-level directory system.
+.. Explain how multiple users might be supported in a single-level file system.
+. What is a symbolic link?
+. Describe a possible file system design that supports symbolic links.
+. Describe the process of booting a computer.
+. What is the Master Boot Record (MBR)?
+. What is a partition?
+. Define internal versus external fragmentation.
+. List 4 goals of file system design.
+. Consider the following set of files: A has 2 blocks. B has 5 blocks. C has 1 block. Assume they are stored on a system with 4 KB block sizes. Draw how we would store the files 
+.. using contiguous allocation
+.. using linked lists having nodes stored with each block
+.. using a file allocation table (FAT)
+.. using inodes 
+. Consider the following series of commands. Assume the starting current working directory is root. Draw the corresponding file system hierarchy.
+[source]
+----
+$ mkdir B
+$ cd B
+$ mkdir A
+$ touch 6.txt
+----
+.. If we were using inodes, how many inodes would we need to represent the above file system?
+.. Suppose directories store the contents of the directory. Each entry of the table contains the following information: inode id, name (8 bytes), extension (3 bytes), and flags (4 bytes). The least significant bit of flags is 0 for files and 1 for directories. The most significant bit is 1 for a non-empty entry and 0 for an empty entry. 
++
+* Define a struct type that represents the entries inside a directory. Make sure that all data types are properly byte-aligned.
+* Write pseudocode that tests whether a directory entry is valid of not. 
+* Write pseudocode that tests whether a directory entry corresponds to a file or directory.
+* Draw the contents of directory B as a table.
+* Describe how you would redesign the directory entries in order to support variable-sized filenames. 
+. Suppose we are using inodes. Describe the steps needed to lookup the file with path `/usr/ast/mbox`
+. Suppose we are using FAT. Describe the steps needed to lookup the file with path `/usr/ast/mbox`
+. Suppose we are using inodes. Describe the steps needed to lookup the file with path `../ast/mbox`
+. Consider a hierarchical file system. What three things need to happen when a file is deleted?
+. If a crash occurs while deleting a file, how might the system become in an inconsistent state?
+. Explain how journaling can help a file system recover from crashes.
+. Why do journaling systems rely on indempotent actions?
+. When using disks, why are bigger blocksizes more efficient?
+. Suppose we are analyzing a disk system for time and size efficiency. The blocksize is 1 MB and the file is 64 KB. 
+.. If the disk uses 1 MB per track, has a combined seek and delay time of 9 ms, and a rotation time of 8.33 ms / MB, how much time is needed to fetch the file? (Recall the time = seek + delay + rotation * (k/1MB), where k is the number of bytes).
+.. How much space is wasted?
+. Suppose we are analyzing a disk system for time and size efficiency. The blocksize is 1 KB and the file is 64 KB. 
+.. If the disk uses 1 MB per track, has a combined seek and delay time of 9 ms, and a rotation time of 8.33 ms / MB, how much time is needed to fetch the file? (Recall the time = seek + delay + rotation * (k/1MB), where k is the number of bytes).
+.. How much space is wasted?
+. What is the difference between soft and hard caps in quota systems. 
+. Why might a quota system be necessary in a multiuser system?
+. List three challenges of creating a good backup system.
+. How does an incremental backup work?
+. List two methods for making backups faster.
+. What is the difference between a physical and logical dump?
+. List three limitations of physical dumps. 
+. List the steps needed to created a logical dump.
+. List the steps needed to restore a logical dump.
+. How can inodes be checked for inconsistencies?
+. How can directories be checked for inconsistencies?
+. Suppose we have an inode based file system for which we are checking for inconsistencies. Is the following system consistent?
++
+[cols="3,1,1,1,1,1,1"]
+|===
+|Blocks in use
+|1
+|1
+|0
+|1
+|1
+|0
+
+|Free blocks
+|0
+|0
+|1
+|0
+|0
+|1
+|===
+
+. Suppose we have an inode based file system for which we are checking for inconsistencies. Is the following system consistent?
++
+[cols="3,1,1,1,1,1,1"]
+|===
+|Blocks in use
+|1
+|0
+|0
+|2
+|1
+|0
+
+|Free blocks
+|0
+|1
+|1
+|0
+|0
+|1
+|===
+
+. Suppose we have an inode based file system for which we are checking for inconsistencies. Is the following system consistent?
++
+[cols="3,1,1,1,1,1,1"]
+|===
+|Blocks in use
+|1
+|0
+|0
+|1
+|1
+|0
+
+|Free blocks
+|0
+|2
+|1
+|0
+|0
+|1
+|===
+
+. Suppose we have an inode based file system for which we are checking for inconsistencies. Is the following system consistent?
++
+[cols="3,1,1,1,1,1,1"]
+|===
+|Blocks in use
+|1
+|0
+|0
+|1
+|1
+|0
+
+|Free blocks
+|0
+|0
+|1
+|0
+|0
+|1
+|===
+
+. A file contains a link count of two. What does this mean?
+. A file contains a link count of three, but it is only listed in two directories. What problems might result due to this inconsistency?
+. A file contains a link count of one, but it is listed in two directories. What problems might results due to this inconsistency?
+. List three features that improve disk read/write performance.
+. What is a write-through cache?
+. Suppose we are using caching for a file system in order to increase its performance. What is the risk of writing file blocks infrequently back to disk?
+. Suppose we are using caching for a file system in order to increase its performance. What is the risk of writing inode blocks infrequently back to disk?
+. Suppose we are using caching for a file system in order to increase its performance. What is the drawback of writing data back to disk too frequently?
+. Describe how block read-ahead works.
+. What is file system defragmentation? When should we use it?
+. Suppose we have an inode file system with the following properties:
++
+* Blocksize: 16 bytes
+* 10 direct blocks
+* 4 indirect blocks
+* 1 double-indirect block
+* 1 triple-indirect block
+* Block ids are 4-byte integers
+* sizeof(indode) = 128 bytes 
++
+.. How many block IDS can we store in an indirect block?
+.. What is the max file size we can store using direct blocks?
+.. What is the max file size we can store using indirect blocks?
+.. What is the max file size we can store using double-indirect blocks?
+.. What is the max file size we can store using triple-indirect blocks?
+.. Suppose we have 300 byte file. Sketch a picture of how these blocks would be stored in an inode.
+. Suppose we are using a FAT for a file system that contains one directory (/) which contains two files: A.txt and B.txt.
++
+* All directories fit inside a 1 KB block.
+* Suppose the root directory is at block 0
+* Suppose A.txt uses blocks 2, 6, 7
+* Suppose B.txt uses blocks 3, 4, 8
+* Draw the contents of the first 10 FAT entries  
+* Draw the contents of the root directory block. Assume the blocks stores the file names and FAT table IDs. 
+. Consider the CP/M file system which stored all files under a single directory. Sketch a program that would format a disk capable of holding 100 files.
++
+image::CPM.png[width=600px]
+. Suppose a FAT table has 64 entries and the blocksize is 4 KB. What is the maximum number of bytes we can store? What is the maximum possible number of files?
+. How does the ext2 system initialize files to avoid external fragmentation?
+. How does the ext2 system arrange blocks to try to improve performance?

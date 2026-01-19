@@ -1,0 +1,50 @@
+include::header.adoc[]
+
+:title: Study Guide: OS Exam II
+:Author Initials: ASN
+:Date:    2020-08-15
+:Revision: 0.1
+
+= {title}
+
+Exams are closed book. You can bring one written cheat sheet. 90 minutes in class.
+
+Topics:
+
+* Tanenbaum Chapters 3,4,5,9
+* Programming with pointer arithmetic; Working with binary files and formats. 
+* Memory: Strategies for loading processes into memory, TLB, virtual memory, paging algorithms
+* Files: File system features, such as backups, consistency, and journaling. Methods for storing files/directories and managing free space (inodes, FAT tables, etc)
+* I/O: I/O software layers, drivers, disks, keyboard/mouse input, windows systems
+* Security: Terminology, buffer exploits, basic cryptography, malware, defenses
+
+= Tanenbaum
+
+* Chapter 3: 4, 5, 6, 7, 11, 15, 17, 20, 28, 30, 33, 36, 38, 47
+* Chapter 4: 20, 21, 24, 28, 30, 40, 41
+* Chapter 5: 5, 10, 13, 14, 16
+* Chapter 9: 1, 6, 7, 8, 9, 19, 28, 29, 38, 39, 40, 49, 50 
+
+= Additional practice
+
+//* Chapter 1: 15, 27
+
+== Programming with pointers
+
+include::studyguide-pointers.adoc[]
+
+== Memory
+
+include::studyguide-memory.adoc[]
+
+== Files
+
+include::studyguide-files.adoc[]
+
+== IO
+
+include::studyguide-io.adoc[]
+
+== Security
+
+include::studyguide-security.adoc[]

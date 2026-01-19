@@ -1,0 +1,12 @@
+1. A zombie process is a process that is waiting for its parent to accept its
+status code, e.g. the child process exited before its parent. Zombie
+processes are "reaped" using the wait call. Sketch a program that creates a 
+zombie process. You can test your program by implementing it and using `ps w` 
+to verify that the child has zombie status.
+
+2. An orphan process is a process whose parent dies before the child. Sketch a 
+program that creates an orphan process. You can test your program by implementing 
+it and using `ps w` to verify that the child is adopted by the main shell
+process.
+
+Tannenbaum pgs 174-180, #9, 14, 18, 26, 36, 44

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.18">
+<title>Processes III</title>
+<link rel="stylesheet" href="../style/cs21.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_processes_iii">Processes III</a></li>
+<li><a href="#_infinite">1. Infinite</a></li>
+<li><a href="#_child_monitor">2. Child Monitor</a></li>
+<li><a href="#_foregroundbackground">3. Foreground/Background</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_processes_iii">Processes III</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Lab exercises for February 13th</strong></p>
+</div>
+<div class="paragraph">
+<p>The goal for this assignment are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Working with system tools: <code>top H</code></p>
+</li>
+<li>
+<p>Understanding process state: sleeping, running, stopped, terminated</p>
+</li>
+<li>
+<p>Working with additional system calls: sigprocmask, tcgetpgrp, tcsetpgrp, setpgid</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>We will use the same repository as last week: <a href="https://classroom.github.com/a/K4qA5FE_">Labs Repo</a>.
+Click on the link and then accept and merge the pull request.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_infinite">1. Infinite</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Write a program, <code>infinite.c</code>, that calls <code>pause()</code> in an infinite loop. When you
+run <code>ps w</code>, the status of infinite should be S.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ <strong>./infinite &</strong>
+[1] 2320
+$ <strong>ps w</strong>
+  PID TTY      STAT   TIME COMMAND
+   10 pts/0    Ss     0:00 -bash
+  134 pts/2    Ss+    0:00 -bash
+  347 pts/3    Ss+    0:00 -bash
+  743 pts/1    Ss+    0:00 -bash
+ 2320 pts/0    S      0:00 ./infinite
+ 2321 pts/0    R+     0:00 ps w</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Use your program to see how job control works in <code>bash</code>. Use the tools, <code>top H</code>
+and <code>ps w</code> to see how suspending (job status: T), foregrounding (job status:
+S+), and backgrounding (job status: S) change the state of the process.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ <strong>./infinite</strong>
+^Z
+[1]+  Stopped                 ./infinite
+$ bg
+[1]+ ./infinite &
+$ <strong>./infinite &</strong>
+[2] 2302
+$ <strong>./infinite &</strong>
+[3] 2303
+$ <strong>./infinite &</strong>
+[4] 2304
+$ <strong>./infinite &</strong>
+[5] 2305
+$ <strong>./infinite &</strong>
+[6] 2306
+$ <strong>jobs</strong>
+[1]   Running                 ./infinite &
+[2]   Running                 ./infinite &
+[3]   Running                 ./infinite &
+[4]   Running                 ./infinite &
+[5]-  Running                 ./infinite &
+[6]+  Running                 ./infinite &
+$ <strong>kill %2</strong>
+$
+[2]   Terminated              ./infinite
+$ <strong>jobs</strong>
+[1]   Running                 ./infinite &
+[3]   Running                 ./infinite &
+[4]   Running                 ./infinite &
+[5]-  Running                 ./infinite &
+[6]+  Running                 ./infinite &
+$ <strong>fg %5</strong>
+./infinite</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_child_monitor">2. Child Monitor</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Write a program, <code>monitor.c</code>, that forks a process whose state can be controlled by
+the user separately from its parent (e.g. the child has its own process group).
+Using a signal handler on SIGCHLD, report the status changes of the child process.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>alinen@sutekh:~/cs355/os-devel/labs/03$ ./monitor
+Monitoring child process 6242.
+quit
+
+6242 received signal Terminated</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Requirements/Hints:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Make sure the child has a different process ID from the parent.</p>
+</li>
+<li>
+<p>Create a child that loops forever so it is convenient to change its process status.</p>
+</li>
+<li>
+<p>From another terminal, use the command: <code>kill -STOP &lt;pid&gt;</code> to stop the process.</p>
+</li>
+<li>
+<p>From another terminal, use the command: <code>kill -CONT &lt;pid&gt;</code> to continue the process.</p>
+</li>
+<li>
+<p>From another terminal, use the command: <code>kill -TERM &lt;pid&gt;</code> to terminate the process.</p>
+</li>
+<li>
+<p>Try sending other signals, such as <code>kill -ALRM &lt;pid&gt;</code>, and see what happens to the process. Some signals, such as SIGTTOU will cause the process to stop; others will cause the process to quit.</p>
+</li>
+<li>
+<p>Typing <code>quit</code> should quit the parent process and kill the child</p>
+</li>
+<li>
+<p>Inside your signal handler, use a non-blocking <code>waitpid</code> call, configured to also return if the child process stops or continues (see the man page for details).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Use strace to better understand the signaling behavior, e.g.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ <strong>strace -e 'trace=!all' -f ./monitor</strong>
+strace: Process 6254 attached
+Monitoring child process 6254.
+[pid  6254] --- SIGSTOP {si_signo=SIGSTOP, si_code=SI_USER, si_pid=743, si_uid=1000} ---
+[pid  6254] --- stopped by SIGSTOP ---
+[pid  6253] --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_STOPPED, si_pid=6254, si_uid=1000, si_status=SIGSTOP, si_utime=0, si_stime=0} ---
+
+6254 stopped.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Inside a header comment, answer the following questions:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>What happens if the parent and child both belong to the same process group?</p>
+</li>
+<li>
+<p>What happens when SIGCONT is sent to a process that is already running?</p>
+</li>
+<li>
+<p>What happens when SIGSTP is sent to a process already stopped?</p>
+</li>
+<li>
+<p>What happens when you send the signal SIGTTOU?</p>
+</li>
+<li>
+<p>What happens when you send he signal SIGALRM?</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_foregroundbackground">3. Foreground/Background</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Implement a program, <code>fgbg.c</code>, that forks a process in the background and then allows the
+user to switch it between the foreground and background using the commands, fg, bg, and control-Z.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ <strong>./fgbg</strong>
+[1] Created process 6982 in the background
+$ <strong>fg</strong>
+^Zchild stopped.
+$ <strong>bg</strong>
+child continued.
+$ <strong>fg</strong>
+^Zchild stopped.
+$ <strong>quit</strong>
+child received signal Terminated</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Requirements/Hints:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Make sure the child has a different process ID from the parent.</p>
+</li>
+<li>
+<p>Create a child that loops forever so it is convenient to change its process status.</p>
+</li>
+<li>
+<p>Typing Control-Z should suspend the foreground process.</p>
+</li>
+<li>
+<p>Typing Control-C should exit the foreground process. If the foreground process is the parent, the child should also be exited.</p>
+</li>
+<li>
+<p>Typing bg should move the child into the background</p>
+</li>
+<li>
+<p>Typing fg should move the child into the foreground</p>
+</li>
+<li>
+<p>Typing <code>quit</code> should quit the parent process and exit the child</p>
+</li>
+<li>
+<p>Inside a signal handler, use a non-blocking <code>waitpid</code> call, configured to also return if the child process stops or continues (see the man page for details).</p>
+</li>
+<li>
+<p>Whenever the child is stopped, make sure to return the terminal to the parent.</p>
+</li>
+<li>
+<p>Configure the parent to ignore SIGTTOU and SIGTTIN signals so it can modify ownership of the terminal, even when it is running in the background.</p>
+</li>
+<li>
+<p>Use <code>top H</code> to monitor the terminal and process status of both the parent and child</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2025-02-20 14:45:57 -0500
+</div>
+</div>
+</body>
+</html>

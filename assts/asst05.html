@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.18">
+<title>Assignment 05: Userthreads</title>
+<link rel="stylesheet" href="../style/cs21.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_assignment_05_userthreads">Assignment 05: Userthreads</a></li>
+<li><a href="#_interface">1. Interface</a></li>
+<li><a href="#_scheduling_policies">2. Scheduling Policies</a>
+<ul class="sectlevel2">
+<li><a href="#_first_come_first_served_fifo">2.1. First-come, first-served (FIFO)</a></li>
+<li><a href="#_shortest_job_first_sjf">2.2. Shortest-job first (SJF)</a></li>
+<li><a href="#_priority_based_priority">2.3. Priority-based (PRIORITY)</a></li>
+<li><a href="#_threads_context_switching">2.4. Threads Context Switching</a></li>
+</ul>
+</li>
+<li><a href="#_additional_features">3. Additional Features</a>
+<ul class="sectlevel2">
+<li><a href="#_logging">3.1. Logging</a></li>
+<li><a href="#_valgrind_compatibility">3.2. Valgrind Compatibility</a></li>
+<li><a href="#_test_suite">3.3. Test Suite</a></li>
+</ul>
+</li>
+<li><a href="#_advice">4. Advice</a></li>
+<li><a href="#_extra_credit">5. Extra Credit</a></li>
+<li><a href="#_grading_rubric">6. Grading Rubric</a></li>
+<li><a href="#_resubmission">7. Resubmission</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_assignment_05_userthreads">Assignment 05: Userthreads</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Milestone 1: Due Thursday, February 27, in lab (you may take a 1 day extension)</strong>
+<strong>Due Sunday, March 2, before midnight</strong></p>
+</div>
+<div class="paragraph">
+<p>The goals for this assignment are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Implement a user thread library</p>
+</li>
+<li>
+<p>Understand scheduling algorithms</p>
+</li>
+<li>
+<p>Working with additional system calls: getcontext, makecontext, swapcontext</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+We will use new starter code: <a href="https://classroom.github.com/a/K88AA1Zs">Starter Code Link</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><em>Assignment by Dianna Xu</em></p>
+</div>
+<div class="paragraph">
+<p>In this assignment, you will write a library to support multiple threads within
+a single Linux process. This is a "user-level thread library" because the kernel
+doesn’t know these threads exist - they are just something the library
+implements and multiplexes onto a single process. While there are differences
+between user-level threads and the kernel-level threads we used in
+<a href="../labs/lab04.html">Lab 04</a>, building and scheduling actual kernel-level
+processes and threads would not be much different, that is, essentially you are
+now building a part of pthread from scratch.</p>
+</div>
+<div class="paragraph">
+<p><strong>Deliverables</strong></p>
+</div>
+<div class="paragraph">
+<p>For Milestone #1 (Feb 27), you must have the following features complete:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Core user thread API implemented with FIFO Scheduling</p>
+</li>
+<li>
+<p>Use of ucontext for executing the thread function</p>
+</li>
+<li>
+<p>Logging</p>
+</li>
+<li>
+<p>Valgrind</p>
+</li>
+<li>
+<p>Unit tests that call each userthread API function</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The final deliverable (March 2) must contain:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Features from milestone #1</p>
+</li>
+<li>
+<p>SJF scheduling</p>
+</li>
+<li>
+<p>Priority scheduling</p>
+</li>
+<li>
+<p>No memory Errors</p>
+</li>
+<li>
+<p>Clean style</p>
+</li>
+<li>
+<p>Completed unit tests suite</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_interface">1. Interface</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You thread library must follow the specification in <code>userthread.h</code>. You may add to this file,
+<strong>but you must not edit the given functions</strong>. The required API for your thread library
+are described below.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>int thread_libinit(int policy)</code>: thread_libinit is called to initialize the thread library. policy is one of the following
+enum ints: FIFO, SJF, or PRIORITY (see Scheduling section below).</p>
+<div class="ulist">
+<ul>
+<li>
+<p>return value: Upon success, thread_libinit returns 0. Upon failure, it will return -1.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>int thread_libterminate(void)</code> thread_libterminate is called to shut down the thread library and do all necessary clean
+ups.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>return value: Upon success, thread_libterminate returns 0. Upon failure, it will return -1.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>int thread_create(void (*func)(void *), void *arg, int priority)</code> thread_create is used to create a new thread. The last argument priority specifies the
+priority level if priority scheduling is selected. When a newly created thread starts, it will
+call the function pointed to by func and pass it the single argument arg. When a thread calls thread_create, the caller does not yield the CPU. The newly created
+thread is put on the ready queue but is not executed right away.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>return value: Upon success, thread_create returns a positive integer thread ID that can be used later to call thread_join and thus wait for a given thread to terminate. Upon failure, it will return -1.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>int thread_yield(void)</code> thread_yield causes the current/calling thread to yield the CPU to the next runnable thread. The yielding thread should be put at the tail of the ready queue. If the caller is the only runnable thread, it will be selected to run again, in other words, the yield will have no effect.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>return value: Upon success, thread_yield should return 0. You may assume that the call always succeeds, which is on par with the current Linux pthread_yield implementation.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>int thread_join(int tid)</code> thread_join suspends execution of the calling thread until the target thread terminates.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>return value: Upon success, thread_join should return 0 (this includes, of course, the case where the thread is already finished). If given a bad ID or if any other failure ocurres, thread_join should return -1.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_scheduling_policies">2. Scheduling Policies</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As part of this assignment, you will experiment with three scheduling policies: first-come, first-
+served (FIFO), shortest-job first (SJF) and priority (PRIORITY).</p>
+</div>
+<div class="sect2">
+<h3 id="_first_come_first_served_fifo">2.1. First-come, first-served (FIFO)</h3>
+<div class="paragraph">
+<p>Threads on the ready queue should be scheduled according to the order they arrive, without
+preemption. Pass FCFS to thread_init to select this schedule.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_shortest_job_first_sjf">2.2. Shortest-job first (SJF)</h3>
+<div class="paragraph">
+<p>Threads on the ready queue should be scheduled according to their estimated run time.
+Here, you need to keep track of how long a thread runs before calling thread_yield or
+thread_join. Pass SJF to thread_init to select this schedule.
+Because we cannot know how long a job will take to run, we will use an approximation to
+implement SJF. You should use the average of the last three times the thread ran to compute
+its job time. In addition, when a job is created, you should assume it is an “average” job and
+set its runtime to the average runtime of all threads so far. If there is no runtime history at
+all (i.e first thread ever), use a reasonable default value (for example, half of the quanta - see
+below)</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_priority_based_priority">2.3. Priority-based (PRIORITY)</h3>
+<div class="paragraph">
+<p>Pass PRIORITY to thread_init to select this schedule. An integer argument representing
+a thread’s priority is passed to thread_create at the time of thread creation. Based on
+UNIX convention, the smaller the number is, the higher the priority. In this assignment,
+there are only three levels of priorities -1, 0, 1. For FIFO and SJF, you can disregard this
+parameter. For priority scheduling, threads scheduled with level -1 should run 1.5 times more
+often as jobs scheduled with priority level 0, which run 1.5 times more often as jobs scheduled
+with priority level 1. It is your scheduler’s responsibility to ensure this ratio is exact.
+For priority scheduling, you will schedule a SIGALRM signal to be delivered to your scheduler
+every 100 milliseconds. We refer to this event as a clock tick, and on every clock tick the
+scheduler will come in and choose which thread to run next. To set an alarm timer at
+millisecond granularity, refer to setitimer(2).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_threads_context_switching">2.4. Threads Context Switching</h3>
+<div class="paragraph">
+<p>You should use the system calls, <code>getcontext</code>, <code>setcontext</code>, <code>makecontext</code>, <code>swapcontext</code>,
+to help implement user-level thread context switching.
+Please refer to <a href="../labs/lab04.html">Lab 04</a> for details.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_features">3. Additional Features</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_logging">3.1. Logging</h3>
+<div class="paragraph">
+<p>To help evaluate the functionalities of your scheduler, your scheduler should write to a log file
+whenever a thread switches context.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Name it <code>userthread_log.txt</code></p>
+</li>
+<li>
+<p>Log Events: CREATED, SCHEDULED, STOPPED, and FINISHED</p>
+</li>
+<li>
+<p>Log should be tab deliminated.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This required for all three scheduling algorithms (FIFO and SJF may leave the
+PRIORITY column empty). Document clearly the name of the log file and its path.
+The logger should overwrite logs of the last execution of the scheduler program.
+That is, it should not accumulate but only record the current session’s
+information. The log will have the following format (tab deliminated):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>[ticks] OPERATION TID PRIORITY
+For example, here is a snippet of a logger:
+...
+[100] SCHEDULED 1 -1
+[200] STOPPED 1 -1
+[200] SCHEDULED 2 -1
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Operations requiring logging are CREATED, SCHEDULED, STOPPED, and FINISHED. You should
+log any other information you find helpful as long as you document it clearly. Logging is also a
+great tool to help you debug your program. It is recommended to implement this feature as soon
+as possible.</p>
+</div>
+<div class="paragraph">
+<p>printf is not re-entrant and thus there is a risk using it with signal handlers. It’s not a big
+deal when you are just printing a message for debugging, but for the logger, you should use the
+system call write and STDOUT_FILENO instead. fprintf is thread-safe and thus if you are
+logging to a file (which is what you should be doing), you are safe.</p>
+</div>
+<div class="paragraph">
+<p>Use the <code>clock()</code> function to compute the number of ticks from the start of the program.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_valgrind_compatibility">3.2. Valgrind Compatibility</h3>
+<div class="paragraph">
+<p>Unfortunately Valgrind by default does not work very well with ucontext. To make it work,
+you will need to include valgrind.h header file (Path:/usr/include/valgrind) and use
+VALGRIND_STACK_REGISTER and VALGRIND_STACK_DEREGISTER to explicit tell valgrind which
+stack space you are using right now. Please see the example provided by Valgrind at https://
+github.com/lu-zero/valgrind/blob/master/memcheck/tests/linux/stack_changes.
+c. Please pay special attention to the init_context function and see that valgrind requires a
+integer id to label each stack and to keep track which stack space is associated with which context.
+Error Handling and Testing</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_test_suite">3.3. Test Suite</h3>
+<div class="paragraph">
+<p>An integral (and graded) part of writing your thread library will be to write a suite of test cases
+to validate your thread library.</p>
+</div>
+<div class="paragraph">
+<p>Each test case for the thread library will be a short C program that uses functions in the thread
+library. Each test case should be run without any arguments and should not use any input files.
+Test cases should exit(EXIT_SUCCESS) when run with a correct thread library. Below is an example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>/*
+ Filename: 1.c
+ Test create/run a single thread
+ Expected:: I am func1\nMain exiting\n
+*/
+
+#include &lt;stdio.h&gt;
+#include "userthread.h"
+
+void func1(void *arg) {
+  printf("I am func1\n");
+}
+
+int main() {
+  thread_libinit(FIFO);
+  int ret = thread_create(func1, NULL, 0);
+  ret = thread_join(ret);
+  printf("Main exiting\n");
+  thread_libterminate();
+  return 0;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Requirements:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Your test suite may contain up to 20 test cases and should contain at least 10.</p>
+</li>
+<li>
+<p>Each test case may generate at most 10 KB of output and must take less than 60 seconds to run.</p>
+</li>
+<li>
+<p>For each test case, you should have a header that explains what it tests for, AND (this is important) what the expected CORRECT behavior is.</p>
+</li>
+<li>
+<p>In general, keep the test cases short and narrow. It’s better to test only one thing so that when a program fails a test, you know exactly</p>
+</li>
+<li>
+<p>Check your tests into the subdirectory, labeled <code>tests</code></p>
+</li>
+<li>
+<p>Name each test with a number, e.g. <code>1.c</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You will submit your suite of test cases together with your thread
+library, and we will grade your test suite according to how thoroughly it
+exercises a thread library.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+We will be testing your library against our own test suite. The quality (coverage) of your tests will be compared to ours.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_advice">4. Advice</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Deleting a thread and exiting the program: A thread finishes when it returns from the function that was specified in thread_create. Remember to de-allocate the memory used
+for the thread’s stack space and context (be careful to do this after the thread is really done
+using it).</p>
+</li>
+<li>
+<p>When you create a thread, you may find it useful to invoke a "wrapper" function (also called
+a stub function) that calls the thread’s function and, thus provides a place for the thread to
+return to upon termination, where the necessary cleanup can be performed.</p>
+</li>
+<li>
+<p>Be careful when managing your ready queue which is shared across all threads. Make sure that only one thread modifies the queue at once. And be careful about signals that might interrupt updates to the shared queue of threads.</p>
+</li>
+<li>
+<p>Remember that the main thread (the one that’s making calls to your library) is also a schedulable context and should not be treated differently.</p>
+</li>
+<li>
+<p>For non-preemptive scheduling policies, when your main thread calls thread_join, you
+should call your function that performs scheduling. This is how the first thread gets to
+execute.</p>
+</li>
+<li>
+<p>A minimum thread control block is required to do the house keeping of context switching.
+Your TCB should minimumly include the tid, ucontext and (CPU usage or priority, depending
+on scheduling algorithm), but you will probably add more.</p>
+</li>
+<li>
+<p>To implement priority scheduling, you should create 3 linked-lists, one for each priority. Then
+schedule in a Round Robin fashion among all of them.</p>
+</li>
+<li>
+<p>Note that when a process terminates, often times it may not use up all of 100ms. It is
+your scheduler’s responsibility to handle this situation well and ensure the process next to be
+scheduled will be given a full 100ms quanta.</p>
+</li>
+<li>
+<p>Declare all internal variables and functions (those that are not called by clients of the library)
+static to prevent naming conflicts with programs that link with your thread library.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Assumptions</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>You may assume that we only do one join per thread id.</p>
+</li>
+<li>
+<p>You may assume that we will not call thread_yield from the main thread.</p>
+</li>
+<li>
+<p>Your library functions shouldn’t print any error messages. Errors are indicated by return values, as is typical with libraries.</p>
+</li>
+<li>
+<p>A "run" is defined as the time between a thread being scheduled and the thread being
+descheduled (via a call to thread_join, thread_yield, or the thread’s function
+finishing). So, any time a thread is scheduled, you should start timing; when a thread
+is descheduled, stop; the elapsed time defines the previous "run."
+ *You may assume that we will only invoke thread_libinit with a valid scheduling policy.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_extra_credit">5. Extra Credit</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Note that it is your responsibility to provide sufficient logger output and/or generate additional
+tests to prove the functionality of any extra credit components that you implement. If we can not
+tell that it works, no credit will be granted. You must also clearly document in your README
+which extra credit you implemented, and how to test them.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Change SJF to use aging to estimate execution time, rather than the average of the last three
+runtimes.</p>
+</li>
+<li>
+<p>Change SJF from non-preemptive to preemptive.</p>
+</li>
+<li>
+<p>Implement priority scheduling to be more UNIX like such that a process gets penalized when
+it does not finish in n quanta (up to you to define what n is). That is, its priority increases
+and it will be scheduled less often.</p>
+</li>
+<li>
+<p>Farther down the road of UNIX, implement priority scheduling such that each priority gets a
+different quanta, meaning process with larger priority number is scheduled less often but its
+quanta is also longer.</p>
+</li>
+<li>
+<p>Any other significant improvements on the scheduling algorithms. Please document well.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Note that if you implement any extra credit, it is then your responsibility to clearly demonstrate
+the corresponding functionality. You should create targeted test cases and generate corresponding
+logger output that shows the extra credit components working. You will not receive credit if we
+can not tell that it works.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_grading_rubric">6. Grading Rubric</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Assignment rubrics</strong></p>
+</div>
+<div class="paragraph">
+<p>Grades are out of 4 points.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>(4 points) Userthread</p>
+<div class="ulist">
+<ul>
+<li>
+<p>(0.5 points) Thread API/Logging (basic functionality/infrastructure)</p>
+</li>
+<li>
+<p>(0.5 points) Valgrind</p>
+</li>
+<li>
+<p>(0.9 points) FIFO</p>
+</li>
+<li>
+<p>(0.9 points) SJF</p>
+</li>
+<li>
+<p>(0.9 points) Priority</p>
+</li>
+<li>
+<p>(0.2 points) Test Suite</p>
+</li>
+<li>
+<p>(0.1 points) style and header comment</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Code rubrics</strong></p>
+</div>
+<div class="paragraph">
+<p>For full credit, your C programs must be feature-complete, robust (e.g. run without memory errors or crashing) and
+have good style.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some credit lost for missing features or bugs, depending on severity of error</p>
+</li>
+<li>
+<p>-12.5% for style errors. See the <a href="../codingstandard.html">class coding style</a> here.</p>
+</li>
+<li>
+<p>-50% for memory errors</p>
+</li>
+<li>
+<p>-100% for failure to check in work to Github</p>
+</li>
+<li>
+<p>-100% for failure to compile on linux using make</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_resubmission">7. Resubmission</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Your userthreads library (A05) is eligible for resubmission at the end of the term.
+Students can submit up to two times:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The first time for up to 3.7 credit</p>
+</li>
+<li>
+<p>The second time for up to 3.0 credit</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Resubmissions cannot be made for missed work. I reserve the right to judge whether an
+earnest effort has been made on the initial submission, but as a guideline, students
+must have received at least a C (2.0), for example, corresponding to a submission that
+has some features working but with memory errors.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2025-04-02 16:38:01 -0400
+</div>
+</div>
+</body>
+</html>

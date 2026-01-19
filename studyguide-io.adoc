@@ -1,0 +1,50 @@
+. Give an example of a block device
+. Give an example of a character device
+. What is the difference between block and character devices?
+. Name the five I/O software layers found in UNIX systems.
+. Why is I/O organized into layers, e.g. what is the advantage of this approach?
+. Name the two components of device controllers
+. Name two types of registers that typically come with hardware devices.
+. Name two approaches for communicating with devices from the OS. 
+. What is an I/O port?
+. What is an I/O space?
+. What is the advantage of using memory-mapped I/O over supporting separate spaces for memory and devices?
+. What are some challenges/disadvantages of using memory-mapped I/O?
+. How does the OS communicate with devices when using a separate space for memory and devices?
+. How does the OS communicate with devices when using memory-mapped I/O?
+. What is the purpose of Direct Memory Access (DMA)?
+. In the following diagram, show how the CPU can use a DMA controller to read data from disk storage. (Answer: Fig 5-4 in Tanenbaum)
++
+image::DMA.jpg[width=600px]
+. List four steps that happen when an interrupt occurs due to a device event.
+. List three approaches to I/O handling
+. Suppose we want to read N bytes from a device. Briefly describe how the following code accomplishes this. What approach is the code taking to event handling?
+[source]
+----
+for (i=0; i<N; i++) {
+  while (*status != READY) ;
+  *data = buffer[i];
+}  
+----
+. What is a device driver?
+. What is the goal of the device-independent software layer? 
+. Name three different techniques that enable different devices to be accessed in a similar way. 
+. What is buffering? How does buffering relate to I/O?
+. What is spooling? Give an example of a device that performs spooling. 
+. Consider the five layers of the I/O system. What is the primary functions of the 
++
+* user process layer?
+* device-independent software layer?
+* device drivers?
+* interrupt handlers?
+* hardware?
+. Why is device independence an important principle of I/O programming?
+. Why is handling errors as close to the hardware as possible a principle of I/O Programming? 
+. Give an example of how hardware can handle errors without notifying the user. 
+. Give an example of a hardware error that requires reporting an error to the user. 
+. Give an example of how names are used to provide device-independence on UNIX systems.
+. What is the difference between synchronous and asynchronous transfers of data.
+. What is the difference between sharable and dedicated devices? Give an example of each.
+. Give five examples of user-triggered events that are common in graphical user interfaces.
+. Give five examples of widgets that are common in graphical user interfaces.
+

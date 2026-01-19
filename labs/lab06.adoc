@@ -1,0 +1,88 @@
+include::header.adoc[]
+
+:title: Smooth allocators
+:Author Initials: ASN
+:Date:    2020-08-15
+:Revision: 0.1
+:ASST: labs-USERNAME
+
+= {title}
+
+Lab exercises for March 20th.
+
+The goals for this assignment are:
+
+* Understanding pointer arithmetic
+* Working with mmap
+* Implementing simple memory allocators
+
+We will use the same repository as previous labs: link:https://classroom.github.com/a/K4qA5FE_[Labs Repo]. 
+Click on the link and then accept and merge the pull request.
+
+**Due March 21st**
+
+:sectnums:
+
+= Stack Allocator
+
+In the file, `stalloc.c`, implement a program that implements a simple memory allocator, 
+based on a stack. The stack is initialized as a large block of memory (e.g. a character array). 
+When the user requests memory, they receive a block from the top of the stack. When they free memory, 
+it must be the most recently acquired block. Thus, this allocator has the following properties and 
+limitations:
+
+* Used memory is always at the beginning of the array block
+* Free memory is always at the end of the array block
+* Only a single pointer is needed to keep track of the division between used and free memory
+* The user must deallocate memory in the opposite order that you allocate it
+* The user can ask for at most ALLOCSIZE blocks of memory (e.g. the size of the stack at initialization). If the user asks for more memory than is available, the allocator should return 0.
+
+
+image::Lab05.png[width=200px]
+
+You are given basecode for this assignment. 
+
+* Implement `char* stalloc(int n)`
+* Implement `void stfree(char* p)`
+* Update the tests in `main`
+
+[source, subs="quotes"]
+----
+$ **make**
+g++ -g -Wno-unused-variable -Wno-unused-but-set-variable mylloc.c -o mylloc
+g++ -g -Wno-unused-variable -Wno-unused-but-set-variable stalloc.c -o stalloc
+$ **./stalloc**
+stalloc: stalloc.c:24: int main(): Assertion `b1 == allocbuf' failed.
+Aborted (core dumped)
+$ **./stalloc**
+//prints nothing if all tests pass
+----
+
+= My Simple Allocator
+
+You are given a file, `mylloc.c`, that contains the simple memory allocator 
+from class, modifies to use the STL linked list. Edit this file to include the 
+following:
+
+* Add a linked list to keep track of memory requested by the user
+* Implement `mem_dump` to print the contents of the user memory and free memory. This function should print the starting address of the chunk and the chunk's size.
+* Inside the file, `mylloc.c`, answer the following questions
+** There are three allocations. Why are there only two chunks?
+** Below, the base address is 0x56418de96000. The first chunk listed has address 0x56418de96328. Why?
+
+[source, subs="quotes"]
+----
+$ **make**
+g++ -g -Wno-unused-variable -Wno-unused-but-set-variable mylloc.c -o mylloc
+g++ -g -Wno-unused-variable -Wno-unused-but-set-variable stalloc.c -o stalloc
+$ **./mylloc**
+Base address: 0x56418de96000
+1. Memory dump:
+Used chunk: 0x56418de96328 (400)
+Used chunk: 0x56418de96000 (800)
+2. Memory dump:
+Used chunk: 0x56418de96000 (800)
+Used chunk: 0x56418de96328 (400)
+----
+
+

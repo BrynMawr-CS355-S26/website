@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.18">
+<title>Final Project Supplement</title>
+<link rel="stylesheet" href="../style/cs21.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_final_project_supplement">Final Project Supplement</a></li>
+<li><a href="#_tutorial">Tutorial</a>
+<ul class="sectlevel2">
+<li><a href="#_version_0_1">Version 0.1</a></li>
+<li><a href="#_version_0_2">Version 0.2</a></li>
+<li><a href="#_version_0_3">Version 0.3</a></li>
+<li><a href="#_version_0_4">Version 0.4</a></li>
+</ul>
+</li>
+<li><a href="#_handling_errors">Handling errors</a></li>
+<li><a href="#_virtual_file_system_vfs_programmer_interface">Virtual File System (VFS) Programmer Interface</a>
+<ul class="sectlevel2">
+<li><a href="#_f_open"><code>f_open</code></a></li>
+<li><a href="#_f_read"><code>f_read</code></a></li>
+<li><a href="#_f_write"><code>f_write</code></a></li>
+<li><a href="#_f_close"><code>f_close</code></a></li>
+<li><a href="#_f_seek"><code>f_seek</code></a></li>
+<li><a href="#_f_stat"><code>f_stat</code></a></li>
+<li><a href="#_f_remove"><code>f_remove</code></a></li>
+<li><a href="#_f_opendir"><code>f_opendir</code></a></li>
+<li><a href="#_f_readdir"><code>f_readdir</code></a></li>
+<li><a href="#_f_closedir"><code>f_closedir</code></a></li>
+<li><a href="#_f_mkdir"><code>f_mkdir</code></a></li>
+<li><a href="#_f_rmdir"><code>f_rmdir</code></a></li>
+<li><a href="#_f_mount"><code>f_mount</code></a></li>
+<li><a href="#_f_umount"><code>f_umount</code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_final_project_supplement">Final Project Supplement</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Because this is a large project, it is vital to subdivide the work so that you
+do not become overwhelmed. You can also start your implementation with limitations
+to make things easier. For example,</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Assume all directories and files fit in one block</p>
+</li>
+<li>
+<p>Use fixed-size filenames</p>
+</li>
+<li>
+<p>Don&#8217;t worry about permissions</p>
+</li>
+<li>
+<p>Don&#8217;t worry about error cases, such as running out of memory or bad inputs</p>
+</li>
+</ul>
+</div>
+<h3 id="_version_0_0" class="discrete">Version 0.0</h3>
+<div class="paragraph">
+<p>Goals:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Create an empty disk with <code>format</code></p>
+</li>
+<li>
+<p>Load the empty disk when you start your shell.</p>
+</li>
+<li>
+<p>See the contents of the empty disk using the <code>ls</code> command from your shell.</p>
+</li>
+<li>
+<p>Quit your shell with <code>exit</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Recommendations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Put the code for loading DISK into its own function, say <code>init_fs</code>.</p>
+</li>
+<li>
+<p>Implement a companion function, say <code>cleanup_fs</code>, that cleans up the filesystem. Test that valgrind reports no errors.</p>
+</li>
+<li>
+<p>Use assert to add sanity tests that check for null pointers or values that should never occur.</p>
+</li>
+<li>
+<p>Use GDB to step through your code after you write it. Make sure that each line works as you expect. Don&#8217;t forget that you can call <code>make</code> inside GDB.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_tutorial">Tutorial</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_version_0_1">Version 0.1</h3>
+<div class="paragraph">
+<p>Goals:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Initialize the virtual file system when you load your disk. In other words, create a tree data structure consisting of vnodes that reflects the contents of the loaded disk. In this initial version, you only need to initialize the root, stored in <code>fs_root</code>.</p>
+</li>
+<li>
+<p>List the contents of the root directory using <code>f_opendir</code>, <code>f_readdir</code>, and <code>f_closedir</code> (see below for specifications). You got this working with your physical file system in verion 0.0. Now, refactor your code so functionality is in these functions.</p>
+</li>
+<li>
+<p>Refactor your shell to use <code>f_opendir</code>, <code>f_readdir</code>, and <code>f_closedir</code>.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>#include "vfs.h"
+int main()
+{
+  init_fs(); // loads DISK
+  vfd_t fd = f_opendir(fs_root, ""); // See below for specification
+  vdir_t* entry = f_readdir(fs_root, fd);
+  while (entry &amp;&amp; entry-&gt;valid == 1)
+  {
+    printf("contents: %s", entry-&gt;filename); // you define vdir so this might look different for you
+    entry = f_readdir(fs_root, fd);
+  }
+  f_closedir(fs_root, fd);
+  cleanup_fs(); // frees allocated memory
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Recommendations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Define a global array that holds the current positions of any open files. This array is a table that keeps track of where a caller to f_readdir is in the file. For directories, fd should increase by the size of a directory entry with each call.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_version_0_2">Version 0.2</h3>
+<div class="paragraph">
+<p>Goals:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Write a new file using <code>f_open</code>, <code>f_write</code>, and <code>f_close</code></p>
+</li>
+<li>
+<p>Write a function to traverse your file tree and return a node based on a path</p>
+</li>
+<li>
+<p>Write a function to save your file system so you can reload it later</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>int main()
+{
+  init_fs();
+
+  unsigned int flags = 0600 | O_CREAT | O_WRONLY | O_TRUNC;
+  vfd_t fd = f_open(fs_root, "newfile.txt", flags);
+  assert(fd &gt; 0);
+
+  vnode_t* newnode = find(fs_root, "newfile.txt");
+
+  char data[64];
+  strncpy(data, "It's a festival. Not a restival.", 64);
+  size_t size = f_write(newnode, data, sizeof(char), 64, fd);
+  assert(size == 64);
+  f_close(newnode, fd);
+
+  save_fs("DISK-newfile");
+  cleanup_fs();
+  return 0;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Recommendations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Test with valgrind after this point</p>
+</li>
+<li>
+<p>Use hexedit to check that you updated your file system correctly</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Your implementation of create should update the underlying file system. For example,</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Assign a new inode and initialize its values</p>
+</li>
+<li>
+<p>Assign a new block</p>
+</li>
+<li>
+<p>Update free space management</p>
+</li>
+<li>
+<p>Add an entry to directory fs_root</p>
+</li>
+<li>
+<p>Add a new vnode as a child of the fs_root</p>
+</li>
+<li>
+<p>Return an open file descriptor</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Your implementation of write should also update the underlying file system. For example,</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Increase the inode with the new file size</p>
+</li>
+<li>
+<p>Copy the data into the file&#8217;s data block</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_version_0_3">Version 0.3</h3>
+<div class="paragraph">
+<p>Goals:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Read in the DISK you wrote out</p>
+</li>
+<li>
+<p>Read an existing file using <code>f_open</code>, <code>f_stat</code>, <code>f_read</code>, and <code>f_close</code></p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>int main()
+{
+  init_fs("DISK-newfile");
+
+  vnode_t* node = find(fs_root, "newfile.txt");
+
+  vstat_t stats;
+  f_stat(node, 0, &amp;stats);
+  int size = stats.st_size;
+
+  char* contents = (char*) malloc(size);
+  vfd_t fd = f_open(node, "", O_RDONLY);
+  size_t rsize = f_read(node, contents, size, 1, fd);
+  if (rsize != (unsigned int) size)
+  {
+    printf("Error reading file.\n");
+  }
+  f_close(node, fd);
+  printf("%s", contents);
+  free(contents);
+
+  cleanup_fs();
+  return 0;
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_version_0_4">Version 0.4</h3>
+<div class="paragraph">
+<p>Refactor your shell to use your new functions. You now have code to omplement <code>ls</code>, <code>cat</code>, and <code>touch</code>.
+Congratulations! You have three vertical slices!</p>
+</div>
+<div class="paragraph">
+<p>Use this same process for the remaining functions.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Implement the VFS functions first and test it in its own file.</p>
+</li>
+<li>
+<p>Then integrate the feature into your shell.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>I recommend saving the mount/umount features until last.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_handling_errors">Handling errors</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Your VFS functions should return -1 on error and set a descriptive error code
+in the global variable <code>fs_errno</code>. See the specifications below for details.</p>
+</div>
+<div class="paragraph">
+<p>After you have the basic shell commands working (everything except mount),
+start integrating error checking into your shell. Checking error codes will
+allow you to report errors to the user and detect mistakes in your own code.
+For convenience, our specification re-uses the error codes and reporting
+functions from the Linux programmer interface.  For example,</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>int main()
+{
+  init_fs("DISK-newfile");
+
+  vfd_t fd = f_open(fs_root, "newfile.txt", O_CREAT);
+  if (fd &lt;= 0)
+  {
+    printf("Could not create newfile.txt: %s\n", strerror(fs_errno));
+  }
+
+  cleanup_fs(); // frees allocated memory
+  return 0;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The output looks as follows.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ ./test/create-eexist
+Could not create newfile.txt: File exists</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Be systematic with your implementation. You do not need to handle every case, but you shoudl be aware of which features have been implemented and which haven&#8217;t. You should also be aware of the limitations in your current implementation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_virtual_file_system_vfs_programmer_interface">Virtual File System (VFS) Programmer Interface</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following functions must be implemented by your virtual file system.
+You may change the definition of vnode_t. You should not change the function
+specifications for the public VFS (e.g. the functions that start with f_).
+Feel free to add as many new functions, classes, and structs as you like.
+You can also use C++ types and data structures.</p>
+</div>
+<div class="paragraph">
+<p>In general, you can change the data stored in supporting objects, such as
+vnode_t, vdir_t, and vfd_t, you should not change the function declarations.</p>
+</div>
+<div class="paragraph">
+<p>Below are detailed specifications for each of the functions you should
+implement. The specifications are based on the man pages for the corresponding
+calls in the <a href="https://www.man7.org/linux/man-pages/index.html">linux programming interface</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="_f_open"><code>f_open</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>vfd_t f_open(vnode_t *vn, const char* filename, int flags);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Opens the file specified by filename.</p>
+</div>
+<div class="paragraph">
+<p>If vnode corresponds to a directory and O_CREAT is specified, a new
+file will be created inside that directory and then opened with the
+parameters specified in <code>flags</code>. Otherwise, if vnode corresponds
+to a file, it will be opened with the parameters given in <code>flags</code>.</p>
+</div>
+<div class="paragraph">
+<p>A call to open() returns a new open file description, an entry in
+the system-wide table of open files.  The open file description
+records the file offset and the file status flags (see below).</p>
+</div>
+<div class="paragraph">
+<p>The argument flags must include one of the following access modes:
+O_RDONLY, O_WRONLY, or O_RDWR.  These request opening the file
+read-only, write-only, or read/write, respectively.</p>
+</div>
+<div class="paragraph">
+<p>In addition, zero or more file creation flags and file status
+flags can be bitwise ORed in flags.  The file creation flags are
+O_CREAT, O_APPEND, and O_TRUNC. The file status flags are all of the
+remaining flags listed below. The distinction between these two
+groups of flags is that the file creation flags affect the
+semantics of the open operation itself, while the file status
+flags affect the semantics of subsequent I/O operations.</p>
+</div>
+<div class="paragraph">
+<p>The full list of file creation flags and file status flags is as
+follows:</p>
+</div>
+<div class="paragraph">
+<p><code>O_CREAT</code></p>
+</div>
+<div class="paragraph">
+<p>If pathname does not exist, create it as a regular file.
+The mode argument specifies the file mode bits to be
+applied when a new file is created.  If O_CREAT is not specified in flags,
+then mode is ignored. If no mode is specified, some arbitrary bytes from
+the stack will be applied as the file mode.</p>
+</div>
+<div class="paragraph">
+<p>Note that mode applies only to future accesses of the newly
+created file; the open() call that creates a read-only file
+may well return a read/write file descriptor.</p>
+</div>
+<div class="paragraph">
+<p>The following symbolic constants are provided for mode:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>S_IRUSR - 00400 user has read permission</p>
+</li>
+<li>
+<p>S_IWUSR - 00200 user has write permission</p>
+</li>
+<li>
+<p>S_IXUSR - 00100 user has execute permission</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><code>O_APPEND</code></p>
+</div>
+<div class="paragraph">
+<p>The file is opened in append mode. The file offset is positioned at
+the end of the file, as if with f_seek.</p>
+</div>
+<div class="paragraph">
+<p><code>O_TRUNC</code></p>
+</div>
+<div class="paragraph">
+<p>If the file already exists and is a regular file and the
+access mode allows writing (i.e., is O_RDWR or O_WRONLY) it
+will be truncated to length 0.</p>
+</div>
+<div class="paragraph">
+<p><em>RETURN VALUE</em></p>
+</div>
+<div class="paragraph">
+<p>On success, returns the new file descriptor (a nonnegative integer).  On
+error, -1 is returned and fs_errno is set to indicate the error.</p>
+</div>
+<div class="paragraph">
+<p><code>EACCES</code></p>
+</div>
+<div class="paragraph">
+<p>The requested access to the file is not allowed. For example,
+the O_WRONLY flag was set but the file does not have write permissions.</p>
+</div>
+<div class="paragraph">
+<p><code>EEXIST</code></p>
+</div>
+<div class="paragraph">
+<p>O_CREAT was set but the filename already exists.</p>
+</div>
+<div class="paragraph">
+<p><code>EINVAL</code></p>
+</div>
+<div class="paragraph">
+<p>Invalid value. For example,</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>An invalid value in flags.</p>
+</li>
+<li>
+<p>O_CREAT was specified in flags and the filename contains characters not allowed by the underlying file system.</p>
+</li>
+<li>
+<p>vnode is null or contains invalid inode information.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><code>EISDIR</code></p>
+</div>
+<div class="paragraph">
+<p>Filename refers to an existing directory and not a file.</p>
+</div>
+<div class="paragraph">
+<p><code>ENFILE</code></p>
+</div>
+<div class="paragraph">
+<p>The limit on the number of open file descriptors has been reached.</p>
+</div>
+<div class="paragraph">
+<p><code>ENAMETOOLONG</code></p>
+</div>
+<div class="paragraph">
+<p>filename was too long.</p>
+</div>
+<div class="paragraph">
+<p><code>ENOENT</code></p>
+</div>
+<div class="paragraph">
+<p>O_CREAT is not set and the named file does not exist.</p>
+</div>
+<div class="paragraph">
+<p><code>ENOSPC</code></p>
+</div>
+<div class="paragraph">
+<p>Filename was to be created but there was no room for the new file.</p>
+</div>
+<div class="paragraph">
+<p><code>ENOTDIR</code></p>
+</div>
+<div class="paragraph">
+<p>O_CREAT was specified but the vnode is not a directory.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_f_read"><code>f_read</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>size_t f_read(vnode_t *vn, void *data, size_t size, int num, vfd_t fd);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Read the specified number of bytes from a file handle at the current position
+and given vnode. Returns the number of bytes read, or an error.</p>
+</div>
+<div class="paragraph">
+<p>The read operation commences at the file offset, and the file offset is
+incremented by the number of bytes read.  If the file offset is at or past the
+end of file, no bytes are read, and read() returns zero.</p>
+</div>
+<div class="paragraph">
+<p>A read() with a count of 0 returns zero and has no other effects.</p>
+</div>
+<div class="paragraph">
+<p><em>RETURN VALUE</em></p>
+</div>
+<div class="paragraph">
+<p>On success, the number of bytes read is returned (zero indicates
+end of file), and the file position is advanced by this number.</p>
+</div>
+<div class="paragraph">
+<p>On error, -1 is returned, and fs_errno is set to indicate the error.
+In this case, it is left unspecified whether the file position (if
+any) changes.</p>
+</div>
+<div class="paragraph">
+<p><code>EBADF</code></p>
+</div>
+<div class="paragraph">
+<p>fd is not a valid file descriptor or is not open for reading.</p>
+</div>
+<div class="paragraph">
+<p><code>EISDIR</code></p>
+</div>
+<div class="paragraph">
+<p>vnode refers to a directory.</p>
+</div>
+<div class="paragraph">
+<p><code>EINVAL</code></p>
+</div>
+<div class="paragraph">
+<p>vnode is null or contains invalid inode information.</p>
+</div>
+<div class="paragraph">
+<p><code>EPERM</code></p>
+</div>
+<div class="paragraph">
+<p>fd is attached to a vnode which is unsuitable for reading, for example, the file has write-only permissions.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_f_write"><code>f_write</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>size_t f_write(vnode_t *vn, void *data, size_t size, int num, vfd_t fd);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Write some bytes to a file handle at the current position and given vnode.
+The number of bytes written may be less than count if there is
+insufficient space.</p>
+</div>
+<div class="paragraph">
+<p><em>RETURN VALUE</em></p>
+</div>
+<div class="paragraph">
+<p>On success, the number of bytes written is returned. On error, -1 is returned,
+and fs_errno is set to indicate the error.</p>
+</div>
+<div class="paragraph">
+<p><code>EBADF</code></p>
+</div>
+<div class="paragraph">
+<p>fd is not a valid file descriptor or is not open for writing.</p>
+</div>
+<div class="paragraph">
+<p><code>EISDIR</code></p>
+</div>
+<div class="paragraph">
+<p>vnode refers to a directory.</p>
+</div>
+<div class="paragraph">
+<p><code>EINVAL</code></p>
+</div>
+<div class="paragraph">
+<p>vnode is null or contains invalid inode information.</p>
+</div>
+<div class="paragraph">
+<p><code>EPERM</code></p>
+</div>
+<div class="paragraph">
+<p>fd is attached to a vnode which is unsuitable for writing, for example, the file has read-only permissions.</p>
+</div>
+<div class="paragraph">
+<p><code>EFBIG</code></p>
+</div>
+<div class="paragraph">
+<p>An attempt was made to write a file that exceeds the
+maximum file size or the file size limit.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_f_close"><code>f_close</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>int f_close(vnode_t *vn, vfd_t fd);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Close a file handle</p>
+</div>
+<div class="paragraph">
+<p><em>RETURN VALUE</em></p>
+</div>
+<div class="paragraph">
+<p>Returns zero on success.  On error, -1 is returned, and fs_errno is set to
+indicate the error.</p>
+</div>
+<div class="paragraph">
+<p><code>EBADF</code></p>
+</div>
+<div class="paragraph">
+<p>fd is not a valid file descriptor.</p>
+</div>
+<div class="paragraph">
+<p><code>EISDIR</code></p>
+</div>
+<div class="paragraph">
+<p>vnode refers to a directory.</p>
+</div>
+<div class="paragraph">
+<p><code>EINVAL</code></p>
+</div>
+<div class="paragraph">
+<p>vnode is null or contains invalid inode information.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_f_seek"><code>f_seek</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>int f_seek(vnode_t *vn, vfd_t fd, off_t offset, int whence);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Repositions the file offset of the open file description
+associated with the file descriptor fd and file vnode. The file description
+is moved to the argument offset according to the directive whence as follows:</p>
+</div>
+<div class="paragraph">
+<p><code>SEEK_SET</code></p>
+</div>
+<div class="paragraph">
+<p>The file offset is set to offset bytes.</p>
+</div>
+<div class="paragraph">
+<p><code>SEEK_CUR</code></p>
+</div>
+<div class="paragraph">
+<p>The file offset is set to its current location plus offset bytes.</p>
+</div>
+<div class="paragraph">
+<p><code>SEEK_END</code></p>
+</div>
+<div class="paragraph">
+<p>The file offset is set to the size of the file plus offset bytes.</p>
+</div>
+<div class="paragraph">
+<p><em>RETURN VALUE</em></p>
+</div>
+<div class="paragraph">
+<p>Upon successful completion, returns the resulting offset location as
+measured in bytes from the beginning of the file.  On error, the value (off_t)
+-1 is returned and fs_errno is set to indicate the error.</p>
+</div>
+<div class="paragraph">
+<p><code>EBADF</code></p>
+</div>
+<div class="paragraph">
+<p>fd is not a valid file descriptor.</p>
+</div>
+<div class="paragraph">
+<p><code>EISDIR</code></p>
+</div>
+<div class="paragraph">
+<p>vnode refers to a directory.</p>
+</div>
+<div class="paragraph">
+<p><code>ENXIO</code></p>
+</div>
+<div class="paragraph">
+<p>whence is SEEK_DATA and offset is beyond the end of the file</p>
+</div>
+<div class="paragraph">
+<p><code>EINVAL</code></p>
+</div>
+<div class="paragraph">
+<p>vnode is null or contains invalid inode information.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_f_stat"><code>f_stat</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>int f_stat(vnode_t *vn, vfd_t fd /* unused */, vstat_t* stats);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Retrieve information about a file or directory. Parameter <code>fd</code> is not used and
+can be ignored.</p>
+</div>
+<div class="paragraph">
+<p><em>RETURN VALUE</em></p>
+</div>
+<div class="paragraph">
+<p>Fills in the <code>stats</code> with the information corresponding to vnode.
+Returns zero on success. On error, -1 is returned and fs_errno is set to indicate the error.</p>
+</div>
+<div class="paragraph">
+<p><code>EINVAL</code></p>
+</div>
+<div class="paragraph">
+<p>vnode is null or contains invalid inode information.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_f_remove"><code>f_remove</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>int f_remove(vnode_t *vn, vfd_t fd);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Delete a file. If <code>fd</code> is non-zero, also closes the and frees the file descriptor.</p>
+</div>
+<div class="paragraph">
+<p><code>EINVAL</code></p>
+</div>
+<div class="paragraph">
+<p>vnode is null or contains invalid inode information.</p>
+</div>
+<div class="paragraph">
+<p><code>EISDIR</code></p>
+</div>
+<div class="paragraph">
+<p>vnode refers to a directory.</p>
+</div>
+<div class="paragraph">
+<p><code>EBADF</code></p>
+</div>
+<div class="paragraph">
+<p>fd is not a valid file descriptor.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_f_opendir"><code>f_opendir</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>vfd_t f_opendir(vnode_t *vn, const char* path /*unused*/);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Open the given vnode as a "directory file" for reading, and return a directory entry handle.</p>
+</div>
+<div class="paragraph">
+<p><em>RETURN VALUE</em></p>
+</div>
+<div class="paragraph">
+<p>Returns a file descriptor on success. Return -1 on error and sets the error code.</p>
+</div>
+<div class="paragraph">
+<p><code>ENOTDIR</code></p>
+</div>
+<div class="paragraph">
+<p>The vnode is not a directory.</p>
+</div>
+<div class="paragraph">
+<p><code>EINVAL</code></p>
+</div>
+<div class="paragraph">
+<p>The vnode is null or contains invalid inode information.</p>
+</div>
+<div class="paragraph">
+<p><code>ENFILE</code></p>
+</div>
+<div class="paragraph">
+<p>The limit on the number of open file descriptors has been reached.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_f_readdir"><code>f_readdir</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>vdir_t* f_readdir(vnode_t *vn, vfd_t fd);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Returns a pointer to a "directory entry" structure representing the next directory entry.</p>
+</div>
+<div class="paragraph">
+<p>Reads sizeof(vdir_t) bytes from the directory corresponding to vnode at the current position specified by fd.
+Returns a pointer to the start of the vdir_t entry.</p>
+</div>
+<div class="paragraph">
+<p>The read operation commences at the file offset, and the file offset is
+incremented by the number of bytes read.  If the file offset is at or past the
+end of file, no bytes are read, and readdir returns NULL.</p>
+</div>
+<div class="paragraph">
+<p><em>RETURN VALUE</em></p>
+</div>
+<div class="paragraph">
+<p>On success, the next vdir_t entry is returned, or NULL, if no more entries are available.
+The file position is advanced by this number.</p>
+</div>
+<div class="paragraph">
+<p>On error, -1 is returned, and fs_errno is set to indicate the error.
+In this case, it is left unspecified whether the file position (if
+any) changes.</p>
+</div>
+<div class="paragraph">
+<p><code>EBADF</code></p>
+</div>
+<div class="paragraph">
+<p>fd is not a valid file descriptor or is not open for reading.</p>
+</div>
+<div class="paragraph">
+<p><code>ENOTDIR</code></p>
+</div>
+<div class="paragraph">
+<p>The vnode is not a directory.</p>
+</div>
+<div class="paragraph">
+<p><code>EINVAL</code></p>
+</div>
+<div class="paragraph">
+<p>The vnode is null or contains invalid inode information.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_f_closedir"><code>f_closedir</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>int f_closedir(vnode_t *vn, vfd_t fd);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Close an open directory file.</p>
+</div>
+<div class="paragraph">
+<p><em>RETURN VALUE</em></p>
+</div>
+<div class="paragraph">
+<p>On success, returns 0. On error, -1 is returned, and fs_errno is set to indicate the error.</p>
+</div>
+<div class="paragraph">
+<p><code>EBADF</code></p>
+</div>
+<div class="paragraph">
+<p>fd is not a valid file descriptor or is not open for reading.</p>
+</div>
+<div class="paragraph">
+<p><code>ENOTDIR</code></p>
+</div>
+<div class="paragraph">
+<p>The vnode is not a directory.</p>
+</div>
+<div class="paragraph">
+<p><code>EINVAL</code></p>
+</div>
+<div class="paragraph">
+<p>The vnode is null or contains invalid inode information.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_f_mkdir"><code>f_mkdir</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>int f_mkdir(vnode_t *vn, const char* name);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Make a new directory with the given name at the location specified by vnode.</p>
+</div>
+<div class="paragraph">
+<p><em>RETURN VALUE</em></p>
+</div>
+<div class="paragraph">
+<p>On success, returns 0. On error, -1 is returned, and fs_errno is set to indicate the error.</p>
+</div>
+<div class="paragraph">
+<p><code>EEXIST</code></p>
+</div>
+<div class="paragraph">
+<p>Either the name corresponds to a directory that already exists, or it correspond to a file.</p>
+</div>
+<div class="paragraph">
+<p><code>ENOTDIR</code></p>
+</div>
+<div class="paragraph">
+<p>The vnode is not a directory.</p>
+</div>
+<div class="paragraph">
+<p><code>EINVAL</code></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The vnode is null or contains invalid inode information.</p>
+</li>
+<li>
+<p>The given name contains invalid characters</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><code>ENAMETOOLONG</code></p>
+</div>
+<div class="paragraph">
+<p>directory name was too long.</p>
+</div>
+<div class="paragraph">
+<p><code>ENOSPC</code></p>
+</div>
+<div class="paragraph">
+<p>Directory was to be created but there was no room for the new file.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_f_rmdir"><code>f_rmdir</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>int f_rmdir(vnode_t *vn, const char* name);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Recursively deletes the directory specified by name, contained within the directory given by vnode.</p>
+</div>
+<div class="paragraph">
+<p><em>RETURN VALUE</em></p>
+</div>
+<div class="paragraph">
+<p>On success, returns 0. On error, -1 is returned, and fs_errno is set to indicate the error.</p>
+</div>
+<div class="paragraph">
+<p><code>ENOENT</code></p>
+</div>
+<div class="paragraph">
+<p>The name does not exist within vnode.</p>
+</div>
+<div class="paragraph">
+<p><code>ENOTDIR</code></p>
+</div>
+<div class="paragraph">
+<p>The vnode is not a directory.</p>
+</div>
+<div class="paragraph">
+<p><code>EINVAL</code></p>
+</div>
+<div class="paragraph">
+<p>The vnode is null or contains invalid inode information.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_f_mount"><code>f_mount</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>int f_mount(vnode_t *vn, const char* sourcefile, const char* name);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Mount a specified file system into your directory tree at the location specified by vnode.
+vnode must be a directory.</p>
+</div>
+<div class="paragraph">
+<p><em>RETURN VALUE</em></p>
+</div>
+<div class="paragraph">
+<p>Returns zero on success. Returns -1 on error and sets fs_errno to insidicate the error.</p>
+</div>
+<div class="paragraph">
+<p><code>ENOTDIR</code></p>
+</div>
+<div class="paragraph">
+<p>The vnode is not a directory.</p>
+</div>
+<div class="paragraph">
+<p><code>EINVAL</code></p>
+</div>
+<div class="paragraph">
+<p>The vnode is null or contains invalid inode information.</p>
+</div>
+<div class="paragraph">
+<p><code>ENAMETOOLONG</code></p>
+</div>
+<div class="paragraph">
+<p>The given name is too long.</p>
+</div>
+<div class="paragraph">
+<p><code>EINVAL</code></p>
+</div>
+<div class="paragraph">
+<p>The given name contains invalid characters.</p>
+</div>
+<div class="paragraph">
+<p><code>ENOENT</code></p>
+</div>
+<div class="paragraph">
+<p>The given sourcefile cannot be found.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_f_umount"><code>f_umount</code></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>int f_unmount(vnode_t *vn, const char* name);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Unmount a specified file system. All resources associated with the file system should be destroyed.</p>
+</div>
+<div class="paragraph">
+<p><em>RETURN VALUE</em></p>
+</div>
+<div class="paragraph">
+<p>Returns zero on success. Returns -1 on error and sets fs_errno to insidicate the error.</p>
+</div>
+<div class="paragraph">
+<p><code>ENOENT</code></p>
+</div>
+<div class="paragraph">
+<p>The name does not exist within vnode.</p>
+</div>
+<div class="paragraph">
+<p><code>ENOTDIR</code></p>
+</div>
+<div class="paragraph">
+<p>The vnode is not a directory.</p>
+</div>
+<div class="paragraph">
+<p><code>EINVAL</code></p>
+</div>
+<div class="paragraph">
+<p>The vnode is null or contains invalid inode information.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2025-04-19 10:42:56 -0400
+</div>
+</div>
+</body>
+</html>

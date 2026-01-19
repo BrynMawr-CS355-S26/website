@@ -1,0 +1,80 @@
+
+. What is a file? A directory?
+. What are some common file types?
+. What is the difference between text and binary files?
+. How do we distinguish between file types?
+. In a file system, what is a path?
+. What is the difference between an absolute and relative path?
+. What is the current working directory?
+. What is the difference between a foreground and background process in the terminal?
+. What is a pipe? Give an example of a bash command that uses pipes.
+. How is redirected input/output different from reading/writing a file?
+. What is `job control` in regards to the bash terminal?
+. How do you redirect output to a file in terminal?
+. What do the file descriptors corresponding to values 0, 1, and 2 represent in terminal?
+. What is a process group?
+. What is a session?
+. What is the controlling terminal for a process?
+. What do the following symbols mean when they are in a path?
+* `/`
+* `.`
+* `..`
+* `~`
+
+. Suppose a file system has the following hierarchy
++
+[source]
+----
+root
++ home
+++ ren
++++ A    
+++ stimpy
++++ B
++++ C
+++++ hello.txt      
+----
+* What is the absolute path of `hello.txt`?
+* If we are in the directory A, what is the relative path of hello.txt?
+* If we are in the directory B, what is the relative path of hello.txt?
+
+. Draw the directory hierarchy after the following commands
++
+[source]
+----
+$ pwd
+/home/alinen
+$ mkdir A
+$ cd A
+$ mkdir Z
+$ touch talk.c
+$ cd ..
+$ touch listen.c
+$ cd
+$ touch sing.c
+----
+
+. Consider the following file properties listed with `ls -l`
++
+[source]
+----
+-rw-r--r--  0 alinen alinen   70 Dec 10  2023 README.md
+----
++
+* What does the above file permissions represent?
+* What numeric value corresponds to the following permissions (in octal)? `–rw-r--r--`
+* What numeric value corresponds to the following permissions (in octal)? `–rwxr-x--x`
+* What permissions correspond to the value `0665`?
+
+. Consider the following commands and associated diagram.
+
+image::processgroups.png[width=600]
+
+* Fill in the session ID for each of the processes
+* Fill in the parent group IDs for each of the processes
+* Fill in the process group IDs for each of the processes. Assume that children are created with the call `setpgid(0,0)`
+* In the above diagram, what processes are running in the foreground? 
+* In the above diagram, what processes are running in the background?
+* Suppose a user sends the following signal command. `kill(658, SIGALRM)` Which processes receive the signal? 
+* Suppose a user sends the following signal command. `kill(-658, SIGALRM)` Which processes receive the signal? 
+* Suppose a user sends the following signal command. `kill(659, SIGALRM)` Which processes receive the signal? 

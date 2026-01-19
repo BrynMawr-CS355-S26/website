@@ -1,0 +1,119 @@
+include::header.adoc[]
+
+:title: Processes II
+:Author Initials: ASN
+:Date:    2020-08-15
+:Revision: 0.1
+:ASST: labs-USERNAME
+
+= {title}
+
+**Lab exercises for Feb 6th. Due 5pm Feb 7**
+
+The goals for this assignment are:
+
+* Working with processes, pipes, file descriptors
+
+We will use the same repository as last week: link:https://classroom.github.com/a/K4qA5FE_[Labs Repo]. 
+Click on the link and then accept and merge the pull request.
+
+:sectnums:
+
+= Dupee Dup2
+
+In the file, `filesort.c`, implement a program that runs the command `sort < list.txt` 
+using the system calls: open, close, fork, execlp, and dup2.
+
+[source, subs="quotes"]
+----
+$ **cat list.txt**
+banana
+apple
+orange
+kiwi
+$ **./filesort**
+apple
+banana
+kiwi
+orange
+Sort complete
+----
+
+In the above example, `filesort` performs the following steps:
+
+* Creates a child process with fork
+* The child process does the following:
+** Opens the file "list.txt" 
+** Maps the file descripor for "list.txt" to stdard input
+** Calls execlp with arguments that correspond to sort, e.g execlp("sort", "sort", (char*) NULL)
+* The parent process does the following:
+** Waits for the child to complete
+
+NOTE: Don't forget to implement error handling. Check the return code of system calls and use perror to report errors if they occur. 
+
+= Pipe Warm-up
+
+Use the command `man pipe` to read the man page about the pipe system call. In 
+the file, `pipe.c`, copy the example from the man page. This example implements 
+the followig demo.
+
+```
+The following program creates a pipe, and then fork(2)s to create a child
+process; the child inherits a  duplicate  set of file descriptors that
+refer to the same pipe.  After the fork(2), each process closes the file
+descriptors that it doesn't need for the pipe (see pipe(7)).  The parent then
+writes the string contained in the program's command-line argument to the
+pipe, and the child reads this string a byte at a time from the pipe and echoes
+it on standard output.  
+```
+
+Modify the example to print the parent and child PIDs like so:
+
+[source, subs="quotes"]
+----
+$ **./pipe "mario takes the pipe to land 5"**
+parent (3168) will send input to child: "mario takes the pipe to land 5"
+child (3169) will print output from parent
+mario takes the pipe to land 5
+----
+
+In the header comment of `pipe.c`, answer the following questions:
+
+* What do the descriptors pipefd[0] and pipefd[1] refer to?
+* When you run valgrind on this example, the report is printed twice. Why?
+* The example is careful to close the ends of the pipe. What happens when you do not call `close()`? 
+
+= Pipe 
+
+In the file, `catsort.c`, implement a program that runs the command `cat list.txt | sort`
+using the system calls: pipe, fork, execlp, and dup2.
+
+[source, subs="quotes"]
+----
+$ **cat list.txt**
+banana
+apple
+orange
+kiwi
+$ **./catsort**
+apple
+banana
+kiwi
+orange
+Cat complete
+Sort complete
+----
+
+In the above example, `catsort` performs the following steps:
+
+* Creates a pipe 
+* Creates two child processes with fork
+* Each child process does the following:
+** Uses dup2 to map one side of the pipe with either standard input or output. 
+** Closes the ends of the pipe
+** Calls execlp with arguments that correspond to the command
+* The parent process does the following:
+** Closes the ends of its pipe
+** Waits for both children to complete
+
+NOTE: Don't forget to implement error handling by checking the return code and printing the error with perror is the status of the system call is < 0.

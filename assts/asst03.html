@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.18">
+<title>Assignment 03: Trust the Process (Part 2)</title>
+<link rel="stylesheet" href="../style/cs21.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_assignment_03_trust_the_process_part_2">Assignment 03: Trust the Process (Part 2)</a></li>
+<li><a href="#_better_shell">1. Better Shell</a>
+<ul class="sectlevel2">
+<li><a href="#_change_the_working_directory">1.1. Change the working directory</a></li>
+<li><a href="#_piping">1.2. Piping</a></li>
+<li><a href="#_io_redirection">1.3. I/O redirection</a></li>
+<li><a href="#_error_reporting">1.4. Error reporting</a></li>
+<li><a href="#_cleanup">1.5. Cleanup</a></li>
+</ul>
+</li>
+<li><a href="#_grading_rubric">2. Grading Rubric</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_assignment_03_trust_the_process_part_2">Assignment 03: Trust the Process (Part 2)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Due Sunday, Feb 9, before midnight</strong></p>
+</div>
+<div class="paragraph">
+<p>The goals for this assignment are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Working with stdout, stdin, and files</p>
+</li>
+<li>
+<p>Understanding redirection and pipes at the command line</p>
+</li>
+<li>
+<p>Working with additional system calls: pipe, dup2, chdir, pwd, perror</p>
+</li>
+<li>
+<p>C practice/review</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+We will use the same starter code as last week: <a href="https://classroom.github.com/a/z8JKZurc">here</a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_better_shell">1. Better Shell</h2>
+<div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This question is from <a href="https://www.cs.swarthmore.edu/~kwebb/cs45/s24/labs/lab1.html">this lab</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In the file, <code>shell.c</code>, extend the features of your shell from <a href="asst02.html">Assignment 02</a>.</p>
+</div>
+<div class="paragraph">
+<p>Requirements:</p>
+</div>
+<div class="paragraph">
+<p>Your shell should satisfy the requirements of <a href="asst02.html">Assignment 02</a>.
+Additionally, your shell should support the following features, outlined in the sections below.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Change the current working directory if the users types <code>cd</code></p>
+</li>
+<li>
+<p>Support pipes</p>
+</li>
+<li>
+<p>Support file redirection</p>
+</li>
+<li>
+<p>Error reporting</p>
+</li>
+<li>
+<p>Cleanup</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_change_the_working_directory">1.1. Change the working directory</h3>
+<div class="paragraph">
+<p>If the user enters the <code>cd</code> command, change the current working directory.
+Your shell should change the working directory to the specified path using
+<code>chdir()</code>. You can execute the <code>pwd</code> command to print the current working directory
+(to test if cd is working).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_piping">1.2. Piping</h3>
+<div class="paragraph">
+<p>Your shell should support piping the output (standard out) from one command to
+the input (standard in) of another. A pipe is an inter-process communication
+(IPC) mechanism for two Unix processes running on the same machine. It’s a
+one-way communication channel between the two processes (one process always
+writes to one end of the pipe, the other process always reads from the other end
+of the pipe). The interface to a pipe is like a temporary file with two open
+ends — writes to one end by one process can be read from the other end by the
+another process. However, unlike a regular file, a read from a pipe results in
+the removal of data that was written by the other process.</p>
+</div>
+<div class="paragraph">
+<p>The <code>pipe()</code> system call will create a pipe when given an array of two integers.
+It creates two file descriptors, one for the read end of the pipe (array element
+0), the other for the write end of the pipe (array element 1).</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Child processes inherit file descriptors from their parent, so you’ll want
+to create a pipe before calling fork() so that any newly-created processes will
+get a copy of the pipe when they’re forked. After the fork, a child can set up
+its file descriptors before calling <code>execv()</code> by using <code>dup2()</code> to associate the
+read or write end of the pipe with the appropriate file descriptor.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Placing a pipe between two commands causes the output of the first to feed into the input of the second. For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>ls | sort</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Says to take the output from ls and rather than printing it, instead send it as
+input to sort, which will sort it and then print it.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>cat file.txt | grep blah</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Says to take the output from cat (the contents of file.txt) and send it to the
+input of grep, which searches for all lines containing the string "blah". This
+is a silly way to run grep, since grep can read files on its own without cat,
+but it works well for testing pipes.</p>
+</div>
+<div class="paragraph">
+<p>You are not required to support multiple pipes in a single command line,
+although I would encourage you to think about how you might make that happen
+(it’s not that different).</p>
+</div>
+<div class="sect3">
+<h4 id="_creating_a_pipe">1.2.1. Creating a pipe</h4>
+<div class="paragraph">
+<p>Calling the pipe() system call creates two new file descriptors for a process: a
+read-end and a write-end. Any data written to the write-end will be available
+for reading from the read-end. When all of the FDs representing the write-end of
+a pipe are closed, any attempt to read from the pipe will return end-of-file
+(EOF) to the reader, signifying that no more data is coming.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+When working with pipes in your shell, it’s important to close any parts
+of the pipe that you aren’t using. For example, if a child process is planning
+to write into a pipe, it should close the read-end, since the read-end isn’t
+useful to it. Similarly, a pipe reader should close the write-end.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Your parent shell will also need to close both ends after it has forked all of
+the child processes that need access to a shared pipe. If you don’t close all
+the write ends of a pipe, your shell will hang because the pipe’s reader will
+never get an EOF!</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_io_redirection">1.3. I/O redirection</h3>
+<div class="paragraph">
+<p>Your shell should support I/O redirection whereby files replace a process’s
+standard in (0), standard out (1), or standard error (2) file descriptor
+streams. The user can ask to replace standard in by supplying "&lt; filename". For
+example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>grep blah &lt; input_file.txt 1&gt; output_file.txt</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Says to use the file input_file.txt as file descriptor 0 rather than reading
+from terminal input and the file output_file.txt as file descriptor 1 rather
+than printing to standard out.</p>
+</div>
+<div class="paragraph">
+<p>For output streams, the user must specify which I/O stream(s) to replace:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>1&gt; filename redirects the standard out stream to a file.
+
+2&gt; filename redirects the standard error stream to a file.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The user may also choose to redirect both streams, either to separate files or
+to the same one. To implement this functionality, most of the complexity is in
+the parser, since you’ll need to recognize that an I/O redirect is happening and
+treat the next token as the file name rather than an ARGV token. After parsing
+is complete and you’ve created a child process, you can use <code>open()</code> and <code>dup2()</code> to
+place the file at the appropriate file descriptor.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+When opening files for writing, pay attention to the flags and modes you
+pass to <code>open()</code>, since you’ll need to create files with usable access permissions
+that don’t already exist. See the Tips section below.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Note that most shells will assume you mean "1&gt;" if you just say "&gt;", but you are
+not required to do that. For output streams, you may assume there will be an
+explicit 1 or 2 preceding the "&gt;". You may also assume that the user won’t give
+you nonsense numbers (e.g., 3&gt;).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_error_reporting">1.4. Error reporting</h3>
+<div class="paragraph">
+<p>Your shell should report errors using <code>perror()</code> and continue executing whenever
+possible. If the main shell process (parent) makes a system call that fails
+(e.g., signal, fork, pipe) it’s fine to report the error and terminate, since
+you can’t really recover from those. For minor errors though (e.g., exec fails
+because the user’s command is invalid) a child process should terminate, but the
+shell should continue.</p>
+</div>
+<div class="paragraph">
+<p><strong>Always always always check the return value of any system call you make!</strong></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_cleanup">1.5. Cleanup</h3>
+<div class="paragraph">
+<p>Your shell should reap all child processes when they terminate, close all file
+descriptors it’s no longer using, and get a clean bill of health from valgrind:
+no invalid memory accesses, uninitialized variables, or memory leaks.</p>
+</div>
+<h3 id="_submit_your_work_to_github" class="discrete">Submit your work to Github</h3>
+<div class="paragraph">
+<p>Add and check in your program using git and then push your changes to Github.
+Run the following command inside your <code>shell-USERNAME</code> directory.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ cd shell-USERNAME
+$ git add .
+$ git commit -m "Descriptive message"
+$ git push</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Run <code>git status</code> to check the result of the previous git command.
+Check the Github website to make sure that your program uploaded correctly.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_grading_rubric">2. Grading Rubric</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Assignment rubrics</strong></p>
+</div>
+<div class="paragraph">
+<p>Grades are out of 4 points.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>(4 points) Shell</p>
+<div class="ulist">
+<ul>
+<li>
+<p>(0.3 points) style and header comment</p>
+</li>
+<li>
+<p>(0.3 points) cd</p>
+</li>
+<li>
+<p>(0.7 points) pipes</p>
+</li>
+<li>
+<p>(0.7 points) redirection</p>
+</li>
+<li>
+<p>(2.0 points) Polish. No memory errors.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+When using <code>readline()</code>, valgrind will report that some of your memory is
+<em>still reachable</em>. This memory is not leaked. It hasn&#8217;t been cleaned up yet from
+`readline()&#8217;s internal memory. For example, output such as the following is ok
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>==3504== HEAP SUMMARY:
+==3504==     in use at exit: 204,143 bytes in 221 blocks
+==3504==   total heap usage: 453 allocs, 232 frees, 244,790 bytes allocated
+==3504==
+==3504== LEAK SUMMARY:
+==3504==    definitely lost: 0 bytes in 0 blocks
+==3504==    indirectly lost: 0 bytes in 0 blocks
+==3504==      possibly lost: 0 bytes in 0 blocks
+==3504==    still reachable: 204,143 bytes in 221 blocks
+==3504==         suppressed: 0 bytes in 0 blocks</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Code rubrics</strong></p>
+</div>
+<div class="paragraph">
+<p>For full credit, your C programs must be feature-complete, robust (e.g. run without memory errors or crashing) and
+have good style.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some credit lost for missing features or bugs, depending on severity of error</p>
+</li>
+<li>
+<p>-12.5% for style errors. See the <a href="../codingstandard.html">class coding style</a> here.</p>
+</li>
+<li>
+<p>-50% for memory errors</p>
+</li>
+<li>
+<p>-100% for failure to checkin work to Github</p>
+</li>
+<li>
+<p>-100% for failure to compile on linux using make</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2025-02-03 17:21:19 -0500
+</div>
+</div>
+</body>
+</html>

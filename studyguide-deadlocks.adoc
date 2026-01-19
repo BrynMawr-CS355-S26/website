@@ -1,0 +1,129 @@
+. What is a deadlock?
+. Name four conditions for deadlock.
+. List four ways to deal with deadlock.
+. Under what circumstances is ignoring deadlock a reasonable strategy? Under what circumstances is it unacceptable?
+. What factors does the OS need to keep track of in order to detect deadlocks?
+. List three ways that the OS can recover from deadlock if it is detected.
+. Give an example of deadlock recovery through preemption.
+. Give an example of deadlock recovery through rollback.
+. Give an example of deadlock recovery through killing a process.
+. Give an example of deadlock prevention by removing the need for "mutual exclusion".
+. Give an example of deadlock prevention by avoid the need for "hold and wait" of resources.
+. Give an example of deadlock prevention by allowing resources to be "preempted". 
+. Give an example of deadlock prevention by avoid the need for "circular wait" of resources.
+. What is a safe state? 
+. Does an unsafe state guarantee a deadlock will occur? Why or why not?
+
+. Consider 5 dining philosophers. Can the following code deadlock? Why or why not?
++
+[source]
+----
+pthread_mutex_t mutex[N]
+struct thread_data {
+  int id;
+};
+
+void Philosophize(void* usr)
+{
+  struct thread_data* data = (struct thread_data*) usr;
+  printf("%d is hungry\n", data->id);
+
+  int leftFork = data->id;
+  int rightFork = (data->id + 1) % N;
+
+  pthread_mutex_lock(&mutex[leftFork]);
+  pthread_mutex_lock(&mutex[rightFork]);
+  printf("%d is eating\n", data->id);
+  sleep(duration);
+  pthread_mutex_unlock(&mutex[leftFork]);
+  pthread_mutex_unlock(&mutex[rightFork]);
+}
+----
+
+. Consider 5 dining philosophers. Can the following code deadlock? Why or why not. Is the given solution fair?
++
+[source]
+----
+pthread_mutex_t mutex[N]
+struct thread_data {
+  int id;
+};
+
+void Philosophize(void* usr)
+{
+  struct thread_data* data = (struct thread_data*) usr;
+  printf("%d is hungry\n", data->id);
+  if (data->id % 2 == 0) return;
+
+  int leftFork = data->id;
+  int rightFork = (data->id + 1) % N;
+
+  pthread_mutex_lock(&mutex[leftFork]);
+  pthread_mutex_lock(&mutex[rightFork]);
+  printf("%d is eating\n", data->id);
+  sleep(duration);
+  pthread_mutex_unlock(&mutex[leftFork]);
+  pthread_mutex_unlock(&mutex[rightFork]);
+}
+----
+
+. Consider 5 dining philosophers. Can the following code deadlock? Why or why not. Is the given solution fair?
++
+[source]
+----
+pthread_mutex_t mutex[N]
+struct thread_data {
+  int id;
+};
+
+void Philosophize(void* usr)
+{
+  struct thread_data* data = (struct thread_data*) usr;
+  printf("%d is hungry\n", data->id);
+  if (data->id % 2 == 0) return;
+
+  int leftFork = data->id;
+  int rightFork = (data->id + 1) % N;
+
+  pthread_mutex_lock(&mutex[leftFork]);
+  pthread_mutex_lock(&mutex[rightFork]);
+  printf("%d is eating\n", data->id);
+  sleep(duration);
+  pthread_mutex_unlock(&mutex[leftFork]);
+  pthread_mutex_unlock(&mutex[rightFork]);
+}
+----
+
+. Visualize the following requests for resources using a resource allocation graph. Does deadlock occur?
++
+[source]
+----
+A requests R
+B requests S
+C requests T
+A requests S
+B requestsT
+C requests R
+----
+
+. Visualize the following resource/usage state using matrices. Is there deadlock?
++
+* Suppose there are 2 instances of A and 3 of B
+* Process P currently has 1 instance of A, and is requesting 1 instance of A and 3 instances of B
+* Process Q currently has 1 instance of B, and is requesting 1 instance of A and 1 instance of B
+
+. Is the following a safe state?
++
+[source]
+----
+Process     Holding     Max
+A           4           6
+B           4           11
+C           2           7
+
+Unallocated: 2
+----
+
+. Is the follow state with multiple resources safe? If so, show the sequence of allocations that avoid deadlock. If so, show the sequence of allocations that avoid deadlock. Otherwise, show why deadlock is possible.
+
+image::BankersAlgorithmMultiResources.jpg[width=400px]

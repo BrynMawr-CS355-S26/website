@@ -1,0 +1,153 @@
+include::header.adoc[]
+
+:title: Assignment 7: The Defragmentor
+:Author Initials: ASN
+:Date:    2020-08-15
+:Revision: 0.1
+:ASST: A07
+
+= {title}
+
+**Due Sunday, April 6, before midnight**
+
+The goals for this assignment are:
+
+* Write your own memory defragmentor
+* Work with inodes using advanced pointers
+
+NOTE: We will use new starter code: link:https://classroom.github.com/a/HQbSg2u5[Start Code Link]
+
+= Defragmentor
+
+_Assignment by Dianna Xu_
+
+In this project, you will implement a disk defragmenter for a Unix-like file system. File system
+defragmenters improve performance by compacting all the blocks of a file in sequential order on
+disk.
+
+[source]
+----
+$ ./defrag
+usage: defrag <disk_image>
+----
+
+Requirements/Hints:
+
+* Your defragmenter should output a new disk image with ”-defrag” concatenated to the end of the input file name. For instance, `./defrag myfile` should produce the output file `myfile-defrag`.
+* You can assume that you will be given a disk that follows the specification (below). 
+* Your program should read in the disk, find inodes containing valid files, and write out a new image
+containing the same set of files, with the same inode numbers, but with all the blocks in a
+file laid out contiguously. Thus, if a file originally contained blocks 6, 2, 15, 22, 84, 7 and it
+was relocated to the beginning of the data section, the new blocks would be 0, 1, 2, 3, 4, 5.
+* Disks are binary files, so use functions such as `fread` for reading 
+* After defragmenting, your new disk image should contain:
+** the same boot block (just copy it)
+** a new superblock with the same list of free inodes but a new list of free blocks (sorted from lowest to highest to help prevent future fragmentation)
+** new inodes for the files
+** data blocks at their new locations
+* You can access sample disks to use for testing. Your repository should contain a small sample but you should test with larger disks as well. 
+
+IMPORTANT: Do not check in large files into your git repository!
+
+== Data Structures
+
+There are two important data structures stored on disk: 
+
+* superblock
+* inode
+
+The superblock has the following structure.
+
+[source]
+----
+struct superblock {
+    int size; /* size of blocks in bytes */
+    int inode_offset; /* offset of inode region in blocks */
+    int data_offset; /* data region offset in blocks */
+    int swap_offset; /* swap region offset in blocks */
+    int free_inode; /* head of free inode list, index, if disk is full, -1 */
+    int free_block; /* head of free block list, index, if disk is full, -1 */
+};
+----
+
+On disk, the first 512 bytes contain the boot block (and you can ignore it). The second
+512 bytes contain the superblock. All offsets in the superblock start at 1024 bytes into
+the disk and are given as blocks.
+
+For instance, if the inode offset is 1 and the block size is 512B, then the inode region
+starts at 1024B + 1 × 512B = 1536B into the disk.  Each region fills up the disk to the next region; the swap region fills the disk to the end.
+
+`inodes` have the following structure
+
+[source]
+----
+#define N_DBLOCKS 10
+#define N_IBLOCKS 4
+
+struct inode {
+    int next_inode; /* index of next free inode */
+    int protect; /* protection field */
+    int nlink; /* number of links to this file */
+    int size; /* numer of bytes in file */
+    int uid; /* owner’s user ID */
+    int gid; /* owner’s group ID */
+    int ctime; /* change time */
+    int mtime; /* modification time */
+    int atime; /* access time */
+    int dblocks[N_DBLOCKS]; /* pointers to data blocks */
+    int iblocks[N_IBLOCKS]; /* pointers to indirect blocks */
+    int i2block; /* pointer to doubly indirect block */
+    int i3block; /* pointer to triply indirect block */
+};
+----
+
+The inode region is effectively a large array of inodes. An unused inode has 0 in the
+`nlink` field and `next_inode` field contains the index of the next free inode. For inodes
+in use, the next_inode field is not used.
+
+The `size` field of the inode is used to determine which data block pointers are valid. If
+the file is small enough to fit in N_DBLOCKS blocks, then the indirect blocks are not used.
+
+There may be more than one indirect block. However, there is only one pointer
+to a doubly indirect block and one pointer to a triply indirect block. All block pointers
+are relative to the start of the data region. You may assume 4-byte integer size for block
+pointers in this file system.
+
+The free block list is maintained as a linked list. The first 4 bytes of a free block contain
+an integer index to the next free block; the last free block contains −1 for the index.
+
+
+= Grading Rubric
+
+*Assignment rubrics*
+
+Grades are out of 4 points.
+
+* (4 points) Defragmentor
+** (2.7 points) Correct behavior
+** (1.0 points) valgrind
+** (0.3 points) style and header comment
+
+*Code rubrics*
+
+For full credit, your C programs must be feature-complete, robust (e.g. run without memory errors or crashing) and 
+have good style.
+
+* Some credit lost for missing features or bugs, depending on severity of error
+* -12.5% for style errors. See the link:../codingstandard.html[class coding style] here.
+* -50% for memory errors
+* -100% for failure to check in work to Github
+* -100% for failure to compile on linux using make
+
+= Resubmission
+
+Your defragmentor program (A07) is eligible for resubmission at the end of the term.
+Students can submit up to two times:
+
+* The first time for up to 3.7 credit
+* The second time for up to 3.0 credit
+
+Resubmissions cannot be made for missed work. I reserve the right to judge whether an 
+earnest effort has been made on the initial submission, but as a guideline, students 
+must have received at least a C (2.0), for example, corresponding to a submission that 
+has some features working but with memory errors. 

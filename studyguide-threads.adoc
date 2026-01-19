@@ -1,0 +1,173 @@
+
+. What is a thread? How does a thread differ from a process? How are threads similar?
+. Why and when might we want to use multiple _threads_ to implement a program?
+. Why and when might we want to use multiple _processes_ to implement a program? 
+. Explain how threads might improve the implementation of a word processor. 
+. Explain how threads might improve the implementation of a web server. 
+. Explain how threads might improve the implementation of a web server. 
+. How do threads created in user space differ from threads created in kernel space?
+. What is a critical section?
+. What is a race condition?
+. What is mutual exclusion?
+. What is deadlock? livelock?
+. What is bounded liveness?
+. What four criteria must be met to ensure mutual exclusion?
+. Why is disabling interrupts not ideal for enforcing mutual exclusion?
+
+. Sketch a multi-threaded program (N threads) that computes the average of a list of numbers. You can assume that the size of the list can be evenly divided by N. 
+
+. Draw the stack diagram for the following program with two threads.
++
+[source]
+----
+struct foo {
+   long id;
+   char message[16];
+};
+
+void *HelloWorld(void *id) {
+  struct foo *holder = (struct foo *) id;
+  printf("%s world! I am thread %ld\n", holder->message, holder->id);
+  return NULL;
+}
+
+int main(int argc, char **argv) {
+  struct foo holder1, holder2;
+  holder1.id = 1;
+  strcpy(holder1.message, "caio");
+  
+  holder2.id = 2;
+  strcpy(holder2.message, "aloha");
+
+  long* retval1 = NULL, *retval2 = NULL;
+  pthread_t thread1, thread2;
+  pthread_create(&thread1, NULL, HelloWorld, &holder1);
+  pthread_create(&thread2, NULL, HelloWorld, &holder2);
+  pthread_join(thread1, NULL);
+  pthread_join(thread2, NULL);
+  return 0;
+}
+----
+
+. Explain why the following program does not compute the correct answer for count. 
++
+[source]
+----
+#define MAX 100000
+int count=0;
+
+void interleave() {
+  pthread_t th0, th1;
+  pthread_create(&th0,0,test,0);
+  pthread_create(&th1,0,test,0);
+  pthread_join(th0,0);
+  pthread_join(th1,0);
+  printf(“%d\n”, count);
+}
+
+void test() {
+  for(int j=0;j<MAX;j++) count=count+1;
+}
+----
+
+. For the following sets of assembly instructions for processes 1 and 2, give an interleaving of instructions that results in v having the value 2.
++
+[source]
+----
+P1. MOVE V, r0			Q1. MOVE V, r1
+P2. INCR r0			    Q2. INCR r1
+P3. MOVE r0, V			Q3. MOVE r1, V
+----
+
+. For the following sets of assembly instructions for processes 1 and 2, give an interleaving of instructions that results in v having the value 3.
++
+[source]
+----
+P1. MOVE V, r0			Q1. MOVE V, r1
+P2. INCR r0			    Q2. INCR r1
+P3. MOVE r0, V			Q3. MOVE r1, V
+----
+
+. Consider the following code for a process P0. Assume that the code for P1 is symmetric. Is it possible for both P0 and P1 to be in the same critical section at the same time?
++
+[source]
+----
+Shared variable: turn :{0,1}
+while (TRUE) {
+  while (turn != 0);  /* busy waiting */
+  CS();
+  turn = 1; /* let the other enter */
+  Non_CS();
+}
+----
+
+. Consider the following code for a process P0. Assume that the code for P1 is symmetric. Is it possible for both P0 and P1 to be in the same critical section at the same time?
++
+[source]
+----
+Shared variable: interested[i] : int, init 0
+while (TRUE) {
+  interested[0] = 10;  
+  while (interested[1] > 0) interested[0]--; 
+  CS();
+  interested[0] = 0; 
+  Non_CS();
+}
+----
+* If P0 is in the critical section, what values should interested have?
+* If P1 is in the critical section, what values should interested have?
+* Is it possible for both P0 and P1 to be in the same critical section at the same time?
+
+. Consider the following code for a process P0. Assume that the code for P1 is symmetric. 
++
+[source]
+----
+Shared variables: interested[i] :boolean; 
+                  turn :{0,1}
+interested[0] = FALSE; 
+while (TRUE) {
+  interested[0] = TRUE;  /* declare interest */
+  turn = 0; /* takes care of race condition */
+  repeat if /* busy wait */
+   (interested[1] == TRUE && turn == 0);
+  CS();
+  interested[0] = FALSE; /* unblock P1 */
+  Non_CS();
+}
+----
+
+* If P0 is in the critical section, what values should interested and turn have?
+* If P1 is in the critical section, what values should interested and turn have?
+* Is it possible for both P0 and P1 to be in the same critical section at the same time?
+
+. Consider the producer/consumer problem discussed in class. Suppose the buffer has size 8 and contains the values -2,3,4,-5; that `in = 7` and `out = 3`. 
+
+* Draw the state of the buffer, in, out, and num_items.
+* Suppose the producer adds one item. Draw the new state of the buffer.
+* Suppose the consumer removes 3 items. Draw the new state of the buffer.
+
+. Consider the following implementation for two threads, one a producer and the other a consumer. Does the code below contain a race condition? If yes, explain how the current implementation can lead to inconsistent buffer state.
++
+[source]
+----
+//Producer Threads:
+int item;
+while(1) {
+  item = produce_item();
+  pthread_mutex_lock(&mux);
+  buff[in] = item;
+  in = (in+1)%N;
+  pthread_mutex_unlock(&mux);
+  num_items++;
+}
+//Consumer thread
+int item;
+while(1) {
+  pthread_mutex_lock(&mux);
+  item = buff[out];
+  out = (out+1)%N;
+  pthread_mutex_unlock(&mux);
+  num_items--;
+  consume_item(item);
+}
+----
