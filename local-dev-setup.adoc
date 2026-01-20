@@ -1,0 +1,75 @@
+== Set up a remote development environment with VS Code 
+
+VS Code is an integrated development environment.
+
+A remote development environment will allow you to run code from
+comet.cs.brynmawr.edu, a remote server, from within VS Code. 
+
+For this option, your need to use VS Code with the Remote-SSH extension to VS Code.
+
+* link:https://code.visualstudio.com/[VS Code]
+* link:https://code.visualstudio.com/docs/remote/ssh[Remote SSH Tutorial]
+
+== Setting up your own local development environment
+
+A local development environment allows you to write code on your own desktop or
+laptop. With a local development environment, you will be able to run your code even 
+after you graduate from college. 
+
+NOTE: All programs must run on the lab's Linux environment. Make sure you test
+your work on the lab machines if you work on your laptop! 
+
+=== Windows
+
+. Open PowerShell and install wsl2: `wsl --install`. See link:https://docs.microsoft.com/en-us/windows/wsl/install[documentation]. Note that you may need to open powershell as an administrator.
+. From the windows store, link:https://ubuntu.com/wsl[install `Ubuntu`].
+
+Once installed, you can setup your development environment from a bash shell. 
+
+. Open PowerShell
+. Type `wsl` to start the windows subsystem for linux. This will give your a bash prompt
+. Then install your development tools
+.. `sudo apt-get install cmake`
+.. `sudo apt-get install git`
+.. `sudo apt-get install g++`
+.. `sudo apt-get install vim`
+.. `sudo apt-get install libc6-dev-i386`
+.. `sudo apt-get install gcc-multilib`
+.. `sudo apt-get install hexedit`
+.. `sudo apt-get install valgrind`
+.. `sudo apt-get install gdb`
+
+For example, you get something like the following
+
+[source]
+----
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+PS C:\Users\alinen> wsl
+WSL alinen@Balthazar:~$ sudo apt-get install make
+
+etc
+----
+
+NOTE: A quick way to open powershell is to type <WindowsKey>-'Q' and type 'powershell'.
+
+=== MacOS
+
+From terminal, run command `xcode-select --install`
+
+You can follow the instructions link:https://www.ics.uci.edu/~pattis/common/handouts/macclion/clang.html[here]
+
+Then, to install additional dependencies, execute the following commands form terminal
+
+[source]
+----
+$ brew install vim
+$ brew install git
+$ brew install cmake
+----
+
+NOTE: A quick way to open terminal is to use spotlight. From the keyboard, type the <cmd> and <spacebar>. Then type terminal at the popup edit field.
+
+Unfortunately, `valgrind` and `gdb` cannot be run natively on mac. However, you may try running `leaks` or `lldb` which are similar. However, we recommend you still test on goldengate or a lab machine.
+

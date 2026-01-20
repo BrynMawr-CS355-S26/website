@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.18">
+<title>Setting up SSH with Github</title>
+<link rel="stylesheet" href="../style/cs21.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_setting_up_an_ssh_key_for_github">Setting up an SSH Key for GitHub</a>
+<ul class="sectlevel2">
+<li><a href="#_1_generate_a_new_ssh_key">1. Generate a new SSH key</a></li>
+<li><a href="#_2_add_your_ssh_key_to_github">2. Add your SSH key to GitHub</a></li>
+<li><a href="#_troubleshooting_tips">Troubleshooting Tips</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_setting_up_an_ssh_key_for_github">Setting up an SSH Key for GitHub</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For detailed instructions, <a href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh">visit this documentation on github</a>.</p>
+</div>
+<div class="paragraph">
+<p>In this process, you will create two keys:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A private key that is stored on your local machine</p>
+</li>
+<li>
+<p>A public key that is stored on Github</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This public/private key pair is used to securely transfer data from your
+local machine to the server hosted by Github. In other words, the keys are
+used by git to</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>download changes from the remote repository to your local repository (e.g. using <code>pull</code> or <code>clone</code>)</p>
+</li>
+<li>
+<p>upload changes from the local repository to the remote repository (e.g. <code>push</code>)</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_1_generate_a_new_ssh_key">1. Generate a new SSH key</h3>
+<div class="paragraph">
+<p>On your local machine, open a terminal and execute the <code>ssh-keygen</code> command.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ <strong>ssh-keygen -t ed25519 -C "your_email@example.com"</strong>
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/alinen/.ssh/id_ed25519):
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /home/alinen/.ssh/id_ed25519
+Your public key has been saved in /home/alinen/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:cUr7fXShYj7lz1Rly2TVXQ/tIwg3FPkv/co7BSJBfEA your_email@example.com
+The key's randomart image is:
++--[ED25519 256]--+
+|         +E+o ..<strong>|
+|         .o+.  .</strong>|
+|        o +o+  =+|
+|       . =...o*o=|
+|        S  + +=++|
+|         .o.+o +o|
+|          .o..oo.|
+|            .o= .|
+|              +* |
++----[SHA256]-----+</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notes</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>-C</code> option indicates a comment. Replace this with your own information.</p>
+</li>
+<li>
+<p>Typing ENTER for the file location will choose the default</p>
+</li>
+<li>
+<p>Typing ENTER for the password will disable a password for this key</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_add_your_ssh_key_to_github">2. Add your SSH key to GitHub</h3>
+<div class="paragraph">
+<p>Copy the key to your clipboard. Check the contents of <code>~/.ssh</code>. You should
+see a private key (name: <code>id_ed25519</code>) and a public key (name: <code>id_ed25529.pub</code>).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ <strong>ls ~/.ssh/</strong>
+id_ed25519  id_ed25519.pub  known_hosts  known_hosts.old
+$ <strong>cat ~/.ssh/id_ed25519.pub</strong>
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBNxuU/ZMS5DfKqdtq6Fd1XPfgMLy/f4KCG0j0+RQ4T0 your_email@example.com</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We need to give the public key to Github. Copy the entire contents of <code>id_ed25519.pub</code> and
+paste it to your GitHub Settings.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>In the upper-right corner of any page on GitHub, click your profile picture, then click Settings.</p>
+</li>
+<li>
+<p>In the "Access" section of the sidebar, click SSH and GPG keys.</p>
+</li>
+<li>
+<p>Click New SSH key or Add SSH key.</p>
+</li>
+<li>
+<p>In the "Title" field, add a descriptive label for the new key. For example, if you&#8217;re using a personal laptop, you might call this key "Personal laptop".</p>
+</li>
+<li>
+<p>Select key type authentication.</p>
+</li>
+<li>
+<p>In the "Key" field, paste your public key.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Click Add SSH key.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="img/Github-add-ssh.png" alt="Github add ssh" height="300px">
+</div>
+</div>
+<div class="sect3">
+<h4 id="_3_test_your_key">3. Test your key</h4>
+<div class="paragraph">
+<p>Run the following command.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ <strong>ssh -T git@github.com</strong>
+Hi alinen! You've successfully authenticated, but GitHub does not provide shell access.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see a success message.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_troubleshooting_tips">Troubleshooting Tips</h3>
+<div class="sect3">
+<h4 id="_how_to_check_for_an_existing_ssh_key">How to check for an existing SSH key</h4>
+<div class="paragraph">
+<p>SSH keys are typically stored in <code>.ssh</code> in your home directory.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">ls -al ~/.ssh</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_what_if_no_agent_is_running">What if no agent is running?</h4>
+<div class="paragraph">
+<p>If you get an error saying that the SSH agent is not running, use the
+following command to start it. This command can be placed in your ~/.bashrc
+file so it runs automatically every time you log into bash.</p>
+</div>
+<div class="paragraph">
+<p>Start the agent and add your key:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2026-01-19 20:29:12 -0500
+</div>
+</div>
+</body>
+</html>

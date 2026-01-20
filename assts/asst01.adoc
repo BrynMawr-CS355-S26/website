@@ -4,23 +4,23 @@ include::header.adoc[]
 :Author Initials: ASN
 :Date:    2020-08-15
 :Revision: 0.1
-:ASST: a01-USERNAME
+:ASST: warmup-USERNAME
 
 = {title}
 
-**Due Sunday, January 26, before midnight**
+**Due Tuesday, January 27, before midnight**
 
 The goals for this assignment are:
 
-* Try slack
-* Check your Github configuration
-* Look at the website
+* Sign into slack
+* Sign into a lab computer
+* Setup an SSH key for github
+* Clone your classwork repository
 * Write a C++ program
-* (Optional) Setup your development environment on your own machine
 
 :sectnums:
 
-= Try slack
+= Sign-up for slack
 
 I will be inviting you all to join the course slack channel. In the
 `#social` channel, say and introduce yourself:
@@ -31,49 +31,56 @@ I will be inviting you all to join the course slack channel. In the
 We will use Slack for 
 
 * Course announcements
-* Links to zoom and calend.ly
 * Questions and errata for assignments and labs
+* One-on-one programming help
 
 You can also use Slack to talk directly to me and the TAs, or even to each other.
 
-= Check your Github configuration
+= Sign into a lab computer
 
-Please go to github.com to register if you do not yet have a Github account. We
-will use github for assignments.  *Email the instructor (anormoyle at
-brynmawr.edu) with your github username.* 
+As a CS students, you should have received a username and password from our IT
+administrator, David Diaz.  Use this account information to log into one of the
+desktops in our lab while they are running Linux.
 
-*You will need to setup an SSH key for Github. link:https://docs.github.com/en/authentication/connecting-to-github-with-ssh[Click here for instructions].
+NOTE: To log into Ubuntu, you should use your CS username and password.
 
-Your work for this class will be *closed source*. You will have repositories created 
-for you within our class organization on Github. See below for details. 
+Our lab machines are _dual boot_. This means that they can boot either Windows
+or Ubuntu Linux. For class, you will need to boot them with Ubuntu.
 
-NOTE: The repository configuration is different from CS223 (Systems Programming), so 
-read carefully!
+= Sign-up for Github
 
-= Read the class web pages 
+If you do not have one already, please link:https://github.com[create a github account].
 
-Start by reading through **all** of the link:../index.html[class webpage]!
-Bookmark this page on your browser, or use some other method that helps you 
-keep this information handy. All course materials will be 
-posted on the course webpage! 
+*Email the instructor (anormoyle at brynmawr.edu) with your github username.* 
 
-Pay special attention to the link:../index.html#_schedule[Schedule]. 
+= Setup an SSH Key for github
+
+SSH refers to "Secure Shell Protocol" and it ensures that the information transferred between
+your local machines and github are secure.
+
+If you have not done this before, follow link:ssh-setup.html[the instructions here].
 
 = Hello C++
 
 Verify that you can use Github, git, and C/C++. You can try this using a lab machine, or your own 
 machine if you have setup your development environment there. 
 
-[discrete]
 == Clone the repository 
 
-Navigate to this URL: link:https://classroom.github.com/a/OfNvNh5v[https://classroom.github.com/a/OfNvNh5v]
+link:https://classroom.github.com/a/bW5vOjCz[Click here to get the repository link]
 
-Click on your username. This will create a repository for you. Next, clone it to your local machine.  
+== Get the download link
+
+From your github account, copy the repository url from Github. It should look
+similar to the following (note that URLs and repository names may be different!)
+
+image::github-code-url-ssh.png[height=300px]
+
+WARNING: Make sure you have SSH selected for the URL type
 
 [source, subs="attributes"]
 ----
-git clone git@github.com:BrynMawr-CS355-S25/{ASST}
+git clone git@github.com:BrynMawr-CS355-S26/{ASST}
 ----
 
 This will download a local copy of the repository to your computer.
