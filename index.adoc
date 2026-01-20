@@ -80,7 +80,7 @@ include::schedule.adoc[]
 * The Linux Programming Interface, by Michael Kerrisk, No Starch Press, 2010. link:https://nostarch.com/tlpi/[Available from No Starch Press]
 * link:https://diveintosystems.org/[Dive Intro Systems] 
 * **Github Account** Please go to link:https://github.com/[github.com] and register. You will be using github to submit assignments. 
-* **Slack** Please go to link:https://slack.com/signin[slack.com]. Our workspace is BrynMawr-CS355-S25. You can ask questions and access course content on Slack. Course announcements will also be made on Slack. 
+* **Slack** Please go to link:https://slack.com/signin[slack.com]. Our workspace is BrynMawr-CS355-S26. You can ask questions and access course content on Slack. Course announcements will also be made on Slack. 
 * link:https://www.usenix.org/system/files/1311_05-08_mickens.pdf[Why study systems? by James Mickens]
 
 === Unix, Bash, Makefiles
