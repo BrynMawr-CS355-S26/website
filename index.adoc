@@ -60,9 +60,9 @@ Learning Outcomes
 |===
 | Activity | Location | Time
 
-| Lecture | Park TBD | Tuesday and Thursday 11:10 PM - 1:00 PM 
-| Lab | Park TBD | Thursdays 2:40 PM - 4:00 PM 
-| Office Hours - Prof. Aline Normoyle | Park TBD | Tuesdays and Thursdays, 4-5 PM, Wednesdays by appointment
+| Lecture | Park 336 | Tuesday and Thursday 11:10 PM - 1:00 PM 
+| Lab | Park 231 | Thursdays 2:40 PM - 4:00 PM 
+| Office Hours - Prof. Aline Normoyle | Park 230/231/200A | Tuesdays and Thursdays, 4-5 PM, by appointment
 | Office Hours - Rebecca Lassman | Park 231 | 
 
 |===
@@ -81,6 +81,7 @@ include::schedule.adoc[]
 * link:https://diveintosystems.org/[Dive Intro Systems] 
 * **Github Account** Please go to link:https://github.com/[github.com] and register. You will be using github to submit assignments. 
 * **Slack** Please go to link:https://slack.com/signin[slack.com]. Our workspace is BrynMawr-CS355-S25. You can ask questions and access course content on Slack. Course announcements will also be made on Slack. 
+* link:https://www.usenix.org/system/files/1311_05-08_mickens.pdf[Why study systems? by James Mickens]
 
 === Unix, Bash, Makefiles
     
