@@ -15,7 +15,7 @@ Instructor: link:https://www.cs.brynmawr.edu/~alinen[Aline Normoyle]
 
 [.anns]
 
-* Welcome! To those about to rock, I salute you!
+* Welcome! To those of you about to rock, I salute you!
 
 == Course Info
 
@@ -78,7 +78,8 @@ include::schedule.adoc[]
 
 * Modern Operating Systems, 4th Edition, by Andrew S. Tanenbaum, Prentice Hall, 2015. ( Note that there is a newer 5th Edition, but there is little difference in the materials we cover and the 4th Edition is significantly cheaper.)
 * The Linux Programming Interface, by Michael Kerrisk, No Starch Press, 2010. link:https://nostarch.com/tlpi/[Available from No Starch Press]
-* link:https://diveintosystems.org/[Dive Intro Systems] 
+* (Optional) link:https://diveintosystems.org/[Dive Intro Systems] by Matthews, Newhall, and Webb
+* (Optional) link:https://www.amazon.com/More-Effective-Improve-Programs-Designs/dp/020163371X[More Effective C++: 35 New Ways to Improve Your Programs and Designs] by Scott Meyers
 * **Github Account** Please go to link:https://github.com/[github.com] and register. You will be using github to submit assignments. 
 * **Slack** Please go to link:https://slack.com/signin[slack.com]. Our workspace is BrynMawr-CS355-S26. You can ask questions and access course content on Slack. Course announcements will also be made on Slack. 
 * link:https://www.usenix.org/system/files/1311_05-08_mickens.pdf[Why study systems? by James Mickens]

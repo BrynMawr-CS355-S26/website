@@ -10,7 +10,7 @@
 | *Introduction, C/C++ Review, Bash shell review, Git* 
 
 * Topics: History, Bash, Compiling and Building, C/C++, System calls, OS concepts
-* link:labs/lab01.html[Lab Jan 22: Git!]
+//* link:labs/lab01.html[Lab Jan 22: Git!]
 * link:assts/asst01.html[Assignment 01]: Due January 27
 
 * Reading: Tanenbaum 1.1-1.6

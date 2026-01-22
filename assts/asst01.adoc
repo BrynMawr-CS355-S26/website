@@ -69,6 +69,12 @@ machine if you have setup your development environment there.
 
 link:https://classroom.github.com/a/bW5vOjCz[Click here to get the repository link]
 
+After clicking the link, you should receive an email from Github that invites you 
+to the repository. Please check your email and accept the invitation. Afterward acepting 
+the invitation, you should be able to see your repository and clone it.
+
+NOTE: Do you see the error: "Repository Access Issue: You no longer have access to your assignment repository. Contact your teacher for support."? If yes, check your email and accept the invitation for your account. 
+
 == Get the download link
 
 From your github account, copy the repository url from Github. It should look
