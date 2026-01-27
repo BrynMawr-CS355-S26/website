@@ -1,8 +1,9 @@
-[cols="1,2,6a", options="header"]
+[cols="1,2,6a,4a", options="header"]
 |===
 | Week 
 | Date 
 | Agenda
+| Resources
 
 //-----------------------------
 | 1
@@ -10,12 +11,15 @@
 | *Introduction, C/C++ Review, Bash shell review, Git* 
 
 * Topics: History, Bash, Compiling and Building, C/C++, System calls, OS concepts
-//* link:labs/lab01.html[Lab Jan 22: Git!]
 * link:assts/asst01.html[Assignment 01]: Due January 27
 
 * Reading: Tanenbaum 1.1-1.6
 * Optional reading: Dive into systems
 * Recommended study questions (Thurs): Tanenbaum pgs 81-83: 1, 6, 9, 10, 12, 20, 26, 28, 30
+
+|
+* link:lectures/OS-Week01-Jan20-Intro.pdf[Lecture Jan 20]
+* link:lectures/OS-Week01-Jan22-C.pdf[Lecture Jan 22]
 
 //-----------------------------
 | 2 
@@ -30,6 +34,8 @@
 * Optional reading: Dive into systems
 * Recommended questions (Tues): Tanenbaum pgs 174-180: 1, 5, 6, 7, 8, 39
 
+|
+
 //-----------------------------
 |3
 |February 3, 5 anchor:week03[]
@@ -41,6 +47,7 @@
 
 * Reading: Kerrisk Chpt 34
 
+|
 //-----------------------------
 |4
 |February 10, 12 anchor:week04[]
@@ -54,6 +61,7 @@
 * Optional reading: Dive into systems
 * Recommended study questions (Tues): Tanenbaum pgs 174-180: 9, 13, 14, 15, 16, 17, 18 
 
+|
 //-----------------------------
 |5
 |February 17, 19 anchor:week05[]
@@ -66,6 +74,7 @@
 * Optional reading: Dive into systems
 * Recommended study questions (Tues): Tanenbaum pgs 174-180: 19, 21, 24, 25, 26, 27, 30
 
+|
 //-----------------------------
 |6
 |February 24, 26 anchor:week06[]
@@ -78,6 +87,7 @@
 * Recommended study questions (Tues): Tanenbaum pgs 174-180: 40, 42, 43, 44, 45, 47, 48, 49, 50, 51 
 * Recommended study questions (Thurs): Tanenbaum pgs 465-470: 2, 3, 10, 14, 15, 16, 21, 22, 24, 26, 27, 34 
 
+|
 //-----------------------------
 |7
 |March 3, 5 anchor:week07[]
@@ -86,6 +96,7 @@
 * link:studyguide1.html[Study Guide 01]
 * Review and **Exam 01** In Class, March 5 (80 minutes, closed book. One written cheat sheet)
 
+|
 //-----------------------------
 |8
 |March 10, 12 anchor:week08[]
@@ -93,6 +104,7 @@
 
 * *NO LECTURES, LABS, HOMEWORKS*
 
+|
 //-----------------------------
 |9
 |March 17, 19 anchor:week09[]
@@ -105,6 +117,7 @@
 * Read: Tanenbaum 3.1-3.3
 * Recommended study questions (Tues): Tanenbaum pgs 254-262, 4, 5, 6, 7
 
+|
 //-----------------------------
 |10
 |March 24, 26 anchor:week10[]
@@ -114,6 +127,7 @@
 * Lab March 27: Memory management demos
 * Recommended study questions (Tues): Tanenbaum pgs 254-262, 15, 20, 28, 30, 33, 36, 47
 
+|
 //-----------------------------
 |11
 |March 31, April 2 anchor:week10[]
@@ -124,6 +138,7 @@
 * link:assts/asst07.[Assignment 07]: Defragmentor, Due Sunday, April 6
 * Recommended study questions (Tues): Tanenbaum pgs 332-336, 6, 10, 18, 19, 21, 24, 26
 
+|
 //-----------------------------
 |12
 |April 7, 9 anchor:week11[]
@@ -134,6 +149,7 @@
 * link:assts/asst08.[Project]: File System, Due Sunday, April 27
 * Recommended study questions (Tues): Tanenbaum pgs 332-336, 28, 30, 33, 40, 41
 
+|
 //-----------------------------
 |13
 |April 14, 16 anchor:week12[]
@@ -143,6 +159,7 @@
 * Lab April 17: File System checkins: format, writing files
 * Recommended study questions: Tanenbaum pgs 332-336, 
 
+|
 //-----------------------------
 |14
 |April 21, 23 anchor:week13[]
@@ -152,6 +169,7 @@
 * Lab April 24: File System checkins: simple shell integration
 * Recommended study questions: Tanenbaum pgs 332-336, 
 
+|
 //-----------------------------
 |15
 |April 28, 30 anchor:week14[]
@@ -161,6 +179,7 @@
 * April 30, *Exam 02*, link:studyguide2.html[Study Guide 02]
 * *No lab April 30*
 
+|
 |===
 
 
