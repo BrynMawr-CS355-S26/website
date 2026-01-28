@@ -24,11 +24,11 @@
 //-----------------------------
 | 2 
 | January 27, 29 anchor:week02[]
-| *Processes* 
+| *C++, Processes* 
 
-* Topics: Processes, Fork
-* link:labs/lab02.[Lab Jan 29: Files and processes]
-* link:assts/asst02.[Assignment 02]: Due Feb 3
+* Topics: STL data structures, bitfields, processes, Fork
+* link:labs/lab02.html[Lab Jan 29: C strings and pointers]
+* link:assts/asst02.html[Assignment 02: C shell by the shore]: Due Feb 3
 
 * Reading: Tanenbaum 2.1
 * Optional reading: Dive into systems
@@ -41,7 +41,7 @@
 |February 3, 5 anchor:week03[]
 |*Job Control* 
 
-* Topics: Signals. Advanced shell concepts, Pipes, Process and terminal properties
+* Topics: Advanced shell concepts, Pipes, Process and terminal properties, Signals
 * link:labs/lab03.[Lab Feb 5: File descriptors]
 * link:assts/asst03.[Assignment 03]: Due Feb 10
 

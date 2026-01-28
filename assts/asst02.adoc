@@ -1,6 +1,6 @@
 include::header.adoc[]
 
-:title: Assignment 02: Trust the Process (Part 1)
+:title: Assignment 02: C shell by the shore
 :Author Initials: ASN
 :Date:    2020-08-15
 :Revision: 0.1
@@ -8,16 +8,17 @@ include::header.adoc[]
 
 = {title}
 
-**Due Sunday, Feb 2, before midnight**
+**Due Tuesday, Feb 3, before midnight**
 
 The goals for this assignment are:
 
 * Working with stdout, stdin, and files
 * Understanding redirection and pipes at the command line
-* Working with system calls: read, write, open, fork, exec, wait
-* C practice/review
+* Working with system calls: read, write, open
+* C practice
 
-NOTE: Get the starter code link:https://classroom.github.com/a/z8JKZurc[here]
+This is the first assignment of your shell project. To get started, 
+click on this link:https://classroom.github.com/a/j-ws2ho7[Shell Project on Github]
 
 :sectnums:
 
@@ -71,10 +72,7 @@ All life is precious
 
 Requirements/Hints:
 
-* This is basically the Unix `cat` command with no flags. 
-* When working with the standard input and standard output streams, either use the defined file descriptors (e.g. `STDOUT_FILENO`, `STDIN_FILENO`), or defined file pointers (e.g. `stdin`, `stdout`), with either `read` or `fread`.
-* Your program should use the system calls, link:https://www.man7.org/linux/man-pages/man2/read.2.html[read], link:https://www.man7.org/linux/man-pages/man2/write.2.html[write], and link:https://www.man7.org/linux/man-pages/man2/open.2.html[open]. 
-* Ctrl-d will quit your application when reading from stdin
+* Use the low-level system calls for working with files: read, write, open
 
 = Parser
 
@@ -170,48 +168,6 @@ Requirements/Hints:
 * Note that the 2> error.txt, |, and & portions of the command are instructions to the shell and are NOT command ARGV tokens.
 * To simplify parsing, you may assume that nothing other than white space (spaces, newlines, etc.) will appear after an ampersand (&), there will be at most one ampersand, and that ampersands will not appear for any reason other than to specify background tasks.
 
-= Simple Shell
-
-In the file, `shell.c`, write a program that implements a simple shell. 
-
-image::RainbowShell.png[width=640px]
-
-Requirements:
-
-* Your program should print a prompt. At minimum, your prompt should show the current working directory and look distinct from the lab machine prompts. In other words, it should be easy to tell what shell if running from the terminal.
-* Use the `readline()` function to get user input. This function supports backspace, tab completion, and more. link:https://www.man7.org/linux/man-pages/man3/readline.3.html[Documentation for readline can be found here].
-* Use the `add_history()` function to save user history. This will allow arrow keys to work. link:https://www.man7.org/linux/man-pages/man3/readline.3.html[Documentation for readline can be found here].
-* Your program should quit if the users types `exit`.
-* When the user gives a command, split it into a command and arguments using link:https://www.man7.org/linux/man-pages/man3/exec.3.html[execvp]and then fork a command to execute it. 
-* Compiles with `make`. (Do not modify the Makefile)
-* No memory errors using `valgrind`
-* Adheres to the style guidelines and includes a header comment
-* Your terminal should wait for the command to finish. If the command terminates with an error, report the error.
-
-NOTE: `readline` is a package that is installed on goldengate and in our labs. However, you may need to install it on your own machine. On Unix systems, this can be done by running `sudo apt install libreadline-dev`  
-
-NOTE: You can print with colors to the console using ANSI escape sequences (see below). 
-For example, `printf(ANSI_COLOR_GREEN "Green Text" ANSI_COLOR_RESET);` will print green text. link:https://azrael.digipen.edu/~mmead/www/mg/ansicolors/index.html[Here is a good guide!]
-
-[code]
-----
-// Helpful macros for working with color
-#define ANSI_COLOR_RED     "\x1b[31m"
-#define ANSI_COLOR_GREEN   "\x1b[32m"
-#define ANSI_COLOR_YELLOW  "\x1b[33m"
-#define ANSI_COLOR_BLUE    "\x1b[34m"
-#define ANSI_COLOR_MAGENTA "\x1b[35m"
-#define ANSI_COLOR_CYAN    "\x1b[36m"
-#define ANSI_COLOR_RESET   "\x1b[0m"
-----
-
-NOTE: Most prompts print helpful information. Above, we use the 
-system commands `gethostname`, `getcwd`, and `getpwuid(geteuid())` to get the 
-machine name, the current working directory, and current user respectively. 
-
-
-NOTE: To check for valgrind errors, run valgrind with your executable as an argument
-
 [discrete]
 == Submit your work to Github
 
@@ -235,36 +191,8 @@ Check the Github website to make sure that your program uploaded correctly.
 
 Grades are out of 4 points.
 
-* (1 points) Microcat
-* (1.5 points) Parser
-** (0.1 points) style and header comment
-** (0.65) Correct behavior: parses line and fills in struct Cmd
-** (0.75) no memory errors
-* (1.5 points) Simple shell 
-** (0.1 points) style and header comment
-** (0.25 points) Displays unique prompt with current working directory
-** (0.1 points) Uses `readline()` and `add_history()`
-** (0.1 points) Quits when the user types `exit`.
-** (0.1 points) Forks a process to run the user's command. 
-** (0.1 points) Reports the return status of the command when the child process completes.
-** (0.75 points) no memory errors. 
-
-NOTE: When using `readline()`, valgrind will report that some of your memory is
-_still reachable_. This memory is not leaked. It hasn't been cleaned up yet from 
-`readline()`'s internal memory. For example, output such as the following is ok
-[code]
-----
-==3504== HEAP SUMMARY:
-==3504==     in use at exit: 204,143 bytes in 221 blocks
-==3504==   total heap usage: 453 allocs, 232 frees, 244,790 bytes allocated
-==3504==
-==3504== LEAK SUMMARY:
-==3504==    definitely lost: 0 bytes in 0 blocks
-==3504==    indirectly lost: 0 bytes in 0 blocks
-==3504==      possibly lost: 0 bytes in 0 blocks
-==3504==    still reachable: 204,143 bytes in 221 blocks
-==3504==         suppressed: 0 bytes in 0 blocks
----- 
+* (2 points) Microcat
+* (2 points) Parser
 
 *Code rubrics*
 

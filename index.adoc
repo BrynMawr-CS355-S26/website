@@ -15,7 +15,8 @@ Instructor: link:https://www.cs.brynmawr.edu/~alinen[Aline Normoyle]
 
 [.anns]
 
-* Welcome! To those of you about to rock, I salute you!
+* link:labs/lab02.html[Lab 02]: Due Thu, Jan 29
+* link:assts/asst02.html[Assignment 02]: Due Tue, Feb 3
 
 == Course Info
 

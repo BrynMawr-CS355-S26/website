@@ -1,6 +1,6 @@
 include::header.adoc[]
 
-:title: Assignment 03: Trust the Process (Part 2)
+:title: Assignment 03: Process monitor and simple shell 
 :Author Initials: ASN
 :Date:    2020-08-15
 :Revision: 0.1
@@ -17,15 +17,111 @@ The goals for this assignment are:
 * Working with additional system calls: pipe, dup2, chdir, pwd, perror
 * C practice/review
 
-NOTE: We will use the same starter code as last week: link:https://classroom.github.com/a/z8JKZurc[here]
+NOTE: We will use the same starter code as last week: link:https://classroom.github.com/a/j-ws2ho7[Shell Project]
 
 :sectnums:
+
+[discrete]
+== My Process Monitor
+
+The `/proc` filesystem is a pseudo-filesystem which provides an interface to kernel data structures, e.g.
+
+[source]
+----
+alinen@sutekh:$ ls /proc
+1     4331       config.gz      fb           keys           modules       self           tty
+1065  5          consoles       filesystems  kmsg           mounts        slabinfo       uptime
+1066  883        cpuinfo        fs           kpagecgroup    mpt           softirqs       version
+1067  884        crypto         interrupts   kpagecount     mtrr          stat           vmallocinfo
+2374  885        devices        iomem        kpageflags     net           swaps          vmstat
+3571  acpi       diskstats      ioports      latency_stats  pagetypeinfo  sys            zoneinfo
+3582  buddyinfo  dma            irq          loadavg        partitions    sysrq-trigger
+3873  bus        driver         kallsyms     locks          pressure      sysvipc
+3874  cgroups    dynamic_debug  kcore        meminfo        schedstat     thread-self
+3875  cmdline    execdomains    key-users    misc           scsi          timer_list
+----
+
+In the file, `mpm.cpp`, write a program that lists the currently running processes. 
+For each process, show its 
+
+* status (e.g. running, stopped, dead, etc)
+* user
+* parent process ID
+* process ID
+* group ID
+* active file descriptors
+* whether it is a foreground or background process (+)
+
+[source]
+----
+
+----
+
+Requirements/Hints:
+
+* Every process has a directory under `/proc` whose name matches its pid. Inside this directory, you will find files and subdirectories with more state information.
+* To get the status and ID information, read the file `/proc/<pid>/status`
+* The file descriptors are in the directory `/proc/<pid>/fd`. There will be a symbolic link for each file descriptor associated with the process. Use system calls to get the contents of the directory and show the values of the symbolic links. 
+
+The possible process status values are as follows:
+
+* D    uninterruptible sleep (usually IO)
+* I    Idle kernel thread
+* R    running or runnable (on run queue)
+* S    interruptible sleep (waiting for an event to complete)
+* T    stopped by job control signal
+* t    stopped by debugger during the tracing
+* W    paging (not valid since the 2.6.xx kernel)
+* X    dead (should never be seen)
+* Z    defunct ("zombie") process, terminated but not reaped by its parent
+
+= Simple Shell
+
+In the file, `simple_shell.c`, write a program that implements a simple shell. 
+
+image::RainbowShell.png[width=640px]
+
+Requirements:
+
+* Your program should print a prompt. At minimum, your prompt should show the current working directory and look distinct from the lab machine prompts. In other words, it should be easy to tell what shell if running from the terminal.
+* Use the `readline()` function to get user input. This function supports backspace, tab completion, and more. link:https://www.man7.org/linux/man-pages/man3/readline.3.html[Documentation for readline can be found here].
+* Use the `add_history()` function to save user history. This will allow arrow keys to work. link:https://www.man7.org/linux/man-pages/man3/readline.3.html[Documentation for readline can be found here].
+* Your program should quit if the users types `exit`.
+* When the user gives a command, split it into a command and arguments using link:https://www.man7.org/linux/man-pages/man3/exec.3.html[execvp]and then fork a command to execute it. 
+* Compiles with `make`. (Do not modify the Makefile)
+* No memory errors using `valgrind`
+* Adheres to the style guidelines and includes a header comment
+* Your terminal should wait for the command to finish. If the command terminates with an error, report the error.
+
+NOTE: `readline` is a package that is installed on goldengate and in our labs. However, you may need to install it on your own machine. On Unix systems, this can be done by running `sudo apt install libreadline-dev`  
+
+NOTE: You can print with colors to the console using ANSI escape sequences (see below). 
+For example, `printf(ANSI_COLOR_GREEN "Green Text" ANSI_COLOR_RESET);` will print green text. link:https://azrael.digipen.edu/~mmead/www/mg/ansicolors/index.html[Here is a good guide!]
+
+[code]
+----
+// Helpful macros for working with color
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+#define ANSI_COLOR_YELLOW  "\x1b[33m"
+#define ANSI_COLOR_BLUE    "\x1b[34m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_CYAN    "\x1b[36m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
+----
+
+NOTE: Most prompts print helpful information. Above, we use the 
+system commands `gethostname`, `getcwd`, and `getpwuid(geteuid())` to get the 
+machine name, the current working directory, and current user respectively. 
+
+
+NOTE: To check for valgrind errors, run valgrind with your executable as an argument
 
 = Better Shell
 
 NOTE: This question is from link:https://www.cs.swarthmore.edu/~kwebb/cs45/s24/labs/lab1.html[this lab].
 
-In the file, `shell.c`, extend the features of your shell from link:asst02.html[Assignment 02]. 
+In the file, `better_shell.c`, extend the features of your shell from link:asst02.html[Assignment 02]. 
 
 Requirements:
 

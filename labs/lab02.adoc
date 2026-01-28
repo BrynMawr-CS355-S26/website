@@ -4,11 +4,11 @@ include::header.adoc[]
 :Author Initials: ASN
 :Date:    2020-08-15
 :Revision: 0.1
-:ASST: labs-USERNAME
+:ASST: Lab01
 
 = {title}
 
-**Lab exercises: Due January 30th 5PM (24 hr late period allowed)**
+**Lab exercises: Due January 29th by midnight**
 
 The goals for this assignment are:
 
@@ -16,9 +16,68 @@ The goals for this assignment are:
 * Working with environment variables 
 * Working with C strings
 
-To get started, clone the repository link:https://classroom.github.com/a/K4qA5FE_[here]
+To get started, do a `git pull` from within your `warmup-[username]` repository.
 
 :sectnums:
+
+= Stack diagram I
+
+Consider the following program. 
+
+[source]
+----
+int main() {
+  const char* str = "unicorn";
+
+  const char* m = NULL;
+  for (const char* p = str; *p != '\0'; p++) {
+    if (*p == 'c') m = p;
+  }
+  // Draw the stack here
+  printf("%s\n", m);
+  return 0;
+}
+----
+
+Fill in a table that shows how the values of `*p` and `*m` change each iteration of the loop.
+
+[cols="1,1"]
+|===
+| Loop Iteration | *p | *m 
+| 1 | u | NA (NULL) 
+| | |
+| | |
+| | |
+| | |
+|===
+
+Draw the state of the stack (e.g. a stack diagram) after the loop completes. You do not need to 
+show all intermediate steps.
+
+= Stack diagram II
+
+Draw the stack for the following program. Be careful: `strtok` modifies the 
+variable `line` by replacing the delimiters with the null character \0. 
+
+[source]
+----
+int main() {
+  char line[1024]; // max of 1023 characters can be read from the line
+  strcpy(line, "ls -l -a");
+
+  int n = 0;
+  char* list[128]; // max of 128 words can be put in the list
+  char* token = strtok(line, delims);
+  while (token)
+  {
+      list[n++] = token;
+      token = strtok(NULL, delims);
+  }
+  list[n] = NULL;
+  // Draw the stack here
+  return 0;
+}
+----
 
 = stdout, stderr
 
@@ -83,39 +142,9 @@ NOTE: The shell command `env` prints the environment
 
 NOTE: The paths above were truncated for brevity. Yours will be much longer!
 
-= Advanced C strings
-
-In assignment 02, you need to dynamically allocate a list of command line arguments. 
-For example, if the command line is `ls -l -a`, you need to create a null-terminated 
-list of strings, `[ls, -l, -a, NULL]`. 
-
-In the file, `argv.c`, implement a program that tokenizes a string into 
-a null-terminated array of strings created dynamically with malloc. 
-Then implement a function to print the array of strings using pointer arithmetic. 
-
-[source, subs="quotes"]
-----
-$ **./argv**
-[ls, -l, -a, NULL]
-----
-
-Requirements/Hints:
-
-* Use `strtok` to tokenize a string.
-* Use malloc and free to create the list you pass to print.
-* Do not store the length of the list of strings.   
-* Use valgrind to make sure you do not have memory leaks.
-* Do not use standard template library data structures.
-
-= Stack diagram
-
-Draw a stack diagram for the program `argv.c`.
-
 = Submission
 
-1. Hand-in the stack diagram for your team.
-
-2. One team member (or both) should submit their code. 
+Both team members should submit their own code. 
 
 == Submit your work to Github
 
