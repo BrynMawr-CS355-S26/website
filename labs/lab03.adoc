@@ -1,10 +1,10 @@
 include::header.adoc[]
 
-:title: Processes II
+:title: Working with file descriptors
 :Author Initials: ASN
 :Date:    2020-08-15
 :Revision: 0.1
-:ASST: labs-USERNAME
+:ASST: warmup-USERNAME
 
 = {title}
 

@@ -41,7 +41,7 @@ int main() {
 
 Fill in a table that shows how the values of `*p` and `*m` change each iteration of the loop.
 
-[cols="1,1"]
+[cols="1,1,1"]
 |===
 | Loop Iteration | *p | *m 
 | 1 | u | NA (NULL) 
