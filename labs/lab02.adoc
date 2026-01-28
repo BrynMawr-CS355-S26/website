@@ -4,7 +4,7 @@ include::header.adoc[]
 :Author Initials: ASN
 :Date:    2020-08-15
 :Revision: 0.1
-:ASST: Lab01
+:ASST: labs-USERNAME
 
 = {title}
 
@@ -16,7 +16,7 @@ The goals for this assignment are:
 * Working with environment variables 
 * Working with C strings
 
-To get started, do a `git pull` from within your `warmup-[username]` repository.
+To get started, click on this link:https://classroom.github.com/a/K1VF_TaU[Github Link].
 
 :sectnums:
 
