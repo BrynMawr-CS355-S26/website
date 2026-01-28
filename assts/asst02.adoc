@@ -180,11 +180,12 @@ Requirements:
 * Use the `readline()` function to get user input. This function supports backspace, tab completion, and more. link:https://www.man7.org/linux/man-pages/man3/readline.3.html[Documentation for readline can be found here].
 * Use the `add_history()` function to save user history. This will allow arrow keys to work. link:https://www.man7.org/linux/man-pages/man3/readline.3.html[Documentation for readline can be found here].
 * Your program should quit if the users types `exit`.
-* When the user gives a command, split it into a command and arguments using link:https://www.man7.org/linux/man-pages/man3/exec.3.html[execvp]and then fork a command to execute it. 
+* Make sure you don't crash on an empty command! 
+* When the user gives a command, split it into a command and arguments so you can call link:https://www.man7.org/linux/man-pages/man3/exec.3.html[execvp] after creating a new process with fork.
 * Compiles with `make`. (Do not modify the Makefile)
 * No memory errors using `valgrind`
-* Adheres to the style guidelines and includes a header comment
-* Your terminal should wait for the command to finish. If the command terminates with an error, report the error.
+* Adheres to the style guidelines
+* Your terminal should wait for the command to finish. If the command terminates with an error, such as a segmentation fault, report the error.
 
 NOTE: `readline` is a package that is installed on goldengate and in our labs. However, you may need to install it on your own machine. On Unix systems, this can be done by running `sudo apt install libreadline-dev`  
 
