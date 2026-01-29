@@ -78,7 +78,7 @@ Requirements/Hints:
 
 NOTE: This question is from link:https://www.cs.swarthmore.edu/~kwebb/cs45/s24/labs/lab1.html[this lab].
 
-In the file, `parser.c`, implement a function that parses command line input. 
+In the file, `libparser.c`, implement a function that parses command line input. 
 This function should fill in a `struct Cmd` that holds the information needed to execute. Your struct should look as follows. 
 
 [source]
