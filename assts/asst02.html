@@ -296,6 +296,35 @@ cmd2_fds[2]: NULL</code></pre>
 </li>
 </ul>
 </div>
+<div class="paragraph">
+<p>Below is a code example from class that shows how to use exec with fork. You can use this as a starting point. Your book also has code that shows how to write a simple shell.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>int main() {
+  char* command[3] = {"ls", "-l", NULL};
+  pid_t child = fork();
+  if (child == 0) {
+    if (execvp(command[0], command) == -1) {
+      printf("Command not found: \n", command[0]);
+      exit(1);
+    }
+  }
+  else {
+    int status = 0;
+    waitpid(child, &amp;status, 0);
+
+    if (WIFSIGNALED(status)) {
+      int signal = WTERMSIG(status);
+      printf("Abnormal termination: %s\n", strsignal(signal));
+      if (WCOREDUMP(status)) {
+        printf("core dumped\n");
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -431,7 +460,7 @@ have good style.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-28 16:25:34 -0500
+Last updated 2026-01-29 14:38:50 -0500
 </div>
 </div>
 </body>

@@ -187,6 +187,35 @@ Requirements:
 * Adheres to the style guidelines
 * Your terminal should wait for the command to finish. If the command terminates with an error, such as a segmentation fault, report the error.
 
+Below is a code example from class that shows how to use exec with fork. You can use this as a starting point. Your book also has code that shows how to write a simple shell.
+
+[source]
+----
+int main() {
+  char* command[3] = {"ls", "-l", NULL};
+  pid_t child = fork();
+  if (child == 0) {
+    if (execvp(command[0], command) == -1) {
+      printf("Command not found: \n", command[0]);
+      exit(1);
+    }
+  }
+  else {
+    int status = 0;
+    waitpid(child, &status, 0);
+
+    if (WIFSIGNALED(status)) {
+      int signal = WTERMSIG(status); 
+      printf("Abnormal termination: %s\n", strsignal(signal));                                    
+      if (WCOREDUMP(status)) {
+        printf("core dumped\n");
+      }
+    } 
+  }
+}
+----
+
+
 NOTE: `readline` is a package that is installed on goldengate and in our labs. However, you may need to install it on your own machine. On Unix systems, this can be done by running `sudo apt install libreadline-dev`  
 
 NOTE: You can print with colors to the console using ANSI escape sequences (see below). 
