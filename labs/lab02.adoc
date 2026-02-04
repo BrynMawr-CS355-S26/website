@@ -16,7 +16,7 @@ The goals for this assignment are:
 * Working with environment variables 
 * Working with C strings
 
-To get started, click on this link:https://classroom.github.com/a/K1VF_TaU[Github Link].
+To get started, click on this link:{labs-repo}[Github Link].
 
 :sectnums:
 

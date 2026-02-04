@@ -16,7 +16,7 @@ The goal for this assignment are:
 * Understanding process state: sleeping, running, stopped, terminated
 * Working with additional system calls: sigprocmask, tcgetpgrp, tcsetpgrp, setpgid
 
-We will use the same repository as last week: link:https://classroom.github.com/a/K4qA5FE_[Labs Repo]. 
+We will use the same repository as last week: link:{labs-repo}[Labs Repo]. 
 Click on the link and then accept and merge the pull request.
 
 :sectnums:

@@ -21,66 +21,11 @@ NOTE: We will use the same starter code as last week: link:https://classroom.git
 
 :sectnums:
 
-[discrete]
-== My Process Monitor
-
-The `/proc` filesystem is a pseudo-filesystem which provides an interface to kernel data structures, e.g.
-
-[source]
-----
-alinen@sutekh:$ ls /proc
-1     4331       config.gz      fb           keys           modules       self           tty
-1065  5          consoles       filesystems  kmsg           mounts        slabinfo       uptime
-1066  883        cpuinfo        fs           kpagecgroup    mpt           softirqs       version
-1067  884        crypto         interrupts   kpagecount     mtrr          stat           vmallocinfo
-2374  885        devices        iomem        kpageflags     net           swaps          vmstat
-3571  acpi       diskstats      ioports      latency_stats  pagetypeinfo  sys            zoneinfo
-3582  buddyinfo  dma            irq          loadavg        partitions    sysrq-trigger
-3873  bus        driver         kallsyms     locks          pressure      sysvipc
-3874  cgroups    dynamic_debug  kcore        meminfo        schedstat     thread-self
-3875  cmdline    execdomains    key-users    misc           scsi          timer_list
-----
-
-In the file, `mpm.cpp`, write a program that lists the currently running processes. 
-For each process, show its 
-
-* status (e.g. running, stopped, dead, etc)
-* user
-* parent process ID
-* process ID
-* group ID
-* active file descriptors
-* whether it is a foreground or background process (+)
-
-[source]
-----
-
-----
-
-Requirements/Hints:
-
-* Every process has a directory under `/proc` whose name matches its pid. Inside this directory, you will find files and subdirectories with more state information.
-* To get the status and ID information, read the file `/proc/<pid>/status`
-* The file descriptors are in the directory `/proc/<pid>/fd`. There will be a symbolic link for each file descriptor associated with the process. Use system calls to get the contents of the directory and show the values of the symbolic links. 
-
-The possible process status values are as follows:
-
-* D    uninterruptible sleep (usually IO)
-* I    Idle kernel thread
-* R    running or runnable (on run queue)
-* S    interruptible sleep (waiting for an event to complete)
-* T    stopped by job control signal
-* t    stopped by debugger during the tracing
-* W    paging (not valid since the 2.6.xx kernel)
-* X    dead (should never be seen)
-* Z    defunct ("zombie") process, terminated but not reaped by its parent
-
-
-= Better Shell
+= Pipe Shell
 
 NOTE: This question is from link:https://www.cs.swarthmore.edu/~kwebb/cs45/s24/labs/lab1.html[this lab].
 
-In the file, `better_shell.c`, extend the features of your shell from link:asst02.html[Assignment 02]. 
+In the file, `shell02.c`, extend the features of your shell from link:asst02.html[Assignment 02]. 
 
 Requirements:
 
@@ -216,7 +161,7 @@ you can’t really recover from those. For minor errors though (e.g., exec fails
 because the user’s command is invalid) a child process should terminate, but the
 shell should continue.
 
-**Always always always check the return value of any system call you make!**
+NOTE: Best practice is to always check the return value of any system calls you make
 
 == Cleanup
 
@@ -248,7 +193,7 @@ Check the Github website to make sure that your program uploaded correctly.
 Grades are out of 4 points.
 
 * (4 points) Shell
-** (0.3 points) style and header comment
+** (0.3 points) style 
 ** (0.3 points) cd
 ** (0.7 points) pipes 
 ** (0.7 points) redirection 

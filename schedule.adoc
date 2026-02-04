@@ -24,9 +24,9 @@
 //-----------------------------
 | 2 
 | January 27, 29 anchor:week02[]
-| *C++, Processes* 
+| *More C/C++, Processes* 
 
-* Topics: STL data structures, bitfields, processes, Fork
+* Topics: STL data structures, bitfields, processes
 * link:labs/lab02.html[Lab Jan 29: C strings and pointers]
 * link:assts/asst02.html[Assignment 02: C shell by the shore]: Due Feb 3
 
@@ -35,27 +35,32 @@
 * Recommended questions (Tues): Tanenbaum pgs 174-180: 1, 5, 6, 7, 8, 39
 
 |
+* link:lectures/OS-Week02-Jan27-Bitfields.pdf[Lecture Jan 27 - Bitfields]
+* link:lectures/OS-Week02-Jan27-Overview.pdf[Lecture Jan 27 - Overview of OS abstractions]
+* link:lectures/OS-Week02-Jan29-Processes.pdf[Lecture Jan 29, Feb 3 - Processes]
 
 //-----------------------------
 |3
 |February 3, 5 anchor:week03[]
-|*Job Control* 
+|*Fork, Job Control* 
 
-* Topics: Advanced shell concepts, Pipes, Process and terminal properties, Signals
-* link:labs/lab03.[Lab Feb 5: File descriptors]
-* link:assts/asst03.[Assignment 03]: Due Feb 10
+* Topics: Fork/Wait/Exec, Job Control, Pipes, Process and terminal properties, Signals
+* link:labs/lab03.html[Lab Feb 5: File descriptors]
+* link:assts/asst03.html[Assignment 03: Pipe Shell]: Due Feb 10
 
 * Reading: Kerrisk Chpt 34
 
 |
+* link:lectures/OS-Week02-Jan29-Processes.pdf[Lecture Jan 29, Feb 3 - Processes]
+
 //-----------------------------
 |4
 |February 10, 12 anchor:week04[]
-|*Threads*
+|*Signals, Threads*
 
-* Topics: Threads, pthreads 
+* Topics: Signals, Threads, pthreads 
 * link:labs/lab04.[Lab Feb 12: ]
-* link:assts/asst04.[Assignment 04]: Due Feb 17
+* link:assts/asst04.[Assignment 04: Job Shell]: Due Feb 17
 
 * Read: Tanenbaum 2.2
 * Optional reading: Dive into systems

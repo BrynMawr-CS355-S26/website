@@ -10,3 +10,5 @@
 :csweb: https://www.cs.brynmawr.edu/~alinen
 :repo: https://github.com/BrynMawr-CS223-S25
 :semester: s25
+:labs-repo: https://classroom.github.com/a/K1VF_TaU
+:defrag-repo: todo

@@ -15,7 +15,7 @@
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#_assignment_03_process_monitor_and_simple_shell">Assignment 03: Process monitor and simple shell</a></li>
-<li><a href="#_better_shell">1. Better Shell</a>
+<li><a href="#_pipe_shell">1. Pipe Shell</a>
 <ul class="sectlevel2">
 <li><a href="#_change_the_working_directory">1.1. Change the working directory</a></li>
 <li><a href="#_piping">1.2. Piping</a></li>
@@ -66,113 +66,10 @@ We will use the same starter code as last week: <a href="https://classroom.githu
 </tr>
 </table>
 </div>
-<h3 id="_my_process_monitor" class="discrete">My Process Monitor</h3>
-<div class="paragraph">
-<p>The <code>/proc</code> filesystem is a pseudo-filesystem which provides an interface to kernel data structures, e.g.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>alinen@sutekh:$ ls /proc
-1     4331       config.gz      fb           keys           modules       self           tty
-1065  5          consoles       filesystems  kmsg           mounts        slabinfo       uptime
-1066  883        cpuinfo        fs           kpagecgroup    mpt           softirqs       version
-1067  884        crypto         interrupts   kpagecount     mtrr          stat           vmallocinfo
-2374  885        devices        iomem        kpageflags     net           swaps          vmstat
-3571  acpi       diskstats      ioports      latency_stats  pagetypeinfo  sys            zoneinfo
-3582  buddyinfo  dma            irq          loadavg        partitions    sysrq-trigger
-3873  bus        driver         kallsyms     locks          pressure      sysvipc
-3874  cgroups    dynamic_debug  kcore        meminfo        schedstat     thread-self
-3875  cmdline    execdomains    key-users    misc           scsi          timer_list</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>In the file, <code>mpm.cpp</code>, write a program that lists the currently running processes.
-For each process, show its</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>status (e.g. running, stopped, dead, etc)</p>
-</li>
-<li>
-<p>user</p>
-</li>
-<li>
-<p>parent process ID</p>
-</li>
-<li>
-<p>process ID</p>
-</li>
-<li>
-<p>group ID</p>
-</li>
-<li>
-<p>active file descriptors</p>
-</li>
-<li>
-<p>whether it is a foreground or background process (+)</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Requirements/Hints:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Every process has a directory under <code>/proc</code> whose name matches its pid. Inside this directory, you will find files and subdirectories with more state information.</p>
-</li>
-<li>
-<p>To get the status and ID information, read the file <code>/proc/&lt;pid&gt;/status</code></p>
-</li>
-<li>
-<p>The file descriptors are in the directory <code>/proc/&lt;pid&gt;/fd</code>. There will be a symbolic link for each file descriptor associated with the process. Use system calls to get the contents of the directory and show the values of the symbolic links.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The possible process status values are as follows:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>D    uninterruptible sleep (usually IO)</p>
-</li>
-<li>
-<p>I    Idle kernel thread</p>
-</li>
-<li>
-<p>R    running or runnable (on run queue)</p>
-</li>
-<li>
-<p>S    interruptible sleep (waiting for an event to complete)</p>
-</li>
-<li>
-<p>T    stopped by job control signal</p>
-</li>
-<li>
-<p>t    stopped by debugger during the tracing</p>
-</li>
-<li>
-<p>W    paging (not valid since the 2.6.xx kernel)</p>
-</li>
-<li>
-<p>X    dead (should never be seen)</p>
-</li>
-<li>
-<p>Z    defunct ("zombie") process, terminated but not reaped by its parent</p>
-</li>
-</ul>
-</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_better_shell">1. Better Shell</h2>
+<h2 id="_pipe_shell">1. Pipe Shell</h2>
 <div class="sectionbody">
 <div class="admonitionblock note">
 <table>
@@ -187,7 +84,7 @@ This question is from <a href="https://www.cs.swarthmore.edu/~kwebb/cs45/s24/lab
 </table>
 </div>
 <div class="paragraph">
-<p>In the file, <code>better_shell.c</code>, extend the features of your shell from <a href="asst02.html">Assignment 02</a>.</p>
+<p>In the file, <code>shell02.c</code>, extend the features of your shell from <a href="asst02.html">Assignment 02</a>.</p>
 </div>
 <div class="paragraph">
 <p>Requirements:</p>
@@ -385,8 +282,17 @@ you can’t really recover from those. For minor errors though (e.g., exec fails
 because the user’s command is invalid) a child process should terminate, but the
 shell should continue.</p>
 </div>
-<div class="paragraph">
-<p><strong>Always always always check the return value of any system call you make!</strong></p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Best practice is to always check the return value of any system calls you make
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -432,7 +338,7 @@ Check the Github website to make sure that your program uploaded correctly.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>(0.3 points) style and header comment</p>
+<p>(0.3 points) style</p>
 </li>
 <li>
 <p>(0.3 points) cd</p>
@@ -510,7 +416,7 @@ have good style.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-28 16:21:27 -0500
+Last updated 2026-02-04 16:23:41 -0500
 </div>
 </div>
 </body>

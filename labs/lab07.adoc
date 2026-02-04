@@ -15,7 +15,7 @@ The goals for this assignment are:
 * Work with inodes and disks
 
 We will use the same repository as this week's assignment: 
-link:https://classroom.github.com/a/HQbSg2u5[Defragmentor Repo]. 
+link:{defrag-repo}[Defragmentor Repo]. 
 
 :sectnums:
 
