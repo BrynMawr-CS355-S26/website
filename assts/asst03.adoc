@@ -1,6 +1,6 @@
 include::header.adoc[]
 
-:title: Assignment 03: Process monitor and simple shell 
+:title: Assignment 03: Pipe shell 
 :Author Initials: ASN
 :Date:    2020-08-15
 :Revision: 0.1
