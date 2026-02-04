@@ -1,6 +1,6 @@
 include::header.adoc[]
 
-:title: Threads
+:title: Smooth allocators
 :Author Initials: ASN
 :Date:    2020-08-15
 :Revision: 0.1
@@ -8,179 +8,81 @@ include::header.adoc[]
 
 = {title}
 
-Lab exercises for February 20th.
+Lab exercises for March 20th.
 
 The goals for this assignment are:
 
-* Understanding the pthread library
-* Working with ucontext 
+* Understanding pointer arithmetic
+* Working with mmap
+* Implementing simple memory allocators
 
-We will use the same repository as last week: link:{labs-repo}[Labs Repo]. 
+We will use the same repository as previous labs: link:{labs-repo}[Labs Repo]. 
 Click on the link and then accept and merge the pull request.
+
+**Due March 21st**
 
 :sectnums:
 
-= Matrix Add  **Due Feb 20**
+= Stack Allocator
 
-In the files, `matrix.c`, implement a program that uses M threads to add 
-two matrices, each stored in its own binary file, and saving the result into a third file. 
+In the file, `stalloc.c`, implement a program that implements a simple memory allocator, 
+based on a stack. The stack is initialized as a large block of memory (e.g. a character array). 
+When the user requests memory, they receive a block from the top of the stack. When they free memory, 
+it must be the most recently acquired block. Thus, this allocator has the following properties and 
+limitations:
 
-[source, subs="quotes"]
-----
-$ **./matrix**
-usage: ./matrix <NumThreads> <MatrixA> <MatrixB>
-$ **./matrix 1 A1 B2**
-Dimensions do not match!
-$ **./matrix 1 A1 B1**
-Starting thread 139848748009024 (idx = 0)
-duration: 0.00
-$ **./readmat A1**
-0 -8 -6 8
-0 4 -7 9
-1 7 0 5
-$ **./readmat B1**
-1 -6 -2 3
--6 -1 -9 8
--7 8 -5 -5
-$ **./readmat A1+B1**
-1 -14 -8 11
--6 3 -16 17
--6 15 -5 0
-$ **./matrix 1 A4 B4**
-Starting thread 139696590177856 (idx = 0)
-duration: 0.36
-$ **./matrix 4 A4 B4**
-Starting thread 140698237380160 (idx = 0)
-Starting thread 140698228987456 (idx = 1)
-Starting thread 140698220594752 (idx = 2)
-Starting thread 140698212202048 (idx = 3)
-duration: 0.21
-$ **./matrix 8 A4 B4**
-Starting thread 140559920776768 (idx = 1)
-Starting thread 140559912384064 (idx = 2)
-Starting thread 140559903991360 (idx = 3)
-Starting thread 140559929169472 (idx = 0)
-Starting thread 140559895598656 (idx = 4)
-Starting thread 140559887205952 (idx = 5)
-Starting thread 140559878813248 (idx = 6)
-Starting thread 140559870420544 (idx = 7)
-duration: 0.23
-----
+* Used memory is always at the beginning of the array block
+* Free memory is always at the end of the array block
+* Only a single pointer is needed to keep track of the division between used and free memory
+* The user must deallocate memory in the opposite order that you allocate it
+* The user can ask for at most ALLOCSIZE blocks of memory (e.g. the size of the stack at initialization). If the user asks for more memory than is available, the allocator should return 0.
 
-Requirements/Hints:
 
-* Time how long it takes to compute the result when you have 8, 4, or a single thread.
-* Leverage spatial locality to ensure the best performance, e.g. split the work by rows in each matrix.
-* Use the program `readmat.c` to test that your program runs correctly
-* Name the output file based on the two inputs, e.g. <Mat1>+<Mat2>
-* Use gettimeofday(), defined in `sys/time.h` to get the duration of your program.
+image::Lab05.png[width=200px]
 
-[source]
-----
-struct timeval ts, te;
-gettimeofday(&ts, NULL);
-...
-gettimeofday(&te, NULL);
-double time = te.tv_sec - ts.tv_sec + (te.tv_usec - ts.tv_usec)/1.e6;
-printf("duration: %.4f\n", time);
-----
+You are given basecode for this assignment. 
 
-The matrices you need to add are stored in a binary file that stores a sequence of integers. 
-
-* The first integer is the number of rows
-* The second integer is the number of columns
-* The remaining integers are the values of the matrix, stored in row-major order. 
-
-To test with large matrices, download them from the website (but don't check them in!)
-
-[source]
-----
-$ wget https://alinen.net/A4 
-$ wget https://alinen.net/B4 
-----
-
-= Funny functions **Due Feb 23**
-
-Implement the following programs based on ucontext. 
-
-== Return
-
-In the file, `hello_context.c`, modify the program so it returns to main after executing f().
-Use the code from lecture to help you!
-
-[source,subs="quotes"]
-----
-$ ./hello_context
-Hello World
-End of main
-----
-
-== Alternate
-
-In the file, `alternate.c`, write a program that alternates between two
-functions indefinitely.
+* Implement `char* stalloc(int n)`
+* Implement `void stfree(char* p)`
+* Update the tests in `main`
 
 [source, subs="quotes"]
 ----
-$ **./alternate**
-odd:1
-even:0
-odd:3
-even:2
-odd:5
-^C
+$ **make**
+g++ -g -Wno-unused-variable -Wno-unused-but-set-variable mylloc.c -o mylloc
+g++ -g -Wno-unused-variable -Wno-unused-but-set-variable stalloc.c -o stalloc
+$ **./stalloc**
+stalloc: stalloc.c:24: int main(): Assertion `b1 == allocbuf' failed.
+Aborted (core dumped)
+$ **./stalloc**
+//prints nothing if all tests pass
 ----
 
-Send a signal to the `alternate` process. In your C file, answer the following questions:
+= My Simple Allocator
 
-* What happens when a signal is delivered? 
-* How do signals affect the execution of a context?
+You are given a file, `mylloc.c`, that contains the simple memory allocator 
+from class, modifies to use the STL linked list. Edit this file to include the 
+following:
 
-Hints:
+* Add a linked list to keep track of memory requested by the user
+* Implement `mem_dump` to print the contents of the user memory and free memory. This function should print the starting address of the chunk and the chunk's size.
+* Inside the file, `mylloc.c`, answer the following questions
+** There are three allocations. Why are there only two chunks?
+** Below, the base address is 0x56418de96000. The first chunk listed has address 0x56418de96328. Why?
 
-* Alternate between main and another function. 
-* Make your two ucontext variables global so that main can swap to the function, and then the function can swap back to main
-* The example above uses `nanosleep` to pause inside the loop
-* The example above sets printf to flush immediately (e.g. show output text immediately) to make the output cleaner. This is done with the command `setvbuf(stdout, 0, _IOLBF, 0);`.
-
-Above, main loops over odd numbers and the function loops over even numbers (see below). Each iteration, they `swapcontext`.
-
-[source]
+[source, subs="quotes"]
 ----
-void nextEven()
-{
-  struct timespec delay = { 1, 0 };
-  for (unsigned int i = 0;; i += 2) {
-    printf("even:%d\n", i);
-    nanosleep(&delay, 0);
-  }
-}
-----
-
-
-== Alarm
-
-Can you write a program that alternates between two functions at a set interval?
-
-In the file, `alarm.c`, write a program that alternates between two functions at a set interval. 
-Use a kernel timer like in the link:sig_alarm.c[sig_alarm] demo from class.
-
-[source]
-----
-$ **./alarm**
-even:0
-even:2
-odd:1
-odd:3
-even:4
-even:6
-odd:5
-odd:7
+$ **make**
+g++ -g -Wno-unused-variable -Wno-unused-but-set-variable mylloc.c -o mylloc
+g++ -g -Wno-unused-variable -Wno-unused-but-set-variable stalloc.c -o stalloc
+$ **./mylloc**
+Base address: 0x56418de96000
+1. Memory dump:
+Used chunk: 0x56418de96328 (400)
+Used chunk: 0x56418de96000 (800)
+2. Memory dump:
+Used chunk: 0x56418de96000 (800)
+Used chunk: 0x56418de96328 (400)
 ----
 
-Hints:
 
-* Above, we defined two functions in addition to main, `nextEven()` and `nextOdd()`.
-* The signal handler switches between `nextEven` and `nextOdd` using a global variable that specifies which should run
-* After setting up the contexts and signals, main calls `pause` in an infinite loop.
-* The timer triggers every 2 seconds and each functions sleep 1 second between printing. Thus, we see two prints before switching to the next function.

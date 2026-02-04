@@ -27,7 +27,7 @@
 | *More C/C++, Processes* 
 
 * Topics: STL data structures, bitfields, processes
-* link:labs/lab02.html[Lab Jan 29: C strings and pointers]
+* link:labs/lab01.html[Lab Jan 29: C strings and pointers]
 * link:assts/asst02.html[Assignment 02: C shell by the shore]: Due Feb 3
 
 * Reading: Tanenbaum 2.1
@@ -45,7 +45,7 @@
 |*Fork, Job Control* 
 
 * Topics: Fork/Wait/Exec, Job Control, Pipes, Process and terminal properties, Signals
-* link:labs/lab03.html[Lab Feb 5: File descriptors]
+* link:labs/lab02.html[Lab Feb 5: File descriptors]
 * link:assts/asst03.html[Assignment 03: Pipe Shell]: Due Feb 10
 
 * Reading: Kerrisk Chpt 34
@@ -59,7 +59,7 @@
 |*Signals, Threads*
 
 * Topics: Signals, Threads, pthreads 
-* link:labs/lab04.[Lab Feb 12: ]
+* link:labs/lab03.[Lab Feb 12: ]
 * link:assts/asst04.[Assignment 04: Job Shell]: Due Feb 17
 
 * Read: Tanenbaum 2.2
@@ -72,7 +72,7 @@
 |February 17, 19 anchor:week05[]
 |*Thread synchronization* 
 
-* link:labs/lab05.[Lab Feb 19]
+* link:labs/lab04.[Lab Feb 19]
 * link:assts/asst05.[Assignment 05]: Due Feb 24
 
 * Read: Tanenbaum 2.3, 2.5
@@ -115,7 +115,7 @@
 |March 17, 19 anchor:week09[]
 |*Malloc/Free, Memory Management*
 
-* link:labs/lab06.[Lab March 19: Simple memory allocators]
+* link:labs/lab05.[Lab March 19: Simple memory allocators]
 * link:assts/asst06.[Assignment 06]: Due March 24
 
 * Read: Kernihan TBD
@@ -139,7 +139,7 @@
 |*File Systems I* 
 
 * Read: Tanenbaum Chapter 4.1-4.3, 4.5
-* link:labs/lab07.[Lab April 2]
+* link:labs/lab06.[Lab April 2]
 * link:assts/asst07.[Assignment 07]: Defragmentor, Due Sunday, April 6
 * Recommended study questions (Tues): Tanenbaum pgs 332-336, 6, 10, 18, 19, 21, 24, 26
 
@@ -150,7 +150,7 @@
 |*File Systems II* 
 
 * Read: Tanenbaum Chapter 4.4 
-* link:labs/lab08.[Lab April 10]
+* link:labs/lab07.[Lab April 10]
 * link:assts/asst08.[Project]: File System, Due Sunday, April 27
 * Recommended study questions (Tues): Tanenbaum pgs 332-336, 28, 30, 33, 40, 41
 

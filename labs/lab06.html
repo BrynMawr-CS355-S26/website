@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.18">
-<title>Smooth allocators</title>
+<title>Inodes you're busy</title>
 <link rel="stylesheet" href="../style/cs21.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
@@ -14,18 +14,17 @@
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_smooth_allocators">Smooth allocators</a></li>
-<li><a href="#_stack_allocator">1. Stack Allocator</a></li>
-<li><a href="#_my_simple_allocator">2. My Simple Allocator</a></li>
+<li><a href="#_inodes_youre_busy">Inodes you&#8217;re busy</a></li>
+<li><a href="#_print_disk">1. Print disk</a></li>
 </ul>
 </div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_smooth_allocators">Smooth allocators</h2>
+<h2 id="_inodes_youre_busy">Inodes you&#8217;re busy</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lab exercises for March 20th.</p>
+<p>Lab exercises for April 3rd</p>
 </div>
 <div class="paragraph">
 <p>The goals for this assignment are:</p>
@@ -33,133 +32,68 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Understanding pointer arithmetic</p>
-</li>
-<li>
-<p>Working with mmap</p>
-</li>
-<li>
-<p>Implementing simple memory allocators</p>
+<p>Work with inodes and disks</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>We will use the same repository as previous labs: <a href="https://classroom.github.com/a/K1VF_TaU">Labs Repo</a>.
-Click on the link and then accept and merge the pull request.</p>
-</div>
-<div class="paragraph">
-<p><strong>Due March 21st</strong></p>
+<p>We will use the same repository as this week&#8217;s assignment:
+<a href="todo">Defragmentor Repo</a>.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_stack_allocator">1. Stack Allocator</h2>
+<h2 id="_print_disk">1. Print disk</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In the file, <code>stalloc.c</code>, implement a program that implements a simple memory allocator,
-based on a stack. The stack is initialized as a large block of memory (e.g. a character array).
-When the user requests memory, they receive a block from the top of the stack. When they free memory,
-it must be the most recently acquired block. Thus, this allocator has the following properties and
-limitations:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Used memory is always at the beginning of the array block</p>
-</li>
-<li>
-<p>Free memory is always at the end of the array block</p>
-</li>
-<li>
-<p>Only a single pointer is needed to keep track of the division between used and free memory</p>
-</li>
-<li>
-<p>The user must deallocate memory in the opposite order that you allocate it</p>
-</li>
-<li>
-<p>The user can ask for at most ALLOCSIZE blocks of memory (e.g. the size of the stack at initialization). If the user asks for more memory than is available, the allocator should return 0.</p>
-</li>
-</ul>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="img/Lab05.png" alt="Lab05" width="200px">
-</div>
+<p>In the file, <code>printdisk.c</code>, implement a program that reads a disk and prints its underlying data structure
+in terms of the superblock and its inodes.</p>
 </div>
 <div class="paragraph">
-<p>You are given basecode for this assignment.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Implement <code>char* stalloc(int n)</code></p>
-</li>
-<li>
-<p>Implement <code>void stfree(char* p)</code></p>
-</li>
-<li>
-<p>Update the tests in <code>main</code></p>
-</li>
-</ul>
+<p>Information about how to parse disks are in the writeup for <a href="../assts/asst07.html">Assignment 07</a>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>$ <strong>make</strong>
-g++ -g -Wno-unused-variable -Wno-unused-but-set-variable mylloc.c -o mylloc
-g++ -g -Wno-unused-variable -Wno-unused-but-set-variable stalloc.c -o stalloc
-$ <strong>./stalloc</strong>
-stalloc: stalloc.c:24: int main(): Assertion `b1 == allocbuf' failed.
-Aborted (core dumped)
-$ <strong>./stalloc</strong>
-//prints nothing if all tests pass</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_my_simple_allocator">2. My Simple Allocator</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>You are given a file, <code>mylloc.c</code>, that contains the simple memory allocator
-from class, modifies to use the STL linked list. Edit this file to include the
-following:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Add a linked list to keep track of memory requested by the user</p>
-</li>
-<li>
-<p>Implement <code>mem_dump</code> to print the contents of the user memory and free memory. This function should print the starting address of the chunk and the chunk&#8217;s size.</p>
-</li>
-<li>
-<p>Inside the file, <code>mylloc.c</code>, answer the following questions</p>
-<div class="ulist">
-<ul>
-<li>
-<p>There are three allocations. Why are there only two chunks?</p>
-</li>
-<li>
-<p>Below, the base address is 0x56418de96000. The first chunk listed has address 0x56418de96328. Why?</p>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>$ <strong>make</strong>
-g++ -g -Wno-unused-variable -Wno-unused-but-set-variable mylloc.c -o mylloc
-g++ -g -Wno-unused-variable -Wno-unused-but-set-variable stalloc.c -o stalloc
-$ <strong>./mylloc</strong>
-Base address: 0x56418de96000
-1. Memory dump:
-Used chunk: 0x56418de96328 (400)
-Used chunk: 0x56418de96000 (800)
-2. Memory dump:
-Used chunk: 0x56418de96000 (800)
-Used chunk: 0x56418de96328 (400)</code></pre>
+<pre class="highlight"><code>$ <strong>./printdisk datafile-frag</strong>
+size 512
+inode offset 0
+data offset 4
+swap offset 10239
+free inode 14
+free block 10133
+
+0
+next inode 0
+protect 0
+nlink 1
+size 93821
+uid 18390
+gid 9921
+ctime 536561894
+mtime 609329799
+atime 502539239
+direct datablocks
+0: 1120
+1: 8393
+2: 1579
+3: 9539
+4: 7108
+5: 7883
+6: 4762
+7: 1980
+8: 1030
+9: 8610
+single indirect
+0: 4500
+1: 3711
+2: 0
+3: 0
+double indirect
+0
+triple indirect
+0
+
+//etc</code></pre>
 </div>
 </div>
 </div>
@@ -167,7 +101,7 @@ Used chunk: 0x56418de96328 (400)</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-02-04 15:44:20 -0500
+Last updated 2026-02-04 15:44:18 -0500
 </div>
 </div>
 </body>

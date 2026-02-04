@@ -5,103 +5,115 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.18">
-<title>Inodes you're busy</title>
+<title>A file system of your own devising</title>
 <link rel="stylesheet" href="../style/cs21.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-<body class="article toc2 toc-left">
+<body class="article">
 <div id="header">
-<div id="toc" class="toc2">
-<div id="toctitle">Table of Contents</div>
-<ul class="sectlevel1">
-<li><a href="#_inodes_youre_busy">Inodes you&#8217;re busy</a></li>
-<li><a href="#_print_disk">1. Print disk</a></li>
-</ul>
-</div>
 </div>
 <div id="content">
-<div class="sect1">
-<h2 id="_inodes_youre_busy">Inodes you&#8217;re busy</h2>
-<div class="sectionbody">
+<h2 id="_a_file_system_of_your_own_devising" class="discrete">A file system of your own devising</h2>
+<h2 id="_name" class="discrete">Name</h2>
 <div class="paragraph">
-<p>Lab exercises for April 3rd</p>
+<p>Lab exercises for April 10th. This is a written assignment. Due by the end of
+lab&#8201;&#8212;&#8201;no extensions.</p>
 </div>
+<h2 id="_design" class="discrete">Design</h2>
 <div class="paragraph">
-<p>The goals for this assignment are:</p>
+<p><a href="../assts/asst08.html">Read the project description for your file system</a>. Then answer the questions below. Note that some answers are requirements specified in the assignment description.</p>
 </div>
-<div class="ulist">
-<ul>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
-<p>Work with inodes and disks</p>
+<p>What blocksize will your system support?
+&#160;<br>
+&#160;<br>
+&#160;<br></p>
 </li>
-</ul>
+<li>
+<p>What attributes will files have?
+&#160;<br>
+&#160;<br>
+&#160;<br></p>
+</li>
+<li>
+<p>Where on your file system will file attributes be stored?
+&#160;<br>
+&#160;<br>
+&#160;<br></p>
+</li>
+<li>
+<p>Where will filenames be stored? How long can they be?
+&#160;<br>
+&#160;<br>
+&#160;<br></p>
+</li>
+<li>
+<p>Where will the root directory stored? How will you keep track of the root directory for resolving path names?
+&#160;<br>
+&#160;<br>
+&#160;<br></p>
+</li>
+<li>
+<p>How will you manage free memory?
+&#160;<br>
+&#160;<br>
+&#160;<br></p>
+</li>
+<li>
+<p>How will you keep track of which blocks are used by which files (FAT or inodes)?
+&#160;<br>
+&#160;<br>
+&#160;<br></p>
+</li>
+</ol>
 </div>
-<div class="paragraph">
-<p>We will use the same repository as this week&#8217;s assignment:
-<a href="todo">Defragmentor Repo</a>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_print_disk">1. Print disk</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>In the file, <code>printdisk.c</code>, implement a program that reads a disk and prints its underlying data structure
-in terms of the superblock and its inodes.</p>
-</div>
-<div class="paragraph">
-<p>Information about how to parse disks are in the writeup for <a href="../assts/asst07.html">Assignment 07</a>.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>$ <strong>./printdisk datafile-frag</strong>
-size 512
-inode offset 0
-data offset 4
-swap offset 10239
-free inode 14
-free block 10133
-
-0
-next inode 0
-protect 0
-nlink 1
-size 93821
-uid 18390
-gid 9921
-ctime 536561894
-mtime 609329799
-atime 502539239
-direct datablocks
-0: 1120
-1: 8393
-2: 1579
-3: 9539
-4: 7108
-5: 7883
-6: 4762
-7: 1980
-8: 1030
-9: 8610
-single indirect
-0: 4500
-1: 3711
-2: 0
-3: 0
-double indirect
-0
-triple indirect
-0
-
-//etc</code></pre>
-</div>
-</div>
-</div>
+<div class="pagebreak"></div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In the space below, draw a picture that shows how you will organize the primary portions of your disk, e.g. free space management, allocation tables, inodes, data blocks, etc.
+&#160;<br>
+&#160;<br>
+&#160;<br>
+&#160;<br>
+&#160;<br>
+&#160;<br>
+&#160;<br>
+&#160;<br></p>
+</li>
+<li>
+<p>In the space below, write the steps needed to create a file consisting of a single block in your file system.
+&#160;<br>
+&#160;<br>
+&#160;<br>
+&#160;<br>
+&#160;<br>
+&#160;<br>
+&#160;<br>
+&#160;<br></p>
+</li>
+<li>
+<p>In the space below, write the steps needed to edit a file with the path <code>/usr/A.txt</code>.
+&#160;<br>
+&#160;<br>
+&#160;<br>
+&#160;<br>
+&#160;<br>
+&#160;<br>
+&#160;<br>
+&#160;<br></p>
+</li>
+<li>
+<p>In the space below, write the steps needed to remove a file with the path <code>/usr/A.txt</code>.</p>
+</li>
+</ol>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-02-04 15:44:18 -0500
+Last updated 2025-04-09 11:10:28 -0400
 </div>
 </div>
 </body>

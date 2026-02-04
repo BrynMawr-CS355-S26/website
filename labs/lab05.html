@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.18">
-<title>Threads</title>
+<title>Smooth allocators</title>
 <link rel="stylesheet" href="../style/cs21.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
@@ -14,24 +14,18 @@
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_threads">Threads</a></li>
-<li><a href="#_matrix_add_due_feb_20">1. Matrix Add  <strong>Due Feb 20</strong></a></li>
-<li><a href="#_funny_functions_due_feb_23">2. Funny functions <strong>Due Feb 23</strong></a>
-<ul class="sectlevel2">
-<li><a href="#_return">2.1. Return</a></li>
-<li><a href="#_alternate">2.2. Alternate</a></li>
-<li><a href="#_alarm">2.3. Alarm</a></li>
-</ul>
-</li>
+<li><a href="#_smooth_allocators">Smooth allocators</a></li>
+<li><a href="#_stack_allocator">1. Stack Allocator</a></li>
+<li><a href="#_my_simple_allocator">2. My Simple Allocator</a></li>
 </ul>
 </div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_threads">Threads</h2>
+<h2 id="_smooth_allocators">Smooth allocators</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lab exercises for February 20th.</p>
+<p>Lab exercises for March 20th.</p>
 </div>
 <div class="paragraph">
 <p>The goals for this assignment are:</p>
@@ -39,252 +33,133 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Understanding the pthread library</p>
+<p>Understanding pointer arithmetic</p>
 </li>
 <li>
-<p>Working with ucontext</p>
+<p>Working with mmap</p>
+</li>
+<li>
+<p>Implementing simple memory allocators</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>We will use the same repository as last week: <a href="https://classroom.github.com/a/K1VF_TaU">Labs Repo</a>.
+<p>We will use the same repository as previous labs: <a href="https://classroom.github.com/a/K1VF_TaU">Labs Repo</a>.
 Click on the link and then accept and merge the pull request.</p>
 </div>
+<div class="paragraph">
+<p><strong>Due March 21st</strong></p>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_matrix_add_due_feb_20">1. Matrix Add  <strong>Due Feb 20</strong></h2>
+<h2 id="_stack_allocator">1. Stack Allocator</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In the files, <code>matrix.c</code>, implement a program that uses M threads to add
-two matrices, each stored in its own binary file, and saving the result into a third file.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>$ <strong>./matrix</strong>
-usage: ./matrix <NumThreads> <MatrixA> <MatrixB>
-$ <strong>./matrix 1 A1 B2</strong>
-Dimensions do not match!
-$ <strong>./matrix 1 A1 B1</strong>
-Starting thread 139848748009024 (idx = 0)
-duration: 0.00
-$ <strong>./readmat A1</strong>
-0 -8 -6 8
-0 4 -7 9
-1 7 0 5
-$ <strong>./readmat B1</strong>
-1 -6 -2 3
--6 -1 -9 8
--7 8 -5 -5
-$ <strong>./readmat A1+B1</strong>
-1 -14 -8 11
--6 3 -16 17
--6 15 -5 0
-$ <strong>./matrix 1 A4 B4</strong>
-Starting thread 139696590177856 (idx = 0)
-duration: 0.36
-$ <strong>./matrix 4 A4 B4</strong>
-Starting thread 140698237380160 (idx = 0)
-Starting thread 140698228987456 (idx = 1)
-Starting thread 140698220594752 (idx = 2)
-Starting thread 140698212202048 (idx = 3)
-duration: 0.21
-$ <strong>./matrix 8 A4 B4</strong>
-Starting thread 140559920776768 (idx = 1)
-Starting thread 140559912384064 (idx = 2)
-Starting thread 140559903991360 (idx = 3)
-Starting thread 140559929169472 (idx = 0)
-Starting thread 140559895598656 (idx = 4)
-Starting thread 140559887205952 (idx = 5)
-Starting thread 140559878813248 (idx = 6)
-Starting thread 140559870420544 (idx = 7)
-duration: 0.23</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Requirements/Hints:</p>
+<p>In the file, <code>stalloc.c</code>, implement a program that implements a simple memory allocator,
+based on a stack. The stack is initialized as a large block of memory (e.g. a character array).
+When the user requests memory, they receive a block from the top of the stack. When they free memory,
+it must be the most recently acquired block. Thus, this allocator has the following properties and
+limitations:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Time how long it takes to compute the result when you have 8, 4, or a single thread.</p>
+<p>Used memory is always at the beginning of the array block</p>
 </li>
 <li>
-<p>Leverage spatial locality to ensure the best performance, e.g. split the work by rows in each matrix.</p>
+<p>Free memory is always at the end of the array block</p>
 </li>
 <li>
-<p>Use the program <code>readmat.c</code> to test that your program runs correctly</p>
+<p>Only a single pointer is needed to keep track of the division between used and free memory</p>
 </li>
 <li>
-<p>Name the output file based on the two inputs, e.g. &lt;Mat1&gt;+&lt;Mat2&gt;</p>
+<p>The user must deallocate memory in the opposite order that you allocate it</p>
 </li>
 <li>
-<p>Use gettimeofday(), defined in <code>sys/time.h</code> to get the duration of your program.</p>
+<p>The user can ask for at most ALLOCSIZE blocks of memory (e.g. the size of the stack at initialization). If the user asks for more memory than is available, the allocator should return 0.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="img/Lab05.png" alt="Lab05" width="200px">
+</div>
+</div>
+<div class="paragraph">
+<p>You are given basecode for this assignment.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Implement <code>char* stalloc(int n)</code></p>
+</li>
+<li>
+<p>Implement <code>void stfree(char* p)</code></p>
+</li>
+<li>
+<p>Update the tests in <code>main</code></p>
 </li>
 </ul>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>struct timeval ts, te;
-gettimeofday(&amp;ts, NULL);
-...
-gettimeofday(&amp;te, NULL);
-double time = te.tv_sec - ts.tv_sec + (te.tv_usec - ts.tv_usec)/1.e6;
-printf("duration: %.4f\n", time);</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The matrices you need to add are stored in a binary file that stores a sequence of integers.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>The first integer is the number of rows</p>
-</li>
-<li>
-<p>The second integer is the number of columns</p>
-</li>
-<li>
-<p>The remaining integers are the values of the matrix, stored in row-major order.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>To test with large matrices, download them from the website (but don&#8217;t check them in!)</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>$ wget https://alinen.net/A4
-$ wget https://alinen.net/B4</code></pre>
+<pre class="highlight"><code>$ <strong>make</strong>
+g++ -g -Wno-unused-variable -Wno-unused-but-set-variable mylloc.c -o mylloc
+g++ -g -Wno-unused-variable -Wno-unused-but-set-variable stalloc.c -o stalloc
+$ <strong>./stalloc</strong>
+stalloc: stalloc.c:24: int main(): Assertion `b1 == allocbuf' failed.
+Aborted (core dumped)
+$ <strong>./stalloc</strong>
+//prints nothing if all tests pass</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_funny_functions_due_feb_23">2. Funny functions <strong>Due Feb 23</strong></h2>
+<h2 id="_my_simple_allocator">2. My Simple Allocator</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Implement the following programs based on ucontext.</p>
-</div>
-<div class="sect2">
-<h3 id="_return">2.1. Return</h3>
-<div class="paragraph">
-<p>In the file, <code>hello_context.c</code>, modify the program so it returns to main after executing f().
-Use the code from lecture to help you!</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>$ ./hello_context
-Hello World
-End of main</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_alternate">2.2. Alternate</h3>
-<div class="paragraph">
-<p>In the file, <code>alternate.c</code>, write a program that alternates between two
-functions indefinitely.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>$ <strong>./alternate</strong>
-odd:1
-even:0
-odd:3
-even:2
-odd:5
-^C</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Send a signal to the <code>alternate</code> process. In your C file, answer the following questions:</p>
+<p>You are given a file, <code>mylloc.c</code>, that contains the simple memory allocator
+from class, modifies to use the STL linked list. Edit this file to include the
+following:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>What happens when a signal is delivered?</p>
+<p>Add a linked list to keep track of memory requested by the user</p>
 </li>
 <li>
-<p>How do signals affect the execution of a context?</p>
+<p>Implement <code>mem_dump</code> to print the contents of the user memory and free memory. This function should print the starting address of the chunk and the chunk&#8217;s size.</p>
 </li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Hints:</p>
-</div>
+<li>
+<p>Inside the file, <code>mylloc.c</code>, answer the following questions</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Alternate between main and another function.</p>
+<p>There are three allocations. Why are there only two chunks?</p>
 </li>
 <li>
-<p>Make your two ucontext variables global so that main can swap to the function, and then the function can swap back to main</p>
-</li>
-<li>
-<p>The example above uses <code>nanosleep</code> to pause inside the loop</p>
-</li>
-<li>
-<p>The example above sets printf to flush immediately (e.g. show output text immediately) to make the output cleaner. This is done with the command <code>setvbuf(stdout, 0, _IOLBF, 0);</code>.</p>
+<p>Below, the base address is 0x56418de96000. The first chunk listed has address 0x56418de96328. Why?</p>
 </li>
 </ul>
 </div>
-<div class="paragraph">
-<p>Above, main loops over odd numbers and the function loops over even numbers (see below). Each iteration, they <code>swapcontext</code>.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>void nextEven()
-{
-  struct timespec delay = { 1, 0 };
-  for (unsigned int i = 0;; i += 2) {
-    printf("even:%d\n", i);
-    nanosleep(&amp;delay, 0);
-  }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_alarm">2.3. Alarm</h3>
-<div class="paragraph">
-<p>Can you write a program that alternates between two functions at a set interval?</p>
-</div>
-<div class="paragraph">
-<p>In the file, <code>alarm.c</code>, write a program that alternates between two functions at a set interval.
-Use a kernel timer like in the <a href="sig_alarm.c">sig_alarm</a> demo from class.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>$ **./alarm**
-even:0
-even:2
-odd:1
-odd:3
-even:4
-even:6
-odd:5
-odd:7</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Hints:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Above, we defined two functions in addition to main, <code>nextEven()</code> and <code>nextOdd()</code>.</p>
-</li>
-<li>
-<p>The signal handler switches between <code>nextEven</code> and <code>nextOdd</code> using a global variable that specifies which should run</p>
-</li>
-<li>
-<p>After setting up the contexts and signals, main calls <code>pause</code> in an infinite loop.</p>
-</li>
-<li>
-<p>The timer triggers every 2 seconds and each functions sleep 1 second between printing. Thus, we see two prints before switching to the next function.</p>
 </li>
 </ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ <strong>make</strong>
+g++ -g -Wno-unused-variable -Wno-unused-but-set-variable mylloc.c -o mylloc
+g++ -g -Wno-unused-variable -Wno-unused-but-set-variable stalloc.c -o stalloc
+$ <strong>./mylloc</strong>
+Base address: 0x56418de96000
+1. Memory dump:
+Used chunk: 0x56418de96328 (400)
+Used chunk: 0x56418de96000 (800)
+2. Memory dump:
+Used chunk: 0x56418de96000 (800)
+Used chunk: 0x56418de96328 (400)</code></pre>
 </div>
 </div>
 </div>
@@ -292,7 +167,7 @@ odd:7</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-02-04 15:44:21 -0500
+Last updated 2026-02-04 15:44:20 -0500
 </div>
 </div>
 </body>

@@ -1,6 +1,6 @@
 include::header.adoc[]
 
-:title: Smooth allocators
+:title: Inodes you're busy
 :Author Initials: ASN
 :Date:    2020-08-15
 :Revision: 0.1
@@ -8,81 +8,64 @@ include::header.adoc[]
 
 = {title}
 
-Lab exercises for March 20th.
+Lab exercises for April 3rd 
 
 The goals for this assignment are:
 
-* Understanding pointer arithmetic
-* Working with mmap
-* Implementing simple memory allocators
+* Work with inodes and disks
 
-We will use the same repository as previous labs: link:{labs-repo}[Labs Repo]. 
-Click on the link and then accept and merge the pull request.
-
-**Due March 21st**
+We will use the same repository as this week's assignment: 
+link:{defrag-repo}[Defragmentor Repo]. 
 
 :sectnums:
 
-= Stack Allocator
+= Print disk
 
-In the file, `stalloc.c`, implement a program that implements a simple memory allocator, 
-based on a stack. The stack is initialized as a large block of memory (e.g. a character array). 
-When the user requests memory, they receive a block from the top of the stack. When they free memory, 
-it must be the most recently acquired block. Thus, this allocator has the following properties and 
-limitations:
+In the file, `printdisk.c`, implement a program that reads a disk and prints its underlying data structure 
+in terms of the superblock and its inodes.
 
-* Used memory is always at the beginning of the array block
-* Free memory is always at the end of the array block
-* Only a single pointer is needed to keep track of the division between used and free memory
-* The user must deallocate memory in the opposite order that you allocate it
-* The user can ask for at most ALLOCSIZE blocks of memory (e.g. the size of the stack at initialization). If the user asks for more memory than is available, the allocator should return 0.
-
-
-image::Lab05.png[width=200px]
-
-You are given basecode for this assignment. 
-
-* Implement `char* stalloc(int n)`
-* Implement `void stfree(char* p)`
-* Update the tests in `main`
+Information about how to parse disks are in the writeup for link:../assts/asst07.html[Assignment 07].
 
 [source, subs="quotes"]
 ----
-$ **make**
-g++ -g -Wno-unused-variable -Wno-unused-but-set-variable mylloc.c -o mylloc
-g++ -g -Wno-unused-variable -Wno-unused-but-set-variable stalloc.c -o stalloc
-$ **./stalloc**
-stalloc: stalloc.c:24: int main(): Assertion `b1 == allocbuf' failed.
-Aborted (core dumped)
-$ **./stalloc**
-//prints nothing if all tests pass
+$ **./printdisk datafile-frag**
+size 512
+inode offset 0
+data offset 4
+swap offset 10239
+free inode 14
+free block 10133
+
+0
+next inode 0
+protect 0
+nlink 1
+size 93821
+uid 18390
+gid 9921
+ctime 536561894
+mtime 609329799
+atime 502539239
+direct datablocks
+0: 1120
+1: 8393
+2: 1579
+3: 9539
+4: 7108
+5: 7883
+6: 4762
+7: 1980
+8: 1030
+9: 8610
+single indirect
+0: 4500
+1: 3711
+2: 0
+3: 0
+double indirect
+0
+triple indirect
+0
+
+//etc
 ----
-
-= My Simple Allocator
-
-You are given a file, `mylloc.c`, that contains the simple memory allocator 
-from class, modifies to use the STL linked list. Edit this file to include the 
-following:
-
-* Add a linked list to keep track of memory requested by the user
-* Implement `mem_dump` to print the contents of the user memory and free memory. This function should print the starting address of the chunk and the chunk's size.
-* Inside the file, `mylloc.c`, answer the following questions
-** There are three allocations. Why are there only two chunks?
-** Below, the base address is 0x56418de96000. The first chunk listed has address 0x56418de96328. Why?
-
-[source, subs="quotes"]
-----
-$ **make**
-g++ -g -Wno-unused-variable -Wno-unused-but-set-variable mylloc.c -o mylloc
-g++ -g -Wno-unused-variable -Wno-unused-but-set-variable stalloc.c -o stalloc
-$ **./mylloc**
-Base address: 0x56418de96000
-1. Memory dump:
-Used chunk: 0x56418de96328 (400)
-Used chunk: 0x56418de96000 (800)
-2. Memory dump:
-Used chunk: 0x56418de96000 (800)
-Used chunk: 0x56418de96328 (400)
-----
-
-

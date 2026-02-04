@@ -1,0 +1,164 @@
+include::header.adoc[]
+
+:title: C no evil
+:Author Initials: ASN
+:Date:    2020-08-15
+:Revision: 0.1
+:ASST: labs-USERNAME
+
+= {title}
+
+**Lab exercises: Due January 29th by midnight**
+
+The goals for this assignment are:
+
+* Working with stdout and stderr
+* Working with environment variables 
+* Working with C strings
+
+To get started, click on this link:{labs-repo}[Github Link].
+
+:sectnums:
+
+= Stack diagram I
+
+Consider the following program. 
+
+[source]
+----
+int main() {
+  const char* str = "unicorn";
+
+  const char* m = NULL;
+  for (const char* p = str; *p != '\0'; p++) {
+    if (*p == 'c') m = p;
+  }
+  // Draw the stack here
+  printf("%s\n", m);
+  return 0;
+}
+----
+
+Fill in a table that shows how the values of `*p` and `*m` change each iteration of the loop.
+
+[cols="1,1,1"]
+|===
+| Loop Iteration | *p | *m 
+| 1 | u | NA (NULL) 
+| | |
+| | |
+| | |
+| | |
+|===
+
+Draw the state of the stack (e.g. a stack diagram) after the loop completes. You do not need to 
+show all intermediate steps.
+
+= Stack diagram II
+
+Draw the stack for the following program. Be careful: `strtok` modifies the 
+variable `line` by replacing the delimiters with the null character \0. 
+
+[source]
+----
+int main() {
+  char line[1024]; // max of 1023 characters can be read from the line
+  strcpy(line, "ls -l -a");
+
+  int n = 0;
+  char* list[128]; // max of 128 words can be put in the list
+  char* token = strtok(line, delims);
+  while (token)
+  {
+      list[n++] = token;
+      token = strtok(NULL, delims);
+  }
+  list[n] = NULL;
+  // Draw the stack here
+  return 0;
+}
+----
+
+= stdout, stderr
+
+Write a program, `outerr.c`, that outputs the even integers between 0 and 10 to standard out 
+and the odd integers between 1 and 10 to standard error.
+
+[source, subs="quotes"]
+----
+$ **./outerr**
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+$ **./outerr > even.txt 2> odd.txt**
+$ **cat even.txt**
+0
+2
+4
+6
+8
+$ **cat odd.txt**
+1
+3
+5
+7
+9
+----
+
+
+= Environment
+
+Write a program, `myenv.c`, that loops through the process's environment variables and 
+prints the value for PATH. Use the code below, based on pointer arithmetic, 
+as a starting point. 
+
+[source]
+----
+int main(int argc, char** argv, char** envp)
+{
+  while(*envp)
+  {
+    printf("%s\n",*envp++);  
+  }
+}
+----
+
+[source, subs="quotes"]
+----
+$ **./myenv** 
+PATH=/home/alinen/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+$ **env | grep PATH**
+PATH=/home/alinen/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+----
+
+NOTE: The shell command `env` prints the environment 
+
+NOTE: The paths above were truncated for brevity. Yours will be much longer!
+
+= Submission
+
+Both team members should submit their own code. 
+
+== Submit your work to Github
+
+Add and check in your program using git and then push your changes to Github. 
+Run the following command inside your `{ASST}` directory.
+
+[source, subs="attributes"]
+----
+$ cd {ASST}
+$ git add .
+$ git commit -m "Descriptive message"
+$ git push
+----
+
+Run `git status` to check the result of the previous git command.
+Check the Github website to make sure that your program uploaded correctly. 
+

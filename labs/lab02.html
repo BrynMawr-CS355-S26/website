@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.18">
-<title>C no evil</title>
+<title>File descriptors</title>
 <link rel="stylesheet" href="../style/cs21.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
@@ -14,25 +14,18 @@
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_c_no_evil">C no evil</a></li>
-<li><a href="#_stack_diagram_i">1. Stack diagram I</a></li>
-<li><a href="#_stack_diagram_ii">2. Stack diagram II</a></li>
-<li><a href="#_stdout_stderr">3. stdout, stderr</a></li>
-<li><a href="#_environment">4. Environment</a></li>
-<li><a href="#_submission">5. Submission</a>
-<ul class="sectlevel2">
-<li><a href="#_submit_your_work_to_github">5.1. Submit your work to Github</a></li>
-</ul>
-</li>
+<li><a href="#_file_descriptors">File descriptors</a></li>
+<li><a href="#_file_redirection">1. File redirection</a></li>
+<li><a href="#_pipe">2. Pipe</a></li>
 </ul>
 </div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_c_no_evil">C no evil</h2>
+<h2 id="_file_descriptors">File descriptors</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>Lab exercises: Due January 29th by midnight</strong></p>
+<p><strong>Lab exercises for Feb 5th. Due Feb 6th</strong></p>
 </div>
 <div class="paragraph">
 <p>The goals for this assignment are:</p>
@@ -40,182 +33,72 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Working with stdout and stderr</p>
-</li>
-<li>
-<p>Working with environment variables</p>
-</li>
-<li>
-<p>Working with C strings</p>
+<p>Inspecting processes, pipes, and file descriptors</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>To get started, click on this <a href="https://classroom.github.com/a/K1VF_TaU">Github Link</a>.</p>
+<p>We will use the same repository as last week: <a href="https://github.com/BrynMawr-CS223-S25">Labs Repo</a>.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_stack_diagram_i">1. Stack diagram I</h2>
+<h2 id="_file_redirection">1. File redirection</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Consider the following program.</p>
+<p>In the file, <code>filesort.c</code>, implement a program that runs the command <code>sort &lt; list.txt</code>
+using the system calls: open, close, fork, execlp, and dup2.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>int main() {
-  const char* str = "unicorn";
-
-  const char* m = NULL;
-  for (const char* p = str; *p != '\0'; p++) {
-    if (*p == 'c') m = p;
-  }
-  // Draw the stack here
-  printf("%s\n", m);
-  return 0;
-}</code></pre>
+<pre class="highlight"><code>$ <strong>cat list.txt</strong>
+banana
+apple
+orange
+kiwi
+$ <strong>./filesort</strong>
+apple
+banana
+kiwi
+orange
+Sort complete</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Fill in a table that shows how the values of <code>*p</code> and <code>*m</code> change each iteration of the loop.</p>
+<p>In the above example, <code>filesort</code> performs the following steps:</p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Loop Iteration</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">*p</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">*m</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">u</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">NA (NULL)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Draw the state of the stack (e.g. a stack diagram) after the loop completes. You do not need to
-show all intermediate steps.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Creates a child process with fork</p>
+</li>
+<li>
+<p>The child process does the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Opens the file "list.txt"</p>
+</li>
+<li>
+<p>Maps the file descriptor for "list.txt" to standard input</p>
+</li>
+<li>
+<p>Calls execlp with arguments that correspond to sort, e.g execlp("sort", "sort", (char*) NULL)</p>
+</li>
+</ul>
 </div>
+</li>
+<li>
+<p>The parent process does the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Waits for the child to complete</p>
+</li>
+</ul>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_stack_diagram_ii">2. Stack diagram II</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Draw the stack for the following program. Be careful: <code>strtok</code> modifies the
-variable <code>line</code> by replacing the delimiters with the null character \0.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>int main() {
-  char line[1024]; // max of 1023 characters can be read from the line
-  strcpy(line, "ls -l -a");
-
-  int n = 0;
-  char* list[128]; // max of 128 words can be put in the list
-  char* token = strtok(line, delims);
-  while (token)
-  {
-      list[n++] = token;
-      token = strtok(NULL, delims);
-  }
-  list[n] = NULL;
-  // Draw the stack here
-  return 0;
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_stdout_stderr">3. stdout, stderr</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Write a program, <code>outerr.c</code>, that outputs the even integers between 0 and 10 to standard out
-and the odd integers between 1 and 10 to standard error.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>$ <strong>./outerr</strong>
-0
-1
-2
-3
-4
-5
-6
-7
-8
-9
-$ <strong>./outerr > even.txt 2> odd.txt</strong>
-$ <strong>cat even.txt</strong>
-0
-2
-4
-6
-8
-$ <strong>cat odd.txt</strong>
-1
-3
-5
-7
-9</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_environment">4. Environment</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Write a program, <code>myenv.c</code>, that loops through the process&#8217;s environment variables and
-prints the value for PATH. Use the code below, based on pointer arithmetic,
-as a starting point.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>int main(int argc, char** argv, char** envp)
-{
-  while(*envp)
-  {
-    printf("%s\n",*envp++);
-  }
-}</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>$ <strong>./myenv</strong>
-PATH=/home/alinen/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-$ <strong>env | grep PATH</strong>
-PATH=/home/alinen/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin</code></pre>
-</div>
+</li>
+</ul>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -224,10 +107,77 @@ PATH=/home/alinen/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The shell command <code>env</code> prints the environment
+Don&#8217;t forget to implement error handling. Check the return code of system calls and use perror to report errors if they occur.
 </td>
 </tr>
 </table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_pipe">2. Pipe</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the file, <code>catsort.c</code>, implement a program that runs the command <code>cat list.txt | sort</code>
+using the system calls: pipe, fork, execlp, and dup2.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ <strong>cat list.txt</strong>
+banana
+apple
+orange
+kiwi
+$ <strong>./catsort</strong>
+apple
+banana
+kiwi
+orange
+Cat complete
+Sort complete</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the above example, <code>catsort</code> performs the following steps:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Creates a pipe</p>
+</li>
+<li>
+<p>Creates two child processes with fork</p>
+</li>
+<li>
+<p>Each child process does the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Uses dup2 to map one side of the pipe with either standard input or output.</p>
+</li>
+<li>
+<p>Closes the ends of the pipe</p>
+</li>
+<li>
+<p>Calls execlp with arguments that correspond to the command</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>The parent process does the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Closes the ends of its pipe</p>
+</li>
+<li>
+<p>Waits for both children to complete</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -236,44 +186,17 @@ The shell command <code>env</code> prints the environment
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The paths above were truncated for brevity. Yours will be much longer!
+Don&#8217;t forget to implement error handling by checking the return code and printing the error with perror is the status of the system call is &lt; 0.
 </td>
 </tr>
 </table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_submission">5. Submission</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Both team members should submit their own code.</p>
-</div>
-<div class="sect2">
-<h3 id="_submit_your_work_to_github">5.1. Submit your work to Github</h3>
-<div class="paragraph">
-<p>Add and check in your program using git and then push your changes to Github.
-Run the following command inside your <code>labs-USERNAME</code> directory.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>$ cd labs-USERNAME
-$ git add .
-$ git commit -m "Descriptive message"
-$ git push</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Run <code>git status</code> to check the result of the previous git command.
-Check the Github website to make sure that your program uploaded correctly.</p>
-</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-02-04 15:41:55 -0500
+Last updated 2026-02-04 16:20:38 -0500
 </div>
 </div>
 </body>

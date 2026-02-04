@@ -1,6 +1,6 @@
 include::header.adoc[]
 
-:title: Processes III
+:title: Threads
 :Author Initials: ASN
 :Date:    2020-08-15
 :Revision: 0.1
@@ -8,157 +8,179 @@ include::header.adoc[]
 
 = {title}
 
-**Lab exercises for February 13th**
+Lab exercises for February 20th.
 
-The goal for this assignment are:
+The goals for this assignment are:
 
-* Working with system tools: `top H`
-* Understanding process state: sleeping, running, stopped, terminated
-* Working with additional system calls: sigprocmask, tcgetpgrp, tcsetpgrp, setpgid
+* Understanding the pthread library
+* Working with ucontext 
 
 We will use the same repository as last week: link:{labs-repo}[Labs Repo]. 
 Click on the link and then accept and merge the pull request.
 
 :sectnums:
 
-= Infinite
+= Matrix Add  **Due Feb 20**
 
-Write a program, `infinite.c`, that calls `pause()` in an infinite loop. When you 
-run `ps w`, the status of infinite should be S. 
-
-[source, subs="quotes"]
-----
-$ **./infinite &**
-[1] 2320
-$ **ps w**
-  PID TTY      STAT   TIME COMMAND
-   10 pts/0    Ss     0:00 -bash
-  134 pts/2    Ss+    0:00 -bash
-  347 pts/3    Ss+    0:00 -bash
-  743 pts/1    Ss+    0:00 -bash
- 2320 pts/0    S      0:00 ./infinite
- 2321 pts/0    R+     0:00 ps w
-----
-
-Use your program to see how job control works in `bash`. Use the tools, `top H`
-and `ps w` to see how suspending (job status: T), foregrounding (job status:
-S+), and backgrounding (job status: S) change the state of the process. 
+In the files, `matrix.c`, implement a program that uses M threads to add 
+two matrices, each stored in its own binary file, and saving the result into a third file. 
 
 [source, subs="quotes"]
 ----
-$ **./infinite**
-^Z
-[1]+  Stopped                 ./infinite
-$ bg
-[1]+ ./infinite &
-$ **./infinite &**
-[2] 2302
-$ **./infinite &**
-[3] 2303
-$ **./infinite &**
-[4] 2304
-$ **./infinite &**
-[5] 2305
-$ **./infinite &**
-[6] 2306
-$ **jobs**
-[1]   Running                 ./infinite &
-[2]   Running                 ./infinite &
-[3]   Running                 ./infinite &
-[4]   Running                 ./infinite &
-[5]-  Running                 ./infinite &
-[6]+  Running                 ./infinite &
-$ **kill %2**
-$
-[2]   Terminated              ./infinite
-$ **jobs**
-[1]   Running                 ./infinite &
-[3]   Running                 ./infinite &
-[4]   Running                 ./infinite &
-[5]-  Running                 ./infinite &
-[6]+  Running                 ./infinite &
-$ **fg %5**
-./infinite
-----
-
-= Child Monitor
-
-Write a program, `monitor.c`, that forks a process whose state can be controlled by 
-the user separately from its parent (e.g. the child has its own process group). 
-Using a signal handler on SIGCHLD, report the status changes of the child process.
-
-[source, subs="quotes"]
-----
-alinen@sutekh:~/cs355/os-devel/labs/03$ ./monitor
-Monitoring child process 6242.
-quit
-
-6242 received signal Terminated
+$ **./matrix**
+usage: ./matrix <NumThreads> <MatrixA> <MatrixB>
+$ **./matrix 1 A1 B2**
+Dimensions do not match!
+$ **./matrix 1 A1 B1**
+Starting thread 139848748009024 (idx = 0)
+duration: 0.00
+$ **./readmat A1**
+0 -8 -6 8
+0 4 -7 9
+1 7 0 5
+$ **./readmat B1**
+1 -6 -2 3
+-6 -1 -9 8
+-7 8 -5 -5
+$ **./readmat A1+B1**
+1 -14 -8 11
+-6 3 -16 17
+-6 15 -5 0
+$ **./matrix 1 A4 B4**
+Starting thread 139696590177856 (idx = 0)
+duration: 0.36
+$ **./matrix 4 A4 B4**
+Starting thread 140698237380160 (idx = 0)
+Starting thread 140698228987456 (idx = 1)
+Starting thread 140698220594752 (idx = 2)
+Starting thread 140698212202048 (idx = 3)
+duration: 0.21
+$ **./matrix 8 A4 B4**
+Starting thread 140559920776768 (idx = 1)
+Starting thread 140559912384064 (idx = 2)
+Starting thread 140559903991360 (idx = 3)
+Starting thread 140559929169472 (idx = 0)
+Starting thread 140559895598656 (idx = 4)
+Starting thread 140559887205952 (idx = 5)
+Starting thread 140559878813248 (idx = 6)
+Starting thread 140559870420544 (idx = 7)
+duration: 0.23
 ----
 
 Requirements/Hints:
 
-* Make sure the child has a different process ID from the parent. 
-* Create a child that loops forever so it is convenient to change its process status.
-* From another terminal, use the command: `kill -STOP <pid>` to stop the process. 
-* From another terminal, use the command: `kill -CONT <pid>` to continue the process. 
-* From another terminal, use the command: `kill -TERM <pid>` to terminate the process. 
-* Try sending other signals, such as `kill -ALRM <pid>`, and see what happens to the process. Some signals, such as SIGTTOU will cause the process to stop; others will cause the process to quit.
-* Typing `quit` should quit the parent process and kill the child
-* Inside your signal handler, use a non-blocking `waitpid` call, configured to also return if the child process stops or continues (see the man page for details). 
+* Time how long it takes to compute the result when you have 8, 4, or a single thread.
+* Leverage spatial locality to ensure the best performance, e.g. split the work by rows in each matrix.
+* Use the program `readmat.c` to test that your program runs correctly
+* Name the output file based on the two inputs, e.g. <Mat1>+<Mat2>
+* Use gettimeofday(), defined in `sys/time.h` to get the duration of your program.
 
-Use strace to better understand the signaling behavior, e.g. 
+[source]
+----
+struct timeval ts, te;
+gettimeofday(&ts, NULL);
+...
+gettimeofday(&te, NULL);
+double time = te.tv_sec - ts.tv_sec + (te.tv_usec - ts.tv_usec)/1.e6;
+printf("duration: %.4f\n", time);
+----
+
+The matrices you need to add are stored in a binary file that stores a sequence of integers. 
+
+* The first integer is the number of rows
+* The second integer is the number of columns
+* The remaining integers are the values of the matrix, stored in row-major order. 
+
+To test with large matrices, download them from the website (but don't check them in!)
+
+[source]
+----
+$ wget https://alinen.net/A4 
+$ wget https://alinen.net/B4 
+----
+
+= Funny functions **Due Feb 23**
+
+Implement the following programs based on ucontext. 
+
+== Return
+
+In the file, `hello_context.c`, modify the program so it returns to main after executing f().
+Use the code from lecture to help you!
+
+[source,subs="quotes"]
+----
+$ ./hello_context
+Hello World
+End of main
+----
+
+== Alternate
+
+In the file, `alternate.c`, write a program that alternates between two
+functions indefinitely.
 
 [source, subs="quotes"]
 ----
-$ **strace -e 'trace=!all' -f ./monitor**
-strace: Process 6254 attached
-Monitoring child process 6254.
-[pid  6254] --- SIGSTOP {si_signo=SIGSTOP, si_code=SI_USER, si_pid=743, si_uid=1000} ---
-[pid  6254] --- stopped by SIGSTOP ---
-[pid  6253] --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_STOPPED, si_pid=6254, si_uid=1000, si_status=SIGSTOP, si_utime=0, si_stime=0} ---
-
-6254 stopped.
+$ **./alternate**
+odd:1
+even:0
+odd:3
+even:2
+odd:5
+^C
 ----
 
-Inside a header comment, answer the following questions:
+Send a signal to the `alternate` process. In your C file, answer the following questions:
 
-. What happens if the parent and child both belong to the same process group?
-. What happens when SIGCONT is sent to a process that is already running?
-. What happens when SIGSTP is sent to a process already stopped?
-. What happens when you send the signal SIGTTOU?
-. What happens when you send he signal SIGALRM?
+* What happens when a signal is delivered? 
+* How do signals affect the execution of a context?
 
-= Foreground/Background
+Hints:
 
-Implement a program, `fgbg.c`, that forks a process in the background and then allows the 
-user to switch it between the foreground and background using the commands, fg, bg, and control-Z. 
+* Alternate between main and another function. 
+* Make your two ucontext variables global so that main can swap to the function, and then the function can swap back to main
+* The example above uses `nanosleep` to pause inside the loop
+* The example above sets printf to flush immediately (e.g. show output text immediately) to make the output cleaner. This is done with the command `setvbuf(stdout, 0, _IOLBF, 0);`.
 
-[source, subs="quotes"]
+Above, main loops over odd numbers and the function loops over even numbers (see below). Each iteration, they `swapcontext`.
+
+[source]
 ----
-$ **./fgbg**
-[1] Created process 6982 in the background
-$ **fg**
-^Zchild stopped.
-$ **bg**
-child continued.
-$ **fg**
-^Zchild stopped.
-$ **quit**
-child received signal Terminated
+void nextEven()
+{
+  struct timespec delay = { 1, 0 };
+  for (unsigned int i = 0;; i += 2) {
+    printf("even:%d\n", i);
+    nanosleep(&delay, 0);
+  }
+}
 ----
 
-Requirements/Hints:
 
-* Make sure the child has a different process ID from the parent. 
-* Create a child that loops forever so it is convenient to change its process status.
-* Typing Control-Z should suspend the foreground process. 
-* Typing Control-C should exit the foreground process. If the foreground process is the parent, the child should also be exited.
-* Typing bg should move the child into the background
-* Typing fg should move the child into the foreground
-* Typing `quit` should quit the parent process and exit the child
-* Inside a signal handler, use a non-blocking `waitpid` call, configured to also return if the child process stops or continues (see the man page for details). 
-* Whenever the child is stopped, make sure to return the terminal to the parent.
-* Configure the parent to ignore SIGTTOU and SIGTTIN signals so it can modify ownership of the terminal, even when it is running in the background.
-* Use `top H` to monitor the terminal and process status of both the parent and child
+== Alarm
 
+Can you write a program that alternates between two functions at a set interval?
+
+In the file, `alarm.c`, write a program that alternates between two functions at a set interval. 
+Use a kernel timer like in the link:sig_alarm.c[sig_alarm] demo from class.
+
+[source]
+----
+$ **./alarm**
+even:0
+even:2
+odd:1
+odd:3
+even:4
+even:6
+odd:5
+odd:7
+----
+
+Hints:
+
+* Above, we defined two functions in addition to main, `nextEven()` and `nextOdd()`.
+* The signal handler switches between `nextEven` and `nextOdd` using a global variable that specifies which should run
+* After setting up the contexts and signals, main calls `pause` in an infinite loop.
+* The timer triggers every 2 seconds and each functions sleep 1 second between printing. Thus, we see two prints before switching to the next function.
