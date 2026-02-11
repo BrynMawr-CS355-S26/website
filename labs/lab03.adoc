@@ -1,6 +1,6 @@
 include::header.adoc[]
 
-:title: Processes III
+:title: Signals
 :Author Initials: ASN
 :Date:    2020-08-15
 :Revision: 0.1
@@ -8,16 +8,16 @@ include::header.adoc[]
 
 = {title}
 
-**Lab exercises for February 13th**
+**Lab exercises for February 12th**
 
 The goal for this assignment are:
 
-* Working with system tools: `top H`
+* Working with system tools: `ps`, `top -u <user>`
 * Understanding process state: sleeping, running, stopped, terminated
 * Working with additional system calls: sigprocmask, tcgetpgrp, tcsetpgrp, setpgid
 
-We will use the same repository as last week: link:{labs-repo}[Labs Repo]. 
-Click on the link and then accept and merge the pull request.
+We will use the same repository as last week: link:{labs-repo}[Labs Repo]. Do a `git pull` 
+to get the basecode. 
 
 :sectnums:
 
@@ -83,9 +83,10 @@ $ **fg %5**
 
 = Child Monitor
 
-Write a program, `monitor.c`, that forks a process whose state can be controlled by 
-the user separately from its parent (e.g. the child has its own process group). 
-Using a signal handler on SIGCHLD, report the status changes of the child process.
+Write a program, `monitor.c`, that forks a child in their own process group. 
+The parent process should then register a signal handler on SIGCHLD to monitor 
+the child's process state. When the user quits `monitor`, the parent should send 
+a terminate signal so that they child also quits.
 
 [source, subs="quotes"]
 ----
@@ -111,7 +112,7 @@ Use strace to better understand the signaling behavior, e.g.
 
 [source, subs="quotes"]
 ----
-$ **strace -e 'trace=!all' -f ./monitor**
+$ **strace -e 'trace=!all' -D -I 3 -f ./monitor**
 strace: Process 6254 attached
 Monitoring child process 6254.
 [pid  6254] --- SIGSTOP {si_signo=SIGSTOP, si_code=SI_USER, si_pid=743, si_uid=1000} ---
@@ -121,18 +122,11 @@ Monitoring child process 6254.
 6254 stopped.
 ----
 
-Inside a header comment, answer the following questions:
-
-. What happens if the parent and child both belong to the same process group?
-. What happens when SIGCONT is sent to a process that is already running?
-. What happens when SIGSTP is sent to a process already stopped?
-. What happens when you send the signal SIGTTOU?
-. What happens when you send he signal SIGALRM?
-
 = Foreground/Background
 
-Implement a program, `fgbg.c`, that forks a process in the background and then allows the 
-user to switch it between the foreground and background using the commands, fg, bg, and control-Z. 
+Implement a program, `fgbg.c`, that forks a child process in the background and
+allows the user to switch the child between the foreground and background mode
+using the commands, fg, bg, and control-Z. 
 
 [source, subs="quotes"]
 ----
@@ -151,14 +145,13 @@ child received signal Terminated
 Requirements/Hints:
 
 * Make sure the child has a different process ID from the parent. 
-* Create a child that loops forever so it is convenient to change its process status.
+* To mimic the logic you will need in your job shell, have the child involve `infinite`, e.g. call `execlp("./infinite", "./infinite", (char*) NULL);`
 * Typing Control-Z should suspend the foreground process. 
 * Typing Control-C should exit the foreground process. If the foreground process is the parent, the child should also be exited.
 * Typing bg should move the child into the background
 * Typing fg should move the child into the foreground
 * Typing `quit` should quit the parent process and exit the child
 * Inside a signal handler, use a non-blocking `waitpid` call, configured to also return if the child process stops or continues (see the man page for details). 
-* Whenever the child is stopped, make sure to return the terminal to the parent.
+* Whenever the child is stopped or exited, make sure to return the terminal to the parent.
 * Configure the parent to ignore SIGTTOU and SIGTTIN signals so it can modify ownership of the terminal, even when it is running in the background.
-* Use `top H` to monitor the terminal and process status of both the parent and child
-
+* Use `top -u <user>` or `ps w` to monitor the terminal and process status of both the parent and child

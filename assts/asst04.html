@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.18">
-<title>Assignment 04: Trust the Process (Part 3)</title>
+<title>Assignment 04: Job Shell</title>
 <link rel="stylesheet" href="../style/cs21.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
@@ -14,7 +14,7 @@
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_assignment_04_trust_the_process_part_3">Assignment 04: Trust the Process (Part 3)</a></li>
+<li><a href="#_assignment_04_job_shell">Assignment 04: Job Shell</a></li>
 <li><a href="#_be_your_best_shell">1. Be your best Shell</a>
 <ul class="sectlevel2">
 <li><a href="#_backgrounding_with">1.1. Backgrounding with &amp;</a></li>
@@ -32,10 +32,10 @@
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_assignment_04_trust_the_process_part_3">Assignment 04: Trust the Process (Part 3)</h2>
+<h2 id="_assignment_04_job_shell">Assignment 04: Job Shell</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>Due Sunday, Feb 16, before midnight</strong></p>
+<p><strong>Due Tuesday, Feb 17, before midnight</strong></p>
 </div>
 <div class="paragraph">
 <p>The goals for this assignment are:</p>
@@ -51,9 +51,6 @@
 <li>
 <p>Working with additional system calls: sigprocmask, tcgetpgrp, tcsetpgrp, setpgid</p>
 </li>
-<li>
-<p>C practice/review</p>
-</li>
 </ul>
 </div>
 <div class="admonitionblock note">
@@ -63,7 +60,7 @@
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-We will use the same starter code as last week: <a href="https://classroom.github.com/a/z8JKZurc">here</a>
+We will use the same starter code as last week: <a href="https://classroom.github.com/a/j-ws2ho7">Shell Project</a>
 </td>
 </tr>
 </table>
@@ -74,13 +71,14 @@ We will use the same starter code as last week: <a href="https://classroom.githu
 <h2 id="_be_your_best_shell">1. Be your best Shell</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In the file, <code>shell.c</code>, extend the features of your shell from <a href="asst03.html">Assignment 02</a>.</p>
+<p>In the file, <code>shell03.c</code>, extend either the shell from <a href="asst02.html">Assignment 02</a> or
+<a href="asst02.html">Assignment 03</a> to support job control.</p>
 </div>
 <div class="paragraph">
 <p>Requirements:</p>
 </div>
 <div class="paragraph">
-<p>Your shell should satisfy the requirements of <a href="asst03.html">Assignment 03</a>.
+<p>Your shell should minimally satisfy the requirements of <a href="asst02.html">Assignment 02</a>.
 Additionally, your shell should support the following features, outlined in the sections below.</p>
 </div>
 <div class="ulist">
@@ -140,13 +138,13 @@ A job is a set of processes in the same group, started from the command line, an
 <div class="paragraph">
 <p>When a process is executing in the background, the shell should not block and
 wait but rather continue accepting commands. In our previous shell implementations,
-we used <code>wait</code> to pause while our child executed. Now, we must detect when our
+we used the system <code>wait</code> call to pause while our child executed. Now, we must detect when our
 background processes complete. Because we do not want our parent process to pause
 while waiting for children to finish, we will use a <em>non-blocking</em> call to <code>waitpid</code> that
 will trigger whenever the child&#8217;s status changes,
 e.g. <code>waitpid(pid, &amp;status, WNOHANG | WUNTRACED | WCONTINUED)</code>
 As discussed in class, we can update the status of our background processes either with
-polling in the foreground process, or within a signal handler.</p>
+polling in the foreground process, or with a signal handler.</p>
 </div>
 <div class="paragraph">
 <p>You will also need to keep track of all running jobs. Use a linked list to keep
@@ -370,7 +368,7 @@ has some features working but with memory errors.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-10 18:35:59 -0400
+Last updated 2026-02-11 15:46:32 -0500
 </div>
 </div>
 </body>

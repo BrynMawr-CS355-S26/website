@@ -15,8 +15,8 @@ Instructor: link:https://www.cs.brynmawr.edu/~alinen[Aline Normoyle]
 
 [.anns]
 
-* link:labs/lab02.html[Lab 02]: Due Fri, Feb 6 (no extensions)
-* link:assts/asst03.html[Assignment 03]: Due Tue, Feb 10 
+* link:labs/lab03.html[Lab 03]: Due Fri, Feb 13 (no extensions)
+* link:assts/asst04.html[Assignment 04]: Due Tue, Feb 17 
 
 == Course Info
 

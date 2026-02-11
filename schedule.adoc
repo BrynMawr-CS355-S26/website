@@ -42,9 +42,9 @@
 //-----------------------------
 |3
 |February 3, 5 anchor:week03[]
-|*Fork, Job Control* 
+|*Fork, Pipes, Redirection* 
 
-* Topics: Fork/Wait/Exec, Job Control, Pipes, Process and terminal properties, Signals
+* Topics: Fork/Wait/Exec, Pipes, Working with file descriptors, Tools for inspecting processes, Introduction to signals
 * link:labs/lab02.html[Lab Feb 5: File descriptors]
 * link:assts/asst03.html[Assignment 03: Pipe Shell]: Due Feb 10
 
@@ -56,28 +56,27 @@
 //-----------------------------
 |4
 |February 10, 12 anchor:week04[]
-|*Signals, Threads*
+|*Job Control, signals*
 
-* Topics: Signals, Threads, pthreads 
-* link:labs/lab03.[Lab Feb 12: ]
-* link:assts/asst04.[Assignment 04: Job Shell]: Due Feb 17
-
-* Read: Tanenbaum 2.2
+* Terminals, Process properties, Advanced signals
+* link:labs/lab03.html[Lab Feb 12: Due Feb 13]
+* link:assts/asst04.html[Assignment 04: Job Shell]: Due Feb 17
 * Optional reading: Dive into systems
-* Recommended study questions (Tues): Tanenbaum pgs 174-180: 9, 13, 14, 15, 16, 17, 18 
 
 |
 //-----------------------------
 |5
 |February 17, 19 anchor:week05[]
-|*Thread synchronization* 
+|*Threads* 
 
+* Topics: Threads, pthreads, user contexts, synchronization techniques
 * link:labs/lab04.[Lab Feb 19]
 * link:assts/asst05.[Assignment 05]: Due Feb 24
 
-* Read: Tanenbaum 2.3, 2.5
+* Read: Tanenbaum 2.2, 2.3, 2.5
 * Optional reading: Dive into systems
-* Recommended study questions (Tues): Tanenbaum pgs 174-180: 19, 21, 24, 25, 26, 27, 30
+* Recommended study questions (Tues): Tanenbaum pgs 174-180: 9, 13, 14, 15, 16, 17, 18 
+* Recommended study questions (Thurs): Tanenbaum pgs 174-180: 19, 21, 24, 25, 26, 27, 30
 
 |
 //-----------------------------

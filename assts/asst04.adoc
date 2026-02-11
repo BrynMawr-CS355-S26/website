@@ -1,6 +1,6 @@
 include::header.adoc[]
 
-:title: Assignment 04: Trust the Process (Part 3)
+:title: Assignment 04: Job Shell
 :Author Initials: ASN
 :Date:    2020-08-15
 :Revision: 0.1
@@ -8,26 +8,26 @@ include::header.adoc[]
 
 = {title}
 
-**Due Sunday, Feb 16, before midnight**
+**Due Tuesday, Feb 17, before midnight**
 
 The goals for this assignment are:
 
 * Working with signals
 * Understanding process state: sleeping, running, stopped, terminated
 * Working with additional system calls: sigprocmask, tcgetpgrp, tcsetpgrp, setpgid
-* C practice/review
 
-NOTE: We will use the same starter code as last week: link:https://classroom.github.com/a/z8JKZurc[here]
+NOTE: We will use the same starter code as last week: link:https://classroom.github.com/a/j-ws2ho7[Shell Project]
 
 :sectnums:
 
 = Be your best Shell
 
-In the file, `shell.c`, extend the features of your shell from link:asst03.html[Assignment 02]. 
+In the file, `shell03.c`, extend either the shell from link:asst02.html[Assignment 02] or 
+link:asst02.html[Assignment 03] to support job control. 
 
 Requirements:
 
-Your shell should satisfy the requirements of link:asst03.html[Assignment 03].
+Your shell should minimally satisfy the requirements of link:asst02.html[Assignment 02].
 Additionally, your shell should support the following features, outlined in the sections below.
 
 * Backgrounding with & 
@@ -50,13 +50,13 @@ NOTE: A job is a set of processes in the same group, started from the command li
 
 When a process is executing in the background, the shell should not block and
 wait but rather continue accepting commands. In our previous shell implementations, 
-we used `wait` to pause while our child executed. Now, we must detect when our 
+we used the system `wait` call to pause while our child executed. Now, we must detect when our 
 background processes complete. Because we do not want our parent process to pause 
 while waiting for children to finish, we will use a _non-blocking_ call to `waitpid` that 
 will trigger whenever the child's status changes, 
 e.g. `waitpid(pid, &status, WNOHANG | WUNTRACED | WCONTINUED)`  
 As discussed in class, we can update the status of our background processes either with 
-polling in the foreground process, or within a signal handler.
+polling in the foreground process, or with a signal handler.
 
 You will also need to keep track of all running jobs. Use a linked list to keep
 track of all jobs.

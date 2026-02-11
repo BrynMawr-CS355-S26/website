@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.18">
-<title>Processes III</title>
+<title>Signals</title>
 <link rel="stylesheet" href="../style/cs21.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
@@ -14,7 +14,7 @@
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_processes_iii">Processes III</a></li>
+<li><a href="#_signals">Signals</a></li>
 <li><a href="#_infinite">1. Infinite</a></li>
 <li><a href="#_child_monitor">2. Child Monitor</a></li>
 <li><a href="#_foregroundbackground">3. Foreground/Background</a></li>
@@ -23,10 +23,10 @@
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_processes_iii">Processes III</h2>
+<h2 id="_signals">Signals</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>Lab exercises for February 13th</strong></p>
+<p><strong>Lab exercises for February 12th</strong></p>
 </div>
 <div class="paragraph">
 <p>The goal for this assignment are:</p>
@@ -34,7 +34,7 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Working with system tools: <code>top H</code></p>
+<p>Working with system tools: <code>ps</code>, <code>top -u &lt;user&gt;</code></p>
 </li>
 <li>
 <p>Understanding process state: sleeping, running, stopped, terminated</p>
@@ -45,8 +45,8 @@
 </ul>
 </div>
 <div class="paragraph">
-<p>We will use the same repository as last week: <a href="https://classroom.github.com/a/K1VF_TaU">Labs Repo</a>.
-Click on the link and then accept and merge the pull request.</p>
+<p>We will use the same repository as last week: <a href="https://classroom.github.com/a/K1VF_TaU">Labs Repo</a>. Do a <code>git pull</code>
+to get the basecode.</p>
 </div>
 </div>
 </div>
@@ -119,9 +119,10 @@ $ <strong>fg %5</strong>
 <h2 id="_child_monitor">2. Child Monitor</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Write a program, <code>monitor.c</code>, that forks a process whose state can be controlled by
-the user separately from its parent (e.g. the child has its own process group).
-Using a signal handler on SIGCHLD, report the status changes of the child process.</p>
+<p>Write a program, <code>monitor.c</code>, that forks a child in their own process group.
+The parent process should then register a signal handler on SIGCHLD to monitor
+the child&#8217;s process state. When the user quits <code>monitor</code>, the parent should send
+a terminate signal so that they child also quits.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -168,7 +169,7 @@ quit
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>$ <strong>strace -e 'trace=!all' -f ./monitor</strong>
+<pre class="highlight"><code>$ <strong>strace -e 'trace=!all' -D -I 3 -f ./monitor</strong>
 strace: Process 6254 attached
 Monitoring child process 6254.
 [pid  6254] --- SIGSTOP {si_signo=SIGSTOP, si_code=SI_USER, si_pid=743, si_uid=1000} ---
@@ -178,36 +179,15 @@ Monitoring child process 6254.
 6254 stopped.</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Inside a header comment, answer the following questions:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>What happens if the parent and child both belong to the same process group?</p>
-</li>
-<li>
-<p>What happens when SIGCONT is sent to a process that is already running?</p>
-</li>
-<li>
-<p>What happens when SIGSTP is sent to a process already stopped?</p>
-</li>
-<li>
-<p>What happens when you send the signal SIGTTOU?</p>
-</li>
-<li>
-<p>What happens when you send he signal SIGALRM?</p>
-</li>
-</ol>
-</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_foregroundbackground">3. Foreground/Background</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Implement a program, <code>fgbg.c</code>, that forks a process in the background and then allows the
-user to switch it between the foreground and background using the commands, fg, bg, and control-Z.</p>
+<p>Implement a program, <code>fgbg.c</code>, that forks a child process in the background and
+allows the user to switch the child between the foreground and background mode
+using the commands, fg, bg, and control-Z.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -232,7 +212,7 @@ child received signal Terminated</code></pre>
 <p>Make sure the child has a different process ID from the parent.</p>
 </li>
 <li>
-<p>Create a child that loops forever so it is convenient to change its process status.</p>
+<p>To mimic the logic you will need in your job shell, have the child involve <code>infinite</code>, e.g. call <code>execlp("./infinite", "./infinite", (char*) NULL);</code></p>
 </li>
 <li>
 <p>Typing Control-Z should suspend the foreground process.</p>
@@ -253,13 +233,13 @@ child received signal Terminated</code></pre>
 <p>Inside a signal handler, use a non-blocking <code>waitpid</code> call, configured to also return if the child process stops or continues (see the man page for details).</p>
 </li>
 <li>
-<p>Whenever the child is stopped, make sure to return the terminal to the parent.</p>
+<p>Whenever the child is stopped or exited, make sure to return the terminal to the parent.</p>
 </li>
 <li>
 <p>Configure the parent to ignore SIGTTOU and SIGTTIN signals so it can modify ownership of the terminal, even when it is running in the background.</p>
 </li>
 <li>
-<p>Use <code>top H</code> to monitor the terminal and process status of both the parent and child</p>
+<p>Use <code>top -u &lt;user&gt;</code> or <code>ps w</code> to monitor the terminal and process status of both the parent and child</p>
 </li>
 </ul>
 </div>
@@ -268,7 +248,7 @@ child received signal Terminated</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-02-04 15:44:22 -0500
+Last updated 2026-02-11 16:02:07 -0500
 </div>
 </div>
 </body>
