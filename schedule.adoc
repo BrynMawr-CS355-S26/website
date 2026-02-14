@@ -64,6 +64,9 @@
 * Optional reading: Dive into systems
 
 |
+* link:lectures/OS-Week03-Feb5-JobControl.pdf[Lecture Jan 10 - Job Control]
+* link:lectures/OS-Week04-Feb10-Signals.pdf[Lecture Jan 12 - Signals]
+
 //-----------------------------
 |5
 |February 17, 19 anchor:week05[]
