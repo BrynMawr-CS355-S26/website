@@ -307,10 +307,7 @@ have good style.
 = Resubmission
 
 Your userthreads library (A05) is eligible for resubmission at the end of the term.
-Students can submit up to two times:
-
-* The first time for up to 3.7 credit
-* The second time for up to 3.0 credit
+Students can submit once, for up to 3.3 credit.
 
 Resubmissions cannot be made for missed work. I reserve the right to judge whether an 
 earnest effort has been made on the initial submission, but as a guideline, students 

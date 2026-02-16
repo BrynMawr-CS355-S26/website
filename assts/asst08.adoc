@@ -269,4 +269,4 @@ have good style.
 
 = Resubmission
 
-This project is not eligible for resubmission at the end of the term.
+This project is not eligible for resubmission. All code must be complete before your in-person demo. 

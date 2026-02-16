@@ -176,12 +176,9 @@ have good style.
 = Resubmission
 
 Your shell program (A03-A04) is eligible for resubmission at the end of the term.
-Students can submit up to two times:
-
-* The first time for up to 3.7 credit
-* The second time for up to 3.0 credit
+Students can submit once for up to 3.3 credit:
 
 Resubmissions cannot be made for missed work. I reserve the right to judge whether an 
 earnest effort has been made on the initial submission, but as a guideline, students 
-must have received at least a C (2.0), for example, corresponding to a submission that 
-has some features working but with memory errors. 
+must have received at least a C (2.0), for example, showing mostly working functionality 
+but perhaps with memory errors. 

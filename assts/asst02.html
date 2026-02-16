@@ -280,7 +280,7 @@ cmd2_fds[2]: NULL</code></pre>
 <p>Make sure you don&#8217;t crash on an empty command!</p>
 </li>
 <li>
-<p>When the user gives a command, split it into a command and arguments so you can call <a href="https://www.man7.org/linux/man-pages/man3/exec.3.html">execvp</a> after creating a new process with fork.</p>
+<p>When the user gives a command, split it into a command using <code>get_command</code> from the previous question. Then call <a href="https://www.man7.org/linux/man-pages/man3/exec.3.html">execvp</a> after creating a new process with fork.</p>
 </li>
 <li>
 <p>Compiles with <code>make</code>. (Do not modify the Makefile)</p>
@@ -460,7 +460,7 @@ have good style.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-29 16:06:01 -0500
+Last updated 2026-02-15 09:11:42 -0500
 </div>
 </div>
 </body>
