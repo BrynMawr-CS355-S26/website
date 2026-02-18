@@ -15,8 +15,8 @@ Instructor: link:https://www.cs.brynmawr.edu/~alinen[Aline Normoyle]
 
 [.anns]
 
-* link:labs/lab03.html[Lab 03]: Due Fri, Feb 13 (no extensions)
-* link:assts/asst04.html[Assignment 04]: Due Tue, Feb 17 
+* link:labs/lab04.html[Lab 04]: Due Fri, Feb 20 (no extensions)
+* link:assts/asst05.html[Assignment 05]: Due Tue, March 3. Milestone due Thu, Feb 26
 
 == Course Info
 
@@ -132,9 +132,10 @@ All graded work will receive a grade, 4.0, 3.7, 3.3, 3.0, 2.7, 2.3, 2.0, 1.7,
 as a weighted average of all grades according to the following weights:
 
 |===
-|30% | Exams
-|60% | Assignments, labs, projects, oral exam
-| 5% | Reading quizzes
+|35% | Exams
+|30% | Assignments
+|10% | Labs
+|20% | Final project and demo
 | 5% | Participation
 |===
 

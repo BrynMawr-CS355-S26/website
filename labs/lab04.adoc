@@ -8,7 +8,7 @@ include::header.adoc[]
 
 = {title}
 
-Lab exercises for February 20th.
+Lab exercises for February 19th. **Due Feb 20**
 
 The goals for this assignment are:
 
@@ -20,7 +20,7 @@ Click on the link and then accept and merge the pull request.
 
 :sectnums:
 
-= Matrix Add  **Due Feb 20**
+= Matrix Add 
 
 In the files, `matrix.c`, implement a program that uses M threads to add 
 two matrices, each stored in its own binary file, and saving the result into a third file. 
@@ -42,7 +42,7 @@ $ **./readmat B1**
 1 -6 -2 3
 -6 -1 -9 8
 -7 8 -5 -5
-$ **./readmat A1+B1**
+$ **./readmat A1_B1**
 1 -14 -8 11
 -6 3 -16 17
 -6 15 -5 0
@@ -72,7 +72,7 @@ Requirements/Hints:
 * Time how long it takes to compute the result when you have 8, 4, or a single thread.
 * Leverage spatial locality to ensure the best performance, e.g. split the work by rows in each matrix.
 * Use the program `readmat.c` to test that your program runs correctly
-* Name the output file based on the two inputs, e.g. <Mat1>+<Mat2>
+* Name the output file based on the two inputs, e.g. `A1_B1`
 * Use gettimeofday(), defined in `sys/time.h` to get the duration of your program.
 
 [source]
@@ -95,18 +95,20 @@ To test with large matrices, download them from the website (but don't check the
 
 [source]
 ----
-$ wget https://alinen.net/A4 
-$ wget https://alinen.net/B4 
+$ wget https://cs.brynmawr.edu/~alinen/A4 
+$ wget https://cs.brynmawr.edu/~alinen/B4 
 ----
 
-= Funny functions **Due Feb 23**
+NOTE: Don't try to check in large matrices to git! This will lead errors.
+
+= Funny functions 
 
 Implement the following programs based on ucontext. 
 
 == Return
 
 In the file, `hello_context.c`, modify the program so it returns to main after executing f().
-Use the code from lecture to help you!
+Use the code from lecture as a guide.
 
 [source,subs="quotes"]
 ----
@@ -131,11 +133,6 @@ odd:5
 ^C
 ----
 
-Send a signal to the `alternate` process. In your C file, answer the following questions:
-
-* What happens when a signal is delivered? 
-* How do signals affect the execution of a context?
-
 Hints:
 
 * Alternate between main and another function. 
@@ -155,12 +152,18 @@ void nextEven()
     nanosleep(&delay, 0);
   }
 }
+
+int main(int argc, char * argv[])
+{
+  // flush each printf as it happens
+  setvbuf(stdout, 0, _IOLBF, 0);
+  
+  // etc
+}
+
 ----
 
-
 == Alarm
-
-Can you write a program that alternates between two functions at a set interval?
 
 In the file, `alarm.c`, write a program that alternates between two functions at a set interval. 
 Use a kernel timer like in the link:sig_alarm.c[sig_alarm] demo from class.

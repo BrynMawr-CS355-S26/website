@@ -15,8 +15,8 @@
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#_threads">Threads</a></li>
-<li><a href="#_matrix_add_due_feb_20">1. Matrix Add  <strong>Due Feb 20</strong></a></li>
-<li><a href="#_funny_functions_due_feb_23">2. Funny functions <strong>Due Feb 23</strong></a>
+<li><a href="#_matrix_add">1. Matrix Add</a></li>
+<li><a href="#_funny_functions">2. Funny functions</a>
 <ul class="sectlevel2">
 <li><a href="#_return">2.1. Return</a></li>
 <li><a href="#_alternate">2.2. Alternate</a></li>
@@ -31,7 +31,7 @@
 <h2 id="_threads">Threads</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lab exercises for February 20th.</p>
+<p>Lab exercises for February 19th. <strong>Due Feb 20</strong></p>
 </div>
 <div class="paragraph">
 <p>The goals for this assignment are:</p>
@@ -53,7 +53,7 @@ Click on the link and then accept and merge the pull request.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_matrix_add_due_feb_20">1. Matrix Add  <strong>Due Feb 20</strong></h2>
+<h2 id="_matrix_add">1. Matrix Add</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>In the files, <code>matrix.c</code>, implement a program that uses M threads to add
@@ -76,7 +76,7 @@ $ <strong>./readmat B1</strong>
 1 -6 -2 3
 -6 -1 -9 8
 -7 8 -5 -5
-$ <strong>./readmat A1+B1</strong>
+$ <strong>./readmat A1_B1</strong>
 1 -14 -8 11
 -6 3 -16 17
 -6 15 -5 0
@@ -116,7 +116,7 @@ duration: 0.23</code></pre>
 <p>Use the program <code>readmat.c</code> to test that your program runs correctly</p>
 </li>
 <li>
-<p>Name the output file based on the two inputs, e.g. &lt;Mat1&gt;+&lt;Mat2&gt;</p>
+<p>Name the output file based on the two inputs, e.g. <code>A1_B1</code></p>
 </li>
 <li>
 <p>Use gettimeofday(), defined in <code>sys/time.h</code> to get the duration of your program.</p>
@@ -154,14 +154,26 @@ printf("duration: %.4f\n", time);</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>$ wget https://alinen.net/A4
-$ wget https://alinen.net/B4</code></pre>
+<pre class="highlight"><code>$ wget https://cs.brynmawr.edu/~alinen/A4
+$ wget https://cs.brynmawr.edu/~alinen/B4</code></pre>
 </div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Don&#8217;t try to check in large matrices to git! This will lead errors.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_funny_functions_due_feb_23">2. Funny functions <strong>Due Feb 23</strong></h2>
+<h2 id="_funny_functions">2. Funny functions</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Implement the following programs based on ucontext.</p>
@@ -170,7 +182,7 @@ $ wget https://alinen.net/B4</code></pre>
 <h3 id="_return">2.1. Return</h3>
 <div class="paragraph">
 <p>In the file, <code>hello_context.c</code>, modify the program so it returns to main after executing f().
-Use the code from lecture to help you!</p>
+Use the code from lecture as a guide.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -196,19 +208,6 @@ even:2
 odd:5
 ^C</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>Send a signal to the <code>alternate</code> process. In your C file, answer the following questions:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>What happens when a signal is delivered?</p>
-</li>
-<li>
-<p>How do signals affect the execution of a context?</p>
-</li>
-</ul>
 </div>
 <div class="paragraph">
 <p>Hints:</p>
@@ -241,15 +240,20 @@ odd:5
     printf("even:%d\n", i);
     nanosleep(&amp;delay, 0);
   }
+}
+
+int main(int argc, char * argv[])
+{
+  // flush each printf as it happens
+  setvbuf(stdout, 0, _IOLBF, 0);
+
+  // etc
 }</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_alarm">2.3. Alarm</h3>
-<div class="paragraph">
-<p>Can you write a program that alternates between two functions at a set interval?</p>
-</div>
 <div class="paragraph">
 <p>In the file, <code>alarm.c</code>, write a program that alternates between two functions at a set interval.
 Use a kernel timer like in the <a href="sig_alarm.c">sig_alarm</a> demo from class.</p>
@@ -292,7 +296,7 @@ odd:7</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-02-04 15:44:21 -0500
+Last updated 2026-02-18 15:32:10 -0500
 </div>
 </div>
 </body>

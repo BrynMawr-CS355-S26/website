@@ -8,8 +8,8 @@ include::header.adoc[]
 
 = {title}
 
-**Milestone 1: Due Thursday, February 27, in lab (you may take a 1 day extension)**
-**Due Sunday, March 2, before midnight**
+**Milestone 1: Due Thursday, February 26, in lab**
+**Due Tuesday, March 3, before midnight**
 
 The goals for this assignment are:
 
@@ -17,7 +17,7 @@ The goals for this assignment are:
 * Understand scheduling algorithms
 * Working with additional system calls: getcontext, makecontext, swapcontext
 
-NOTE: We will use new starter code: link:https://classroom.github.com/a/K88AA1Zs[Starter Code Link]
+NOTE: We will use new starter code: link:https://classroom.github.com/a/-jLG5SyS[Starter Code Link]
 
 _Assignment by Dianna Xu_
 
@@ -32,7 +32,7 @@ now building a part of pthread from scratch.
 
 **Deliverables**
 
-For Milestone #1 (Feb 27), you must have the following features complete:
+For Milestone #1 (Feb 26), you must have the following features complete:
 
 * Core user thread API implemented with FIFO Scheduling
 * Use of ucontext for executing the thread function
@@ -40,7 +40,7 @@ For Milestone #1 (Feb 27), you must have the following features complete:
 * Valgrind
 * Unit tests that call each userthread API function
 
-The final deliverable (March 2) must contain:
+The final deliverable (March 3) must contain:
 
 * Features from milestone #1
 * SJF scheduling

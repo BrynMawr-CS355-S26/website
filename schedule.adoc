@@ -70,11 +70,11 @@
 //-----------------------------
 |5
 |February 17, 19 anchor:week05[]
-|*Threads* 
+|*Threads and Scheduling* 
 
-* Topics: Threads, pthreads, user contexts, synchronization techniques
-* link:labs/lab04.[Lab Feb 19]
-* link:assts/asst05.[Assignment 05]: Due Feb 24
+* Topics: Threads, pthreads, user contexts, scheduling algorithms
+* link:labs/lab04.html[Lab Feb 19]: Due Feb 20
+* link:assts/asst05.html[Assignment 05: Userthreads]: Due March 3rd
 
 * Read: Tanenbaum 2.2, 2.3, 2.5
 * Optional reading: Dive into systems
@@ -85,10 +85,10 @@
 //-----------------------------
 |6
 |February 24, 26 anchor:week06[]
-|*Scheduling and Deadlock* 
+|*Synchronization and Deadlock* 
 
-* Lab Feb 26: Userthread library demos
-* link:assts/asst06.[Assignment 06]: Due March 3
+* Mutual exclusion, classical synchronization problems, strategies for detecting and preventing deadlock
+* Lab Feb 26: mutex, userthread demos
 
 * Read: Tanenbaum 2.4, 6
 * Recommended study questions (Tues): Tanenbaum pgs 174-180: 40, 42, 43, 44, 45, 47, 48, 49, 50, 51 
