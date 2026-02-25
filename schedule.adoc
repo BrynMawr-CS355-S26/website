@@ -82,29 +82,33 @@
 * Recommended study questions (Thurs): Tanenbaum pgs 174-180: 19, 21, 24, 25, 26, 27, 30
 
 |
-* link:lectures/OOS-Week05-Feb17-Threads.pdf[Lecture Feb 17 - Threads]
-* link:lectures/OOS-Week05-Feb19-Scheduling.pdf[Lecture Feb 19 - Scheduling]
+* link:lectures/OS-Week05-Feb17-Threads.pdf[Lecture Feb 17 - Threads]
+* link:lectures/OS-Week05-Feb19-Scheduling.pdf[Lecture Feb 19 - Scheduling I]
 
 //-----------------------------
 |6
 |February 24, 26 anchor:week06[]
-|*Synchronization and Deadlock* 
+|*Scheduling and Synchronization* 
 
-* Mutual exclusion, classical synchronization problems, strategies for detecting and preventing deadlock
-* Lab Feb 26: mutex, userthread demos
+* Mutual exclusion, classical synchronization problems
+* link:labs/lab05.html[Lab Feb 26]: Due Feb 27
 
 * Read: Tanenbaum 2.4, 6
 * Recommended study questions (Tues): Tanenbaum pgs 174-180: 40, 42, 43, 44, 45, 47, 48, 49, 50, 51 
 * Recommended study questions (Thurs): Tanenbaum pgs 465-470: 2, 3, 10, 14, 15, 16, 21, 22, 24, 26, 27, 34 
 
 |
+* link:lectures/OS-Week05-Feb19-Scheduling.pdf[Lecture Feb 24 - Scheduling II]
+
 //-----------------------------
 |7
 |March 3, 5 anchor:week07[]
-|*Midterm I* 
+|*Deadlock, Midterm I* 
 
+* Strategies for detecting and preventing deadlock
 * link:studyguide1.html[Study Guide 01]
 * Review and **Exam 01** In Class, March 5 (80 minutes, closed book. One written cheat sheet)
+* No lab Thursday
 
 |
 //-----------------------------

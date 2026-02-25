@@ -1,6 +1,6 @@
 include::header.adoc[]
 
-:title: Smooth allocators
+:title: Thread Synchronization
 :Author Initials: ASN
 :Date:    2020-08-15
 :Revision: 0.1
@@ -8,81 +8,96 @@ include::header.adoc[]
 
 = {title}
 
-Lab exercises for March 20th.
+Lab exercises for February 26th. **Due Feb 27th**
 
 The goals for this assignment are:
 
-* Understanding pointer arithmetic
-* Working with mmap
-* Implementing simple memory allocators
+* Understanding the pthread library
+* Using synchronization primitives
 
-We will use the same repository as previous labs: link:{labs-repo}[Labs Repo]. 
-Click on the link and then accept and merge the pull request.
-
-**Due March 21st**
+We will use the same repository as last week: link:{labs-repo}[Labs Repo]. 
+Do a `git pull` to get the lab basecode.
 
 :sectnums:
 
-= Stack Allocator
+= Dining Philosophers
 
-In the file, `stalloc.c`, implement a program that implements a simple memory allocator, 
-based on a stack. The stack is initialized as a large block of memory (e.g. a character array). 
-When the user requests memory, they receive a block from the top of the stack. When they free memory, 
-it must be the most recently acquired block. Thus, this allocator has the following properties and 
-limitations:
+Edit the file, `dining_philosophers.c`, to avoid deadlock. 
 
-* Used memory is always at the beginning of the array block
-* Free memory is always at the end of the array block
-* Only a single pointer is needed to keep track of the division between used and free memory
-* The user must deallocate memory in the opposite order that you allocate it
-* The user can ask for at most ALLOCSIZE blocks of memory (e.g. the size of the stack at initialization). If the user asks for more memory than is available, the allocator should return 0.
-
-
-image::Lab05.png[width=200px]
-
-You are given basecode for this assignment. 
-
-* Implement `char* stalloc(int n)`
-* Implement `void stfree(char* p)`
-* Update the tests in `main`
+When you run the basecode, your program will run for a while but then 
+deadlock. For example,
 
 [source, subs="quotes"]
 ----
-$ **make**
-g++ -g -Wno-unused-variable -Wno-unused-but-set-variable mylloc.c -o mylloc
-g++ -g -Wno-unused-variable -Wno-unused-but-set-variable stalloc.c -o stalloc
-$ **./stalloc**
-stalloc: stalloc.c:24: int main(): Assertion `b1 == allocbuf' failed.
+$ **./dining_philosophers**
+2 is hungry
+2 is eating
+4 is hungry
+3 is thinking
+3 is thinking
+2 is thinking
+1 is eating
+3 is hungry
+2 is hungry
+1 is hungry
+
+----
+
+Requirements:
+
+* Add the fix from class to fix the program and verify that it works.
+
+= Mountainview Village
+
+In the remote town of Mountainview Village, there is a single lane bridge that
+connects a popular overlook with a quaint town center with shops and cafes.
+During peak season, tourists spend the day driving back and forth across the
+bridge, alternating between fresh air and inspiring views at the outlook
+platform and coffee, ice cream, and snacks at the town center.
+
+In the file, `bridge.c`, you will find a simulation of summer tourists.  Each
+tourist is simulated with a thread. The bridge is modeled as a shared, global
+resource. If two cars simultaneously try to drive in opposite directions on the
+bridge, we have a terrible accident. The bridge explodes and any cars on the
+bridge plummet to the rapids below.  
+
+Edit the file, `bridge.c`, to safely
+simulate N tourists spending the day in Mountainview Village.
+
+* prevent deadlocks where no one takes the bridge
+* prevent accidents where cars travel in both directions at once
+
+For example, here is a single tourist.
+
+[source, subs="quotes"]
+----
+$ **./bridge 1 10**
+Tourist 0 takes their 0/10 trip towards Outlook
+Tourist 0 takes their 1/10 trip towards Town
+Tourist 0 takes their 2/10 trip towards Outlook
+Tourist 0 takes their 3/10 trip towards Town
+Tourist 0 takes their 4/10 trip towards Outlook
+Tourist 0 takes their 5/10 trip towards Town
+Tourist 0 takes their 6/10 trip towards Outlook
+Tourist 0 takes their 7/10 trip towards Town
+Tourist 0 takes their 8/10 trip towards Outlook
+Tourist 0 takes their 9/10 trip towards Town
+----
+
+But running with multiple tourists, we quickly see a problem.
+
+[source, subs="quotes"]
+----
+$ **./bridge 2 10**
+Tourist 1 takes their 0/10 trip towards Town
+Tourist 0 takes their 0/10 trip towards Outlook
+bridge: bridge.c:38: Move: Assertion `bridge.num_on_bridge[(bridge.direction+1)%2] == 0' failed.
+bridge: bridge.c:38: Move: Assertion `bridge.num_on_bridge[(bridge.direction+1)%2] == 0' failed.
 Aborted (core dumped)
-$ **./stalloc**
-//prints nothing if all tests pass
 ----
 
-= My Simple Allocator
+Requirements:
 
-You are given a file, `mylloc.c`, that contains the simple memory allocator 
-from class, modifies to use the STL linked list. Edit this file to include the 
-following:
-
-* Add a linked list to keep track of memory requested by the user
-* Implement `mem_dump` to print the contents of the user memory and free memory. This function should print the starting address of the chunk and the chunk's size.
-* Inside the file, `mylloc.c`, answer the following questions
-** There are three allocations. Why are there only two chunks?
-** Below, the base address is 0x56418de96000. The first chunk listed has address 0x56418de96328. Why?
-
-[source, subs="quotes"]
-----
-$ **make**
-g++ -g -Wno-unused-variable -Wno-unused-but-set-variable mylloc.c -o mylloc
-g++ -g -Wno-unused-variable -Wno-unused-but-set-variable stalloc.c -o stalloc
-$ **./mylloc**
-Base address: 0x56418de96000
-1. Memory dump:
-Used chunk: 0x56418de96328 (400)
-Used chunk: 0x56418de96000 (800)
-2. Memory dump:
-Used chunk: 0x56418de96000 (800)
-Used chunk: 0x56418de96328 (400)
-----
-
+* Your program must leave the asserts which verify that the safety constraints are enforced.
+* You should use conditional variables and mutex to synchronize the threads that represent each tourist.
 

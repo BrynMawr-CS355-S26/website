@@ -1,0 +1,83 @@
+include::header.adoc[]
+
+:title: A file system of your own devising
+:Author Initials: ASN
+:Date:    2020-08-15
+:Revision: 0.1
+:ASST: labs-USERNAME
+
+[discrete]
+= {title}
+
+[discrete]
+= Name
+
+Lab exercises for April 10th. This is a written assignment. Due by the end of
+lab -- no extensions.
+
+[discrete]
+= Design
+
+link:../assts/asst08.html[Read the project description for your file system]. Then answer the questions below. Note that some answers are requirements specified in the assignment description.
+
+. What blocksize will your system support?
+{nbsp} +
+{nbsp} +
+{nbsp} +
+. What attributes will files have?
+{nbsp} +
+{nbsp} +
+{nbsp} +
+. Where on your file system will file attributes be stored?
+{nbsp} +
+{nbsp} +
+{nbsp} +
+. Where will filenames be stored? How long can they be?
+{nbsp} +
+{nbsp} +
+{nbsp} +
+. Where will the root directory stored? How will you keep track of the root directory for resolving path names?
+{nbsp} +
+{nbsp} +
+{nbsp} +
+. How will you manage free memory? 
+{nbsp} +
+{nbsp} +
+{nbsp} +
+. How will you keep track of which blocks are used by which files (FAT or inodes)? 
+{nbsp} +
+{nbsp} +
+{nbsp} +
+
+++++
+<div class="pagebreak"></div>
+++++
+
+. In the space below, draw a picture that shows how you will organize the primary portions of your disk, e.g. free space management, allocation tables, inodes, data blocks, etc.
+{nbsp} +
+{nbsp} +
+{nbsp} +
+{nbsp} +
+{nbsp} +
+{nbsp} +
+{nbsp} +
+{nbsp} +
+. In the space below, write the steps needed to create a file consisting of a single block in your file system. 
+{nbsp} +
+{nbsp} +
+{nbsp} +
+{nbsp} +
+{nbsp} +
+{nbsp} +
+{nbsp} +
+{nbsp} +
+. In the space below, write the steps needed to edit a file with the path `/usr/A.txt`. 
+{nbsp} +
+{nbsp} +
+{nbsp} +
+{nbsp} +
+{nbsp} +
+{nbsp} +
+{nbsp} +
+{nbsp} +
+. In the space below, write the steps needed to remove a file with the path `/usr/A.txt`.
