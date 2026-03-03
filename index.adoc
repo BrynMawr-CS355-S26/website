@@ -15,8 +15,8 @@ Instructor: link:https://www.cs.brynmawr.edu/~alinen[Aline Normoyle]
 
 [.anns]
 
-* link:labs/lab05.html[Lab 05]: Due Fri, Feb 27 (no extensions)
-* link:assts/asst05.html[Assignment 05]: Due Tue, March 3. Milestone due Thu, Feb 26
+* Midterm I is 80 minutes, Thursday, March 5th. link:studyguide1.html[Study Guide]
+* link:assts/asst05.html[Assignment 05]: **Extended: Due Fri, March 6**. 
 
 == Course Info
 

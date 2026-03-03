@@ -9,7 +9,7 @@ include::header.adoc[]
 = {title}
 
 **Milestone 1: Due Thursday, February 26, in lab**
-**Due Tuesday, March 3, before midnight**
+**Extended: Due Friday, March 6, before midnight**
 
 The goals for this assignment are:
 
