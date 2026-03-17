@@ -34,7 +34,7 @@
 <h2 id="_assignment_6_memory_manager">Assignment 6: Memory Manager</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>Due Sunday, March 30, before midnight</strong></p>
+<p><strong>Due Tuesday, March 31, before midnight</strong></p>
 </div>
 <div class="paragraph">
 <p>The goals for this assignment are:</p>
@@ -56,7 +56,7 @@
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-We will use new starter code: <a href="https://classroom.github.com/a/d4XsWfhO">Start Code Link</a>
+We will use new starter code: <a href="https://classroom.github.com/a/pvvoW_Vj">Start Code Link</a>
 </td>
 </tr>
 </table>
@@ -67,7 +67,7 @@ We will use new starter code: <a href="https://classroom.github.com/a/d4XsWfhO">
 <h2 id="_memory_manager">Memory Manager</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Assignment by Dianna Xu</em></p>
+<p><em>Original Assignment by Dianna Xu</em></p>
 </div>
 <div class="paragraph">
 <p>In this project, you will implement a memory allocator for the heap of a user-level process. In
@@ -175,9 +175,9 @@ not freed any memory.</p>
 ensuring that big chunks remain free for subsequent calls to Mem_Alloc. When coalesce
 is non-zero, Mem_Free will coalesce free space; specifically, when coalesce is 1, coalesce
 the entire list and coalesce wherever possible; when coalesce is 2, coalesce a local
-neighberhood whose size is upto you. If the coalesce flag is 0, no such coalescing should be
+neighborhood whose size is up to you. If the coalesce flag is 0, no such coalescing should be
 done; this makes Mem_Free faster, but leaves small fragments in the free space. Note
-that in this setup, 0 is the fastest, 1 is the slowest, and 2 is inbetween, depending on
+that in this setup, 0 is the fastest, 1 is the slowest, and 2 is in between, depending on
 how you optimize.</p>
 </div>
 <div class="paragraph">
@@ -190,6 +190,13 @@ how you optimize.</p>
 <p>This is a debugging routine for your own use. Have it print the regions of free
 memory to the screen. For those of you who know how to generate PPM images, you can also
 visualize used vs. empty memory with an image.</p>
+</div>
+<div class="paragraph">
+<p><code>void Mem_Shutdown()</code></p>
+</div>
+<div class="paragraph">
+<p>Use this call to shutdown your library and cleanup any memory and system resources created
+in Mem_Init().</p>
 </div>
 </div>
 </div>
@@ -248,7 +255,7 @@ more blocks? What happens when a block is split (on allocation)?</p>
 <p>bad args to Mem_Init()</p>
 </li>
 <li>
-<p>worstfit allocation</p>
+<p>worst fit allocation</p>
 </li>
 <li>
 <p>coalesce of free space</p>
@@ -280,7 +287,7 @@ more blocks? What happens when a block is split (on allocation)?</p>
 </ol>
 </div>
 <div class="paragraph">
-<p>You are heavily enouraged to test beyond this!</p>
+<p>You are heavily encouraged to test beyond this!</p>
 </div>
 </div>
 </div>
@@ -373,14 +380,14 @@ Students can submit once for up to 3.3 credit.</p>
 <p>Resubmissions cannot be made for missed work. I reserve the right to judge whether an
 earnest effort has been made on the initial submission, but as a guideline, students
 must have received at least a C (2.0), for example, corresponding to a submission that
-has some features working but with memory errors.</p>
+has some features working.</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-02-16 15:12:24 -0500
+Last updated 2026-03-17 09:23:32 -0400
 </div>
 </div>
 </body>

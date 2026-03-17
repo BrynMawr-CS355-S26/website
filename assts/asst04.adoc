@@ -20,7 +20,7 @@ NOTE: We will use the same starter code as last week: link:https://classroom.git
 
 :sectnums:
 
-= Be your best Shell
+= Be your best shell
 
 In the file, `shell03.c`, extend either the shell from link:asst02.html[Assignment 02] or 
 link:asst02.html[Assignment 03] to support job control. 
@@ -40,6 +40,10 @@ Additionally, your shell should support the following features, outlined in the 
 NOTE: Even if your previous shell is incomplete, you can still implement the
 features of this assignment. Specifically, we will only be testing single
 commands (no pipes or redirection) to test the job control features in this assignment.
+
+[source]
+----
+----
 
 == Backgrounding with &
 
@@ -64,7 +68,8 @@ track of all jobs.
 === Process groups
 
 All processes have a process group. When a process is created, it receives the 
-same process group as its parent by default. When we send a signal, it is sent to 
+same process group as its parent by default. When we send a signal through terminal 
+commands such as Ctrl-Z and Ctrl-C, it will be sent to 
 every process in the process group.   
 
 We will be using signals to control child processes. Thus, it is very important 

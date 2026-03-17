@@ -124,10 +124,10 @@
 |March 17, 19 anchor:week09[]
 |*Malloc/Free, Memory Management*
 
-* link:labs/lab05.[Lab March 19: Simple memory allocators]
-* link:assts/asst06.[Assignment 06]: Due March 24
+* link:labs/lab06.html[Lab March 19: Smooth allocators]
+* link:assts/asst06.html[Assignment 06]: Memory Allocator, Due March 31
 
-* Read: Kernihan TBD
+* Read: Kernighan and Ritchie, Chapter 5 (especially 5.4)
 * Read: Tanenbaum 3.1-3.3
 * Recommended study questions (Tues): Tanenbaum pgs 254-262, 4, 5, 6, 7
 

@@ -15,8 +15,8 @@ Instructor: link:https://www.cs.brynmawr.edu/~alinen[Aline Normoyle]
 
 [.anns]
 
-* Midterm I is 80 minutes, Thursday, March 5th. link:studyguide1.html[Study Guide]
-* link:assts/asst05.html[Assignment 05]: **Extended: Due Fri, March 6**. 
+* link:labs/lab06.html[Lab March 19: Smooth allocators]: ** Due Friday March 20**
+* link:assts/asst06.html[Assignment 06]: **Due Tuesday, March 31**. 
 
 == Course Info
 
