@@ -60,15 +60,15 @@ $ **./stalloc**
 
 = My Simple Allocator
 
-You are given a file, `mylloc.c`, that contains the simple memory allocator 
-from class, modifies to use the STL linked list. Edit this file to include the 
-following:
+You are given a file, `mylloc.c`, that contains the simple memory allocator
+from class, modified to use the STL linked list. Extend this implementation to
+include the following:
 
 * Add a linked list to keep track of memory requested by the user
 * Implement `mem_dump` to print the contents of the user memory and free memory. This function should print the starting address of the chunk and the chunk's size.
 * Inside the file, `mylloc.c`, answer the following questions
 ** There are three allocations. Why are there only two chunks?
-** Below, the base address is 0x56418de96000. The first chunk listed has address 0x56418de96328. Why?
+** Below, the base address is 0x56418de96000. The first chunk allocated has address 0x56418de96328. Why?
 
 [source, subs="quotes"]
 ----
