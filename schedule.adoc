@@ -148,6 +148,8 @@
 * Recommended study questions (Tues): Tanenbaum pgs 254-262, 15, 20, 28, 30, 33, 36, 47
 
 |
+* link:lectures/OS-Week10-March25-VM.pdf[Lectures - March 24 and 26]
+
 //-----------------------------
 |11
 |March 31, April 2 anchor:week10[]
