@@ -123,10 +123,11 @@ will write your own implementation of this interface.</p>
 number of bytes you should request from the OS using <code>mmap</code>.</p>
 </div>
 <div class="paragraph">
-<p>Note that you may need to round this amount so that you request memory in units of
-the page size (see the man page for getpagesize). Note also that you need to use this
-allocated memory for your own data structures as well; that is, your infrastructure for
-tracking the mapping from addresses to memory objects has to be placed in this region.</p>
+<p>Note that you may need to round this amount so that you request memory in units
+of the page size (see the man page for getpagesize). Note also that you need to
+use this allocated memory for chunk header information, that is, your
+infrastructure for tracking the mapping from addresses to memory objects has to
+be placed in this region.</p>
 </div>
 <div class="paragraph">
 <p>Return value: Upon success (when the call to mmap is succesful), Mem_Init returns 0.
@@ -143,9 +144,10 @@ Along with mmap failing, there are a few other cases where Mem_Init should retur
 pointer to the start of that object.</p>
 </div>
 <div class="paragraph">
-<p>Your allocator should use a Worst Fit (WF) policy to decide which chunk of free space
-to hand out; WF simply looks through your free list and finds the free space that is
-largest in size and returns the requested size to the user, keeping the rest of the chunk
+<p>Your allocator may use any strategy to decide which chunk of free space to hand
+out.  If you are agnostic about your choice, we recommend Worst Fit (WF). WF
+simply looks through your free list and finds the free space that is largest in
+size and returns the requested size to the user, keeping the rest of the chunk
 in its free list.</p>
 </div>
 <div class="paragraph">
@@ -168,7 +170,8 @@ allocated by Mem_Init to satisfy this request (and sets m_error to E_NO_SPACE).<
 if ptr is NULL, then no operation is performed. The coalesce flag determines whether
 the Mem_Free routine should coalesce the freed space back into the bigger pool. Note
 that in the case of Mem_Free(NULL,1), you should still coalesce, even though you have
-not freed any memory.</p>
+not freed any memory. If the user passes a pointer outside of the range returned by mmap,
+Mem_Free should return -1 and set the error code to E_BAD_POINTER.</p>
 </div>
 <div class="paragraph">
 <p><strong>Coalescing</strong>: Coalescing rejoins neighboring freed blocks into one bigger free chunk, thus
@@ -210,10 +213,10 @@ in Mem_Init().</p>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>What are you putting into those 32-byte headers?</p>
+<p>What are you putting into your headers?</p>
 </li>
 <li>
-<p>Where are you putting the headers and how are you going to organize those headers (note that the important thing is you are limited to 32 bytes per block. You are not limited to the “header” name. In other words, you can put it before, after (which makes them footers), as well as before AND after (you will have to split the 32 bytes then, of course)) . How are your data structures embedded and organized through the headers?</p>
+<p>Where are you putting the headers with respect to each chunk of memory? You can put it before, after (which makes them footers), as well as before AND after.</p>
 </li>
 <li>
 <p>How many lists? Singly or doubly or something else?</p>
@@ -303,7 +306,7 @@ more blocks? What happens when a block is split (on allocation)?</p>
 <p>You’ll need a header per allocated block; the maximum size of such a header is 32 bytes.</p>
 </li>
 <li>
-<p>You should not allocate any global arrays. You may allocate a few global variables (e.g., a pointer to the head of your free list).</p>
+<p>You should not allocate any global arrays. You may allocate a some global variables (e.g., a pointer to the head of your free list).</p>
 </li>
 </ul>
 </div>
@@ -387,7 +390,7 @@ has some features working.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-17 09:23:32 -0400
+Last updated 2026-03-26 16:40:44 -0400
 </div>
 </div>
 </body>

@@ -219,7 +219,7 @@ served (FIFO), shortest-job first (SJF) and priority (PRIORITY).</p>
 <h3 id="_first_come_first_served_fifo">2.1. First-come, first-served (FIFO)</h3>
 <div class="paragraph">
 <p>Threads on the ready queue should be scheduled according to the order they arrive, without
-preemption. Pass FCFS to thread_init to select this schedule.</p>
+preemption. Pass FIFO to thread_init to select this schedule.</p>
 </div>
 </div>
 <div class="sect2">
@@ -286,10 +286,11 @@ whenever a thread switches context.</p>
 </div>
 <div class="paragraph">
 <p>This required for all three scheduling algorithms (FIFO and SJF may leave the
-PRIORITY column empty). Document clearly the name of the log file and its path.
-The logger should overwrite logs of the last execution of the scheduler program.
-That is, it should not accumulate but only record the current session’s
-information. The log will have the following format (tab deliminated):</p>
+PRIORITY column empty). Your assignment should log events to the file
+<code>userthread_log.txt</code> The logger should overwrite logs of the last execution of
+the scheduler program.  That is, it should not accumulate but only record the
+current session’s information. The log will have the following format (tab
+deliminated):</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -307,12 +308,6 @@ For example, here is a snippet of a logger:
 log any other information you find helpful as long as you document it clearly. Logging is also a
 great tool to help you debug your program. It is recommended to implement this feature as soon
 as possible.</p>
-</div>
-<div class="paragraph">
-<p>printf is not re-entrant and thus there is a risk using it with signal handlers. It’s not a big
-deal when you are just printing a message for debugging, but for the logger, you should use the
-system call write and STDOUT_FILENO instead. fprintf is thread-safe and thus if you are
-logging to a file (which is what you should be doing), you are safe.</p>
 </div>
 <div class="paragraph">
 <p>Use the <code>clock()</code> function to compute the number of ticks from the start of the program.</p>
@@ -340,7 +335,7 @@ to validate your thread library.</p>
 <div class="paragraph">
 <p>Each test case for the thread library will be a short C program that uses functions in the thread
 library. Each test case should be run without any arguments and should not use any input files.
-Test cases should exit(EXIT_SUCCESS) when run with a correct thread library. Below is an example:</p>
+Test cases should return 0 (e.g. EXIT_SUCCESS) when run with a correct thread library. Below is an example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -385,7 +380,7 @@ int main() {
 <p>In general, keep the test cases short and narrow. It’s better to test only one thing so that when a program fails a test, you know exactly</p>
 </li>
 <li>
-<p>Check your tests into the subdirectory, labeled <code>tests</code></p>
+<p>Check your tests into the subdirectory, labeled <code>test</code></p>
 </li>
 <li>
 <p>Name each test with a number, e.g. <code>1.c</code></p>
@@ -418,43 +413,28 @@ We will be testing your library against our own test suite. The quality (coverag
 <div class="ulist">
 <ul>
 <li>
-<p>Deleting a thread and exiting the program: A thread finishes when it returns from the function that was specified in thread_create. Remember to de-allocate the memory used
-for the thread’s stack space and context (be careful to do this after the thread is really done
-using it).</p>
+<p>Deleting a thread and exiting the program: A thread finishes when it returns from the function that was specified in thread_create. Remember to de-allocate the memory used for the thread’s stack space and context (be careful to do this after the thread is really done using it).</p>
 </li>
 <li>
-<p>When you create a thread, you may find it useful to invoke a "wrapper" function (also called
-a stub function) that calls the thread’s function and, thus provides a place for the thread to
-return to upon termination, where the necessary cleanup can be performed.</p>
+<p>When you create a thread, you may find it useful to invoke a "wrapper" function (also called a stub function) that calls the thread’s function and, thus provides a place for the thread to return to upon termination, where the necessary cleanup can be performed.</p>
 </li>
 <li>
 <p>Be careful when managing your ready queue which is shared across all threads. Make sure that only one thread modifies the queue at once. And be careful about signals that might interrupt updates to the shared queue of threads.</p>
 </li>
 <li>
-<p>Remember that the main thread (the one that’s making calls to your library) is also a schedulable context and should not be treated differently.</p>
+<p>For non-preemptive scheduling policies, when your main thread calls thread_join, you should call your function that performs scheduling. This is how the first thread gets to execute.</p>
 </li>
 <li>
-<p>For non-preemptive scheduling policies, when your main thread calls thread_join, you
-should call your function that performs scheduling. This is how the first thread gets to
-execute.</p>
+<p>A minimum thread control block is required to do the house keeping of context switching.  Your TCB should minimumly include the tid, ucontext and (CPU usage or priority, depending on scheduling algorithm), but you will probably add more.</p>
 </li>
 <li>
-<p>A minimum thread control block is required to do the house keeping of context switching.
-Your TCB should minimumly include the tid, ucontext and (CPU usage or priority, depending
-on scheduling algorithm), but you will probably add more.</p>
+<p>To implement priority scheduling, you should create 3 linked-lists, one for each priority. Then schedule in a Round Robin fashion among all of them.</p>
 </li>
 <li>
-<p>To implement priority scheduling, you should create 3 linked-lists, one for each priority. Then
-schedule in a Round Robin fashion among all of them.</p>
+<p>Note that when a process terminates, often times it may not use up all of 100ms. It is your scheduler’s responsibility to handle this situation well and ensure the process next to be scheduled will be given a full 100ms quanta.</p>
 </li>
 <li>
-<p>Note that when a process terminates, often times it may not use up all of 100ms. It is
-your scheduler’s responsibility to handle this situation well and ensure the process next to be
-scheduled will be given a full 100ms quanta.</p>
-</li>
-<li>
-<p>Declare all internal variables and functions (those that are not called by clients of the library)
-static to prevent naming conflicts with programs that link with your thread library.</p>
+<p>Declare all internal variables and functions (those that are not called by clients of the library) static to prevent naming conflicts with programs that link with your thread library.</p>
 </li>
 </ul>
 </div>
@@ -470,14 +450,8 @@ static to prevent naming conflicts with programs that link with your thread libr
 <p>You may assume that we will not call thread_yield from the main thread.</p>
 </li>
 <li>
-<p>Your library functions shouldn’t print any error messages. Errors are indicated by return values, as is typical with libraries.</p>
-</li>
-<li>
-<p>A "run" is defined as the time between a thread being scheduled and the thread being
-descheduled (via a call to thread_join, thread_yield, or the thread’s function
-finishing). So, any time a thread is scheduled, you should start timing; when a thread
-is descheduled, stop; the elapsed time defines the previous "run."
- *You may assume that we will only invoke thread_libinit with a valid scheduling policy.</p>
+<p>Your library functions shouldn’t print any error messages. Errors are indicated by return values, as is typical with libraries.
+*You may assume that we will only invoke thread_libinit with a valid scheduling policy.</p>
 </li>
 </ul>
 </div>
@@ -611,7 +585,7 @@ has some features working but with memory errors.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-03 13:36:22 -0500
+Last updated 2026-03-26 16:23:59 -0400
 </div>
 </div>
 </body>

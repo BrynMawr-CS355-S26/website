@@ -43,7 +43,6 @@ mapping from logical addresses to physical addresses. Although only a small subs
 does in terms of memory management, this project should still provide good insights into memory
 allocation.
 
-
 == Requesting Memory
 
 Although a real memory allocator requests more memory from the OS whenever it
@@ -61,10 +60,11 @@ will write your own implementation of this interface.
 Mem_Init is called one time by a process using your routines. `sizeOfRegion` is the
 number of bytes you should request from the OS using `mmap`.
 
-Note that you may need to round this amount so that you request memory in units of
-the page size (see the man page for getpagesize). Note also that you need to use this
-allocated memory for your own data structures as well; that is, your infrastructure for
-tracking the mapping from addresses to memory objects has to be placed in this region.
+Note that you may need to round this amount so that you request memory in units
+of the page size (see the man page for getpagesize). Note also that you need to
+use this allocated memory for chunk header information, that is, your
+infrastructure for tracking the mapping from addresses to memory objects has to
+be placed in this region.
 
 Return value: Upon success (when the call to mmap is succesful), Mem_Init returns 0.
 Upon failure, Mem_Init should return −1 and set m_error to E_BAD_ARGS. Along with
@@ -77,9 +77,10 @@ Along with mmap failing, there are a few other cases where Mem_Init should retur
 `Mem_Alloc` takes as input the size in bytes of the object to be allocated and returns a
 pointer to the start of that object.
 
-Your allocator should use a Worst Fit (WF) policy to decide which chunk of free space
-to hand out; WF simply looks through your free list and finds the free space that is
-largest in size and returns the requested size to the user, keeping the rest of the chunk
+Your allocator may use any strategy to decide which chunk of free space to hand
+out.  If you are agnostic about your choice, we recommend Worst Fit (WF). WF
+simply looks through your free list and finds the free space that is largest in
+size and returns the requested size to the user, keeping the rest of the chunk
 in its free list.
 
 For performance reasons, `Mem_Alloc` should return 8-byte aligned chunks of memory. For
@@ -92,14 +93,14 @@ Return value: Upon success, Mem_Alloc returns a pointer to the start of the obje
 function returns NULL if there is not enough contiguous free space within sizeOfRegion
 allocated by Mem_Init to satisfy this request (and sets m_error to E_NO_SPACE).
 
-
 `int Mem_Free(void *ptr, int coalesce)`
 
 `Mem_Free` frees the memory object that ptr points to. Just like the standard free(),
 if ptr is NULL, then no operation is performed. The coalesce flag determines whether
 the Mem_Free routine should coalesce the freed space back into the bigger pool. Note
 that in the case of Mem_Free(NULL,1), you should still coalesce, even though you have
-not freed any memory.
+not freed any memory. If the user passes a pointer outside of the range returned by mmap, 
+Mem_Free should return -1 and set the error code to E_BAD_POINTER.
 
 **Coalescing**: Coalescing rejoins neighboring freed blocks into one bigger free chunk, thus
 ensuring that big chunks remain free for subsequent calls to Mem_Alloc. When coalesce
@@ -127,8 +128,8 @@ in Mem_Init().
 
 Make sure you spend time pondering the design of your memory allocator. In other words:
 
-. What are you putting into those 32-byte headers?
-. Where are you putting the headers and how are you going to organize those headers (note that the important thing is you are limited to 32 bytes per block. You are not limited to the “header” name. In other words, you can put it before, after (which makes them footers), as well as before AND after (you will have to split the 32 bytes then, of course)) . How are your data structures embedded and organized through the headers?
+. What are you putting into your headers?
+. Where are you putting the headers with respect to each chunk of memory? You can put it before, after (which makes them footers), as well as before AND after. 
 . How many lists? Singly or doubly or something else?
 
 Of course, the answers to the above questions are intertwined because what you wish to keep
@@ -164,7 +165,7 @@ You are heavily encouraged to test beyond this!
 
 * You are not allowed to use malloc() or any related function in any of your routines!
 * You’ll need a header per allocated block; the maximum size of such a header is 32 bytes.
-* You should not allocate any global arrays. You may allocate a few global variables (e.g., a pointer to the head of your free list). 
+* You should not allocate any global arrays. You may allocate a some global variables (e.g., a pointer to the head of your free list). 
 
 = Grading Rubric
 
