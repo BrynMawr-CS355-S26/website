@@ -64,8 +64,21 @@ double indirect
 -1
 triple indirect
 -1
-//etc
+
+//etc - other inodes
+
+Free nodes: 1 2 3
+Number of free inodes: 3/4
+Number of free blocks: 510/512
 ----
+
+Requirements:
+
+* Print the superblock
+* Print each inode
+* Print the free list of inodes
+* Print the number of free inodes out of the total
+* Print the number of free blocks out of the total
 
 == Data Structures
 
