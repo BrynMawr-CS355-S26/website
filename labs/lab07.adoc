@@ -14,8 +14,8 @@ The goals for this assignment are:
 
 * Work with inodes and disks
 
-We will use the same repository as this week's assignment: 
-link:{defrag-repo}[Defragmentor Repo]. 
+We will use the same repository as previous labs: link:{labs-repo}[Labs Repo]. 
+Click on the link and then accept and merge the pull request.
 
 :sectnums:
 
@@ -24,48 +24,113 @@ link:{defrag-repo}[Defragmentor Repo].
 In the file, `printdisk.c`, implement a program that reads a disk and prints its underlying data structure 
 in terms of the superblock and its inodes.
 
-Information about how to parse disks are in the writeup for link:../assts/asst07.html[Assignment 07].
-
 [source, subs="quotes"]
 ----
-$ **./printdisk datafile-frag**
-size 512
+$ **./printdisk 16-empty**
+size 16
 inode offset 0
-data offset 4
-swap offset 10239
-free inode 14
-free block 10133
+data offset 25
+swap offset 537
+free inode 1
+free block 2
 
 0
-next inode 0
-protect 0
+next inode -1
+protect ffffffff
 nlink 1
-size 93821
-uid 18390
-gid 9921
-ctime 536561894
-mtime 609329799
-atime 502539239
+size 32
+uid -1
+gid -1
+ctime -1
+mtime -1
+atime -1
 direct datablocks
-0: 1120
-1: 8393
-2: 1579
-3: 9539
-4: 7108
-5: 7883
-6: 4762
-7: 1980
-8: 1030
-9: 8610
+0: 0
+1: 1
+2: -1
+3: -1
+4: -1
+5: -1
+6: -1
+7: -1
+8: -1
+9: -1
 single indirect
-0: 4500
-1: 3711
-2: 0
-3: 0
+0: -1
+1: -1
+2: -1
+3: -1
 double indirect
-0
+-1
 triple indirect
-0
-
+-1
 //etc
 ----
+
+== Data Structures
+
+There are two important data structures stored on disk: 
+
+* superblock
+* inode
+
+The superblock has the following structure.
+
+[source]
+----
+struct superblock {
+    int size; /* size of blocks in bytes */
+    int inode_offset; /* offset of inode region in blocks */
+    int data_offset; /* data region offset in blocks */
+    int swap_offset; /* swap region offset in blocks */
+    int free_inode; /* head of free inode list, index, if disk is full, -1 */
+    int free_block; /* head of free block list, index, if disk is full, -1 */
+};
+----
+
+On disk, the first 512 bytes contain the boot block (and you can ignore it). The second
+512 bytes contain the superblock. All offsets in the superblock start at 1024 bytes into
+the disk and are given as blocks.
+
+For instance, if the inode offset is 1 and the block size is 512B, then the inode region
+starts at 1024B + 1 × 512B = 1536B into the disk.  Each region fills up the disk to the next region; the swap region fills the disk to the end.
+
+`inodes` have the following structure
+
+[source]
+----
+#define N_DBLOCKS 10
+#define N_IBLOCKS 4
+
+struct inode {
+    int next_inode; /* index of next free inode */
+    int protect; /* protection field */
+    int nlink; /* number of links to this file */
+    int size; /* numer of bytes in file */
+    int uid; /* owner’s user ID */
+    int gid; /* owner’s group ID */
+    int ctime; /* change time */
+    int mtime; /* modification time */
+    int atime; /* access time */
+    int dblocks[N_DBLOCKS]; /* pointers to data blocks */
+    int iblocks[N_IBLOCKS]; /* pointers to indirect blocks */
+    int i2block; /* pointer to doubly indirect block */
+    int i3block; /* pointer to triply indirect block */
+};
+----
+
+The inode region is effectively a large array of inodes. An unused inode has 0 in the
+`nlink` field and `next_inode` field contains the index of the next free inode. For inodes
+in use, the next_inode field is not used.
+
+The `size` field of the inode is used to determine which data block pointers are valid. If
+the file is small enough to fit in N_DBLOCKS blocks, then the indirect blocks are not used.
+
+There may be more than one indirect block. However, there is only one pointer
+to a doubly indirect block and one pointer to a triply indirect block. All block pointers
+are relative to the start of the data region. You may assume 4-byte integer size for block
+pointers in this file system.
+
+The free block list is maintained as a linked list. The first 4 bytes of a free block contain
+an integer index to the next free block; the last free block contains −1 for the index.
+

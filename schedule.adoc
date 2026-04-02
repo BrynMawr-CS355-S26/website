@@ -156,11 +156,13 @@
 |*File Systems I* 
 
 * Read: Tanenbaum Chapter 4.1-4.3, 4.5
-* link:labs/lab06.[Lab April 2]
-* link:assts/asst07.[Assignment 07]: Defragmentor, Due Sunday, April 6
+* link:labs/lab07.html[Lab April 7]
 * Recommended study questions (Tues): Tanenbaum pgs 332-336, 6, 10, 18, 19, 21, 24, 26
 
 |
+* link:lectures/OS-Week11-March31-FileSystem.pdf[Lecture - March 31]
+* link:lectures/OS-Week11-April2-FileSystem.pdf[Lecture - April 2]
+
 //-----------------------------
 |12
 |April 7, 9 anchor:week11[]

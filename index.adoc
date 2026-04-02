@@ -15,8 +15,8 @@ Instructor: link:https://www.cs.brynmawr.edu/~alinen[Aline Normoyle]
 
 [.anns]
 
-* link:labs/lab06.html[Lab March 19: Smooth allocators]: ** Due Friday March 20**
-* link:assts/asst06.html[Assignment 06]: **Due Tuesday, March 31**. 
+* link:labs/lab07.html[Lab April 2: Inode your busy]: ** Due Tuesday April 7**
+* No Assignment this week
 
 == Course Info
 
