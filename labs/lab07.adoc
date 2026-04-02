@@ -8,7 +8,7 @@ include::header.adoc[]
 
 = {title}
 
-Lab exercises for April 3rd 
+Lab exercises for April 2nd 
 
 The goals for this assignment are:
 
