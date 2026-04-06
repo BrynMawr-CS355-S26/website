@@ -155,15 +155,13 @@ int main()
 
 == Version 0.4
 
-Refactor your shell to use your new functions. You now have code to omplement `ls`, `cat`, and `touch`.
+Refactor your shell to use your new functions. You now have code to implement `ls`, `cat`, and `touch`.
 Congratulations! You have three vertical slices!
 
 Use this same process for the remaining functions. 
 
 . Implement the VFS functions first and test it in its own file. 
 . Then integrate the feature into your shell.
-
-I recommend saving the mount/umount features until last.
 
 = Handling errors
 
@@ -201,7 +199,7 @@ $ ./test/create-eexist
 Could not create newfile.txt: File exists
 ----
 
-Be systematic with your implementation. You do not need to handle every case, but you shoudl be aware of which features have been implemented and which haven't. You should also be aware of the limitations in your current implementation.
+Be systematic with your implementation. You should be aware of which features have been implemented and which haven't. You should also be aware of the limitations in your current implementation.
 
 = Virtual File System (VFS) Programmer Interface
 
@@ -519,7 +517,7 @@ fd is not a valid file descriptor.
 
 [source]
 ----
-vfd_t f_opendir(vnode_t *vn, const char* path /*unused*/);
+vfd_t f_opendir(vnode_t *vn);
 ----
 
 Open the given vnode as a "directory file" for reading, and return a directory entry handle.

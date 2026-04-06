@@ -132,7 +132,7 @@
 
 * Read: Kernighan and Ritchie, Chapter 5 (especially 5.4)
 * Read: Tanenbaum 3.1-3.3
-* Recommended study questions (Tues): Tanenbaum pgs 254-262, 4, 5, 6, 7
+* Recommended study questions: Tanenbaum pgs 254-262, 4, 5, 6, 7
 
 |
 * link:lectures/OS-Week09-March17-Malloc.pdf[Lecture - March 17]
@@ -145,7 +145,7 @@
 
 * Read: Tanenbaum 3.4-3.6
 * Lab March 27: Memory management demos
-* Recommended study questions (Tues): Tanenbaum pgs 254-262, 15, 20, 28, 30, 33, 36, 47
+* Recommended study questions: Tanenbaum pgs 254-262, 15, 20, 28, 30, 33, 36, 47
 
 |
 * link:lectures/OS-Week10-March25-VM.pdf[Lectures - March 24 and 26]
@@ -157,7 +157,7 @@
 
 * Read: Tanenbaum Chapter 4.1-4.3, 4.5
 * link:labs/lab07.html[Lab April 7]
-* Recommended study questions (Tues): Tanenbaum pgs 332-336, 6, 10, 18, 19, 21, 24, 26
+* Recommended study questions: Tanenbaum pgs 332-336, 6, 10, 18, 19, 21, 24, 26
 
 |
 * link:lectures/OS-Week11-March31-FileSystem.pdf[Lecture - March 31]
@@ -166,22 +166,22 @@
 //-----------------------------
 |12
 |April 7, 9 anchor:week11[]
-|*File Systems II* 
+|*File Systems II an IO* 
 
-* Read: Tanenbaum Chapter 4.4 
-* link:labs/lab07.[Lab April 10]
-* link:assts/asst08.[Project]: File System, Due Sunday, April 27
-* Recommended study questions (Tues): Tanenbaum pgs 332-336, 28, 30, 33, 40, 41
+* Read: Tanenbaum Sections 4.4, 5.1-5.3  
+* link:labs/lab08.html[Lab April 10]
+* link:assts/project.html[Project]: File System, Due Sunday, May 3
+* Recommended study questions: Tanenbaum pgs 332-336, 28, 30, 33, 40, 41
 
 |
 //-----------------------------
 |13
 |April 14, 16 anchor:week12[]
-|*I/O, Virtualization* 
+|*Virtualization, Security* 
 
-* Read: Tanenbaum Chapter 5.1-5.3, 7.1-7.11
+* Read: Tanenbaum sections 7.1-7.11, Chapter 9
 * Lab April 17: File System checkins: format, writing files
-* Recommended study questions: Tanenbaum pgs 332-336, 
+* Recommended study questions: Tanenbaum pgs 332-336 
 
 |
 //-----------------------------

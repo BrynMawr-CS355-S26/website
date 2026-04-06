@@ -23,7 +23,7 @@
 <li><a href="#_file_system_library_functions">File System Library Functions</a></li>
 <li><a href="#_the_shell">The Shell</a></li>
 <li><a href="#_format">Format</a></li>
-<li><a href="#_testing">Testing</a></li>
+<li><a href="#_testing_and_tips">Testing and Tips</a></li>
 </ul>
 </li>
 <li><a href="#_grading_rubric">Grading Rubric</a></li>
@@ -36,7 +36,7 @@
 <h2 id="_final_project_file_system">Final Project: File System</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>Due Sunday, April 27, before midnight</strong></p>
+<p><strong>Due Sunday, May 3, before midnight</strong></p>
 </div>
 <div class="paragraph">
 <p>The goals for this assignment are:</p>
@@ -58,7 +58,7 @@
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-We will use new starter code: <a href="https://classroom.github.com/a/pnwA1hqz">Start Code Link</a>
+We will use new starter code: <a href="https://classroom.github.com/a/oX1fPKb5">Start Code Link</a>
 </td>
 </tr>
 </table>
@@ -78,11 +78,10 @@ as a disk image. You must provide a shell that will be able to navigate this fil
 commands that allow a user to perform normal file system related activities. See below for details.</p>
 </div>
 <div class="paragraph">
-<p>Your file system should have a hierarchical tree structure, support file
-permissions and mounting.  You should also provide a separate "format" utility
+<p>Your file system should have a hierarchical tree structure and support file
+permissions and mounting. You should also provide a separate "format" utility
 that creates and initializes your disk files. The format program should run
-separately from your shell. You may base your implementation on previous work
-from any team member.</p>
+separately from your shell.</p>
 </div>
 </div>
 </div>
@@ -106,8 +105,9 @@ up many GBs, even if your current disk isn’t even remotely large enough.</p>
 <div class="paragraph">
 <p>Tanenbaum discusses physical implementations of file systems in Chapter 4, and in Sections
 10.6 and 11.8, which are good references. As usual, you are encouraged to research widely and use
-any resources you find useful, but are cautioned against taking large amounts of code that you do
-not understand.</p>
+any resources you find useful, but must NOT use code that you do not understand. Note that
+a large part of your grade for this assignment will be to explain (and possibly modify) your
+file system during a live demo.</p>
 </div>
 </div>
 </div>
@@ -130,10 +130,9 @@ not understand.</p>
 <div class="sect2">
 <h3 id="_the_virtual_file_system">The Virtual File System</h3>
 <div class="paragraph">
-<p>A Virtual File System (VFS) is a robust interface to multiple physical disks of varying types (you
-may only have one, of course). The basic idea behind VFS is to provide a generic representation
-of the hierarchical file system in memory, as well as a set of functions to access parts of the file
-system.</p>
+<p>A Virtual File System (VFS) is interface to the physical disk.  The basic idea
+behind the VFS is to provide a generic representation of the hierarchical file
+system in memory, as well as a set of functions to access and modify it.</p>
 </div>
 <div class="paragraph">
 <p>The basic structure of the VFS is the vnode. A vnode can represent a file, a directory or a mount
@@ -146,22 +145,19 @@ the physical layer to store individual file data.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>typedef struct vnode {
-    int vnode_number;
-    char name[255];
-    struct vnode *parent;
-    int permissions;
-    int type;
-    union {
-        struct unix_fs { /* these structs need to be fleshed out by you */
-            int inode;
-        } unixfs;
-        struct dos_fs {
-            int fat_ptr;
-        } dosfs;
-        struct ram_fs {
-            unsigned long offset;
-        } ramfs;
-    } fs_info; /* file system specific info */
+  int vnode_number;
+  char name[255];
+  struct vnode *parent;
+  int permissions;
+  int type;
+  union {
+    struct { // Inode FS attributes here
+       int inode;
+    };
+    struct { // FAT FS attributes here
+       int fat_ptr;
+    };
+  };
 } vnode_t;</code></pre>
 </div>
 </div>
@@ -244,14 +240,29 @@ of related built-in commands.</p>
 <div class="sect2">
 <h3 id="_the_shell">The Shell</h3>
 <div class="paragraph">
-<p>You should extend your shell to work with the new file system. This shell does
+<p>You should write a shell to work with the new file system. This shell does
 not need to support pipes or job control. Thus, you can use your "baby shell"
-as a starting point.  Make sure that your shell supports commands such as echo, ps, etc.</p>
+as a starting point.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The shell should use the VFS API to implement its commands.
+</td>
+</tr>
+</table>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>On start-up, look (in the same directory) for a file called "DISK" where your file system is located. If it is not found, please print a message asking the user to run the format command to make one. For more details on format, see Section 4.</p>
+<p>If no command line arguments are given, the shell should attempt to load a file called <code>DISK</code>. If it is not found, please print a message asking the user to run the format command to make one. For more details on format, see Section 4.</p>
+</li>
+<li>
+<p>The user should be able to specify a disk to load as an optional command line argument. See below for some examples.</p>
 </li>
 <li>
 <p>Once your shell has found the file system, it should mount it at the root directory and display a log-in prompt.</p>
@@ -301,36 +312,11 @@ as a starting point.  Make sure that your shell supports commands such as echo, 
 </li>
 </ol>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_format">Format</h3>
 <div class="paragraph">
-<p>The format utility program is a separate program that you should make available.
-format &lt;name of file&gt; will format a file with your file system design and data structures.
-If the file doesn’t exist, create it. The default size for such a disk image should start at
-1MB. Add a "-s #" flag to allow the creation of different-sized disks, where # is a number in
-megabytes.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_testing">Testing</h3>
-<div class="paragraph">
-<p>To initialize a new filesystem, use your format utility</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code>$ ./format <disk_name></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This command will create a disk containing a boot block, superblock, free space management, and
-initialized root directory. A disk created by format should be passed to your shell to use as the file
-system. When the shell exits, your filesystem should be saved.</p>
-</div>
-<div class="paragraph">
-<p>When the shell loads a filesystem, it should read it into your vnode data structure. The layout of the
-file system specifies how the file is stored on disk. The vode tree is the representation that you can
-use to work with files from your shell.</p>
+<p>When the shell loads a filesystem, it should read it into your vnode data
+structure. The layout of the file system specifies how the file is stored on
+the disk (e.g. the file you loaded). The vnode tree is the representation that
+you can use to work with files from your shell.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -343,12 +329,17 @@ myshell$> ls
 myshell$> cd newdir
 myshell$> ls
 . .. A.txt B.txt C.txt usr
+myshell$> exit
 $ <strong>./shell</strong>
 myshell$> ls
 . .. A.txt B.txt C.txt usr
 myshell$> echo "roses are red" > f1.txt
 myshell$> ls
-. .. A.txt B.txt C.txt f1.txt usr</code></pre>
+. .. A.txt B.txt C.txt f1.txt usr
+myshell$> exit
+$ <strong>./shell DISK-empty</strong>
+myshell$> ls
+. ..</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -376,16 +367,39 @@ myshell$> ls
 </li>
 </ul>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_format">Format</h3>
 <div class="paragraph">
-<p>Implementation Tips:</p>
+<p>The format utility program is a separate program that you should make available.
+format &lt;name of file&gt; will format a file with your file system design and data structures.
+If the file doesn’t exist, create it. The default size for such a disk image should start at
+1MB. Add a "-s #" flag to allow the creation of different-sized disks, where # is a number in
+megabytes.</p>
 </div>
 <div class="paragraph">
-<p>Start with your file system design (Due at the end of Lab, April 10th). After
-your decide your design, you should implement <code>format</code> and use it to create an
+<p>To initialize a new filesystem, use your format utility</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ ./format <disk_name></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This command will create a disk containing a boot block, superblock, free space management, and
+initialized root directory. A disk created by format will be passed to your shell to use as the file
+system. When the shell exits, any modifications to the filesystem should be saved.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_testing_and_tips">Testing and Tips</h3>
+<div class="paragraph">
+<p>Start with your file system design (Due at the end of Lab). After
+you settle on your design, you should implement <code>format</code> and use it to create an
 empty file system. Your empty file system should only contain a root directory.</p>
 </div>
 <div class="paragraph">
-<p>Implementing your shell and file system in vertical slices, one test-able feature at a time.
+<p>Implement your shell and file system in vertical slices, one test-able feature at a time.
 For example, the first thing you can implement is <strong>creating a file</strong>. To start, you would
 implement <code>fopen</code> and <code>fclose</code>, focusing on the ability to create files.
 You should test these functions in their own test program. Then implement <code>cat</code>
@@ -451,7 +465,7 @@ defined below.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>(3 points) File System</p>
+<p>(2 points) File System</p>
 <div class="ulist">
 <ul>
 <li>
@@ -482,11 +496,11 @@ defined below.</p>
 </div>
 </li>
 <li>
-<p>(1 points) File System demo and design (Oral Exam)</p>
+<p>(2 points) File System demo and design (In-person Demo - No exceptions)</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Your grade will be based on your ability to demonstrate several working features of your file system and describe how they work.</p>
+<p>Your grade will be based on your ability to demonstrate, explain, and modify your file system.</p>
 </li>
 </ul>
 </div>
@@ -532,7 +546,7 @@ have good style.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-02-16 15:13:40 -0500
+Last updated 2026-04-06 17:54:51 -0400
 </div>
 </div>
 </body>

@@ -18,9 +18,13 @@ lab -- no extensions.
 [discrete]
 = Design
 
-link:../assts/asst08.html[Read the project description for your file system]. Then answer the questions below. Note that some answers are requirements specified in the assignment description.
+link:../assts/project.html[Read the project description for your file system]. Then answer the questions below. Note that some answers are requirements specified in the assignment description.
 
 . What blocksize will your system support?
+{nbsp} +
+{nbsp} +
+{nbsp} +
+. What information will be stored in the superblock?
 {nbsp} +
 {nbsp} +
 {nbsp} +
@@ -40,11 +44,15 @@ link:../assts/asst08.html[Read the project description for your file system]. Th
 {nbsp} +
 {nbsp} +
 {nbsp} +
-. How will you manage free memory? 
+. How will you manage free memory? Linked-lists? tables? 
 {nbsp} +
 {nbsp} +
 {nbsp} +
 . How will you keep track of which blocks are used by which files (FAT or inodes)? 
+{nbsp} +
+{nbsp} +
+{nbsp} +
+. Explain the steps needed to access a file by its path.
 {nbsp} +
 {nbsp} +
 {nbsp} +
