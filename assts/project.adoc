@@ -227,7 +227,7 @@ system.
 
 Here are other features you can implement similarly:
 
-* Saving your file system to file so it can be loaded again the next time you start your shell (f_mount, f_unmount, mount)
+* Saving your file system to file so it can be loaded again the next time you start your shell
 * Listing a file's system status (stat)
 * Editing a file (f_read, f_write, f_seek, f_rewind, >>, cat)
 * Editing permissions (chmod)
@@ -236,7 +236,7 @@ Here are other features you can implement similarly:
 * Removing a file or directory (f_unlink)
 * Editing names (mv)
 * Testing bad data (for example, files/directories that do not exist. Implement error codes in your VFS API)
-* Testing other shell commands (should be forked with exec)
+* Mounting an other filesystem (mount, umount)
 
 = Grading Rubric
 
