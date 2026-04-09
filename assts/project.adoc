@@ -105,7 +105,7 @@ As part of the VFS you need to create programmer-level library functions to prov
 file system operations. A list of library functions that you should implement has been outlined for
 you. The listed calls are very similar to the equivalent standard ANSI C library functions. 
 
-link:asst08-supplement.html[Consult the specification for specific semantics that you should emulate. This 
+link:project-supplement.html[Consult the specification for specific semantics that you should emulate. This 
 document also includes a tutorial to help you get started]. 
 
 Your shell should call the appropriate functions from your library when implementing the list
