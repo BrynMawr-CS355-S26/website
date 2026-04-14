@@ -166,24 +166,29 @@
 //-----------------------------
 |12
 |April 7, 9 anchor:week11[]
-|*File Systems II an IO* 
+|*File Systems II* 
 
-* Read: Tanenbaum Sections 4.4, 5.1-5.3  
+* Read: Tanenbaum Sections 4.4
 * link:labs/lab08.html[Lab April 10]
 * link:assts/project.html[Project]: File System, Due Sunday, May 3
 * Recommended study questions: Tanenbaum pgs 332-336, 28, 30, 33, 40, 41
 
 |
+* link:lectures/OS-Week12-April07-FileSystem.pdf[Lecture - April 7]
+* link:lectures/OS-Week12-April09-FileDesign-Worksheet.pdf[Lecture - April 9]
+
 //-----------------------------
 |13
 |April 14, 16 anchor:week12[]
-|*Virtualization, Security* 
+|*IO and Virtualization* 
 
-* Read: Tanenbaum sections 7.1-7.11, Chapter 9
-* Lab April 17: File System checkins: format, writing files
-* Recommended study questions: Tanenbaum pgs 332-336 
+* Read: Tanenbaum sections 5.1-5.3, 7.1-7.11
+* link:labs/lab09.html[Lab April 16]: File System checkins: format, writing files
+* Recommended study questions: 
 
 |
+* link:lectures/OS-Week13-April14-IO.pdf[Lecture - April 14]
+
 //-----------------------------
 |14
 |April 21, 23 anchor:week13[]
@@ -191,7 +196,7 @@
 
 * Read: Tanenbaum Chapter 9
 * Lab April 24: File System checkins: simple shell integration
-* Recommended study questions: Tanenbaum pgs 332-336, 
+* Recommended study questions: 
 
 |
 //-----------------------------
