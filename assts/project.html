@@ -382,11 +382,21 @@ megabytes.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>$ ./format <disk_name></code></pre>
+<pre class="highlight"><code>$ ./format -s [DISK_SIZE] -f [Filename]</code></pre>
 </div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>-s</code> specifies the size of the disk. If no argument is given, assume 1 MB</p>
+</li>
+<li>
+<p><code>-f</code> specifies the name of the disk to write. If no argument is given, write the file to the name <code>DISK</code></p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>This command will create a disk containing a boot block, superblock, free space management, and
+<p>This command will create a disk containing a superblock, free space management, and
 initialized root directory. A disk created by format will be passed to your shell to use as the file
 system. When the shell exits, any modifications to the filesystem should be saved.</p>
 </div>
@@ -546,7 +556,7 @@ have good style.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-09 15:04:17 -0400
+Last updated 2026-04-14 16:32:21 -0400
 </div>
 </div>
 </body>

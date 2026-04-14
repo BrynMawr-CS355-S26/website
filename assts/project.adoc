@@ -203,13 +203,15 @@ To initialize a new filesystem, use your format utility
 
 [source, subs="quotes"]
 ----
-$ ./format <disk_name>
+$ ./format -s [DISK_SIZE] -f [Filename]
 ----
 
-This command will create a disk containing a boot block, superblock, free space management, and
+* `-s` specifies the size of the disk. If no argument is given, assume 1 MB
+* `-f` specifies the name of the disk to write. If no argument is given, write the file to the name `DISK`
+
+This command will create a disk containing a superblock, free space management, and
 initialized root directory. A disk created by format will be passed to your shell to use as the file 
 system. When the shell exits, any modifications to the filesystem should be saved. 
-
 
 == Testing and Tips
 
