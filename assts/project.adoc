@@ -213,6 +213,15 @@ This command will create a disk containing a superblock, free space management, 
 initialized root directory. A disk created by format will be passed to your shell to use as the file 
 system. When the shell exits, any modifications to the filesystem should be saved. 
 
+NOTE: It's important to verify that your `format` is working. To get started, you can use hexedit to check that he values of the superblock are correct. However, to make sure that your other data is correct, implement a `printdisk` utility that prints your file system in a human readable format.
+
+Test your disk with a print utility, for example,
+
+[source, subs="quotes"]
+----
+$ ./test/printdisk [Filename]
+----
+
 == Testing and Tips
 
 Start with your file system design (Due at the end of Lab). After 
@@ -252,7 +261,7 @@ complete demos that are well-defined and well-encapsulated, based on the categor
 defined below. 
 
 * (2 points) File System 
-** Format disk, load/save disk
+** Format disk, load/save disk, print disk
 ** Basic shell commands: ls, cat, touch, mkdir, rmdir, pwd, cd, mv, rm, stat
 ** Advanced shell commands: mount, umount
 ** Shell redirection: writing and appending to files from the shell

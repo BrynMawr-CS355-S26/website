@@ -15,8 +15,8 @@ Instructor: link:https://www.cs.brynmawr.edu/~alinen[Aline Normoyle]
 
 [.anns]
 
-* link:labs/labXX[Lab April 16]: Implement format.c (Due Thursday April 16 -- no extensions)
-* link:labs/project.html[Project: File system]: **Due Sunday May 3** No extensions
+* link:assts/project.html[Lab April 16]: Implement format.c (Due Thursday April 16 -- no extensions)
+* link:assts/project.html[Project: File system]: **Due Sunday May 3** No extensions
 * Resubmitted work: **Due Sunday May 3** Please send one email or slack to list all requests for regrades
 
 == Course Info

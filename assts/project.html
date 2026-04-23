@@ -400,6 +400,26 @@ megabytes.</p>
 initialized root directory. A disk created by format will be passed to your shell to use as the file
 system. When the shell exits, any modifications to the filesystem should be saved.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+It&#8217;s important to verify that your <code>format</code> is working. To get started, you can use hexedit to check that he values of the superblock are correct. However, to make sure that your other data is correct, implement a <code>printdisk</code> utility that prints your file system in a human readable format.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Test your disk with a print utility, for example,</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>$ ./test/printdisk [Filename]</code></pre>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_testing_and_tips">Testing and Tips</h3>
@@ -479,7 +499,7 @@ defined below.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Format disk, load/save disk</p>
+<p>Format disk, load/save disk, print disk</p>
 </li>
 <li>
 <p>Basic shell commands: ls, cat, touch, mkdir, rmdir, pwd, cd, mv, rm, stat</p>
@@ -556,7 +576,7 @@ have good style.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-14 16:32:21 -0400
+Last updated 2026-04-23 16:07:30 -0400
 </div>
 </div>
 </body>
