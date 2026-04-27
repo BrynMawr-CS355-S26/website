@@ -45,6 +45,10 @@ include::studyguide-files.adoc[]
 
 include::studyguide-io.adoc[]
 
+== Virtual Machines
+
+include::studyguide-vm.adoc[]
+
 == Security
 
 include::studyguide-security.adoc[]

@@ -1,0 +1,9 @@
+. What is a virtual machine?
+. Give 3 reasons why we might want to use a virtual machine.
+. What are three requirements for Virtualization
+. In a virtual machine, what is the difference between a sensitive instruction and priviledged instruction?
+. A machine is virtualizable if the sensitive instructions are a subset of the priviledged instructions. Why?
+. What is a hypervisor?
+. What is the difference between a type 1 and type 2 hypervisor?
+. How does a trap-and-emulate approach work when used to implement a hypervisor?
+. What is a cloud? How might the cloud use virtual machines?
