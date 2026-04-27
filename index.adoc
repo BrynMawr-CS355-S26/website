@@ -15,7 +15,7 @@ Instructor: link:https://www.cs.brynmawr.edu/~alinen[Aline Normoyle]
 
 [.anns]
 
-* link:assts/project.html[Lab April 16]: Implement format.c (Due Thursday April 16 -- no extensions)
+* Midterm II: 80 minutes, closed book, one written cheat sheet, in-class. link:studyguide2.html[Study Guide]
 * link:assts/project.html[Project: File system]: **Due Sunday May 3** No extensions
 * Resubmitted work: **Due Sunday May 3** Please send one email or slack to list all requests for regrades
 

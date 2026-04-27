@@ -184,10 +184,11 @@
 
 * Read: Tanenbaum sections 5.1-5.3, 7.1-7.11
 * link:labs/lab09.html[Lab April 16]: File System checkins: format, writing files
-* Recommended study questions: 
+* Recommended study questions: link:studyguide-io.html[IO], link:studyguide-vm.html[Virtual Machines]
 
 |
 * link:lectures/OS-Week13-April14-IO.pdf[Lecture - April 14]
+* link:lectures/OS-Week13-April16-Virtual.pdf[Lecture - April 16]
 
 //-----------------------------
 |14
@@ -196,9 +197,11 @@
 
 * Read: Tanenbaum Chapter 9
 * Lab April 24: File System checkins: simple shell integration
-* Recommended study questions: 
+* Recommended study questions: link:studioguide-security.html[Security]
 
 |
+* link:lectures/OS-Week14-April21-Security.pdf[Lectures - April 21, 23]
+
 //-----------------------------
 |15
 |April 28, 30 anchor:week14[]
