@@ -197,7 +197,7 @@
 
 * Read: Tanenbaum Chapter 9
 * Lab April 24: File System checkins: simple shell integration
-* Recommended study questions: link:studioguide-security.html[Security]
+* Recommended study questions: link:studyguide-security.html[Security]
 
 |
 * link:lectures/OS-Week14-April21-Security.pdf[Lectures - April 21, 23]
