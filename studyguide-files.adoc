@@ -32,9 +32,7 @@ $ touch 6.txt
 .. Suppose directories store the contents of the directory. Each entry of the table contains the following information: inode id, name (8 bytes), extension (3 bytes), and flags (4 bytes). The least significant bit of flags is 0 for files and 1 for directories. The most significant bit is 1 for a non-empty entry and 0 for an empty entry. 
 +
 * Define a struct type that represents the entries inside a directory. Make sure that all data types are properly byte-aligned.
-* Write pseudocode that tests whether a directory entry is valid of not. 
-* Write pseudocode that tests whether a directory entry corresponds to a file or directory.
-* Draw the contents of directory B as a table.
+* Draw the contents of directory B as a table consisting of inode number and name.
 * Describe how you would redesign the directory entries in order to support variable-sized filenames. 
 . Suppose we are using inodes. Describe the steps needed to lookup the file with path `/usr/ast/mbox`
 . Suppose we are using FAT. Describe the steps needed to lookup the file with path `/usr/ast/mbox`
@@ -57,7 +55,7 @@ $ touch 6.txt
 . List two methods for making backups faster.
 . What is the difference between a physical and logical dump?
 . List three limitations of physical dumps. 
-. List the steps needed to created a logical dump.
+. List the steps needed to create a logical dump.
 . List the steps needed to restore a logical dump.
 . How can inodes be checked for inconsistencies?
 . How can directories be checked for inconsistencies?

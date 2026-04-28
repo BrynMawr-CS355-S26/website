@@ -13,6 +13,7 @@
 . How does the OS communicate with devices when using a separate space for memory and devices?
 . How does the OS communicate with devices when using memory-mapped I/O?
 . What is the purpose of Direct Memory Access (DMA)?
+. On early computers, every byte of data read or written was handled by the CPU (i.e., there was no DMA). What implications does this have for multiprogramming?
 . In the following diagram, show how the CPU can use a DMA controller to read data from disk storage. (Answer: Fig 5-4 in Tanenbaum)
 +
 image::DMA.jpg[width=600px]

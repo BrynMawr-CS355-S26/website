@@ -1,8 +1,8 @@
-. Describe the levels of the memory hierarchy. 
+. Describe the levels of the memory hierarchy from lowest to highest. 
 . Name 3 types of secondary storage.
 . Name 3 types of primary storage.
 . How do primary storage and secondary storage differ in terms of their characteristics?
-. Give two disadvantages of a simple process memory model in which the entire process is loaded contiguously in memory?
+. Give two disadvantages of a simple process memory model in which the entire process is loaded contiguously in memory.
 . What is virtual memory? 
 . List two advantages of decoupling the process address space from the machine's physical memory.
 . Suppose we are using a 10K blocksize. Give the bitmap that represents the free blocks in memory. 
